@@ -9,14 +9,14 @@ const MyWorkerTasks = () => {
   const myTasks = mockTasks.filter((t) => t.claimedBy === 'w1');
 
   return (
-    <div className="container py-8">
+    <div className="container py-6 md:py-10">
       <div className="mb-8">
-        <h1 className="mb-2 font-heading text-2xl font-bold">My Tasks</h1>
-        <p className="text-muted-foreground">Tasks you've claimed or completed.</p>
+        <h1 className="mb-1 font-heading text-2xl font-bold tracking-tight md:text-3xl">My Tasks</h1>
+        <p className="text-sm text-muted-foreground">Tasks you've claimed or completed.</p>
       </div>
 
       {myTasks.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {myTasks.map((t) => <TaskCard key={t.id} task={t} />)}
         </div>
       ) : (
