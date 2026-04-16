@@ -8,6 +8,8 @@ export type TaskStatus = "draft" | "open" | "claimed" | "submitted" | "reviewed"
 
 export type ClaimStatus = "active" | "submitted" | "approved";
 
+export type SubmissionStatus = "draft" | "submitted";
+
 export type TaskCategory = "testing" | "research" | "community" | "content";
 
 export type RewardCurrency = "USD" | "NGN";
@@ -65,6 +67,26 @@ export interface TaskClaim {
   workerId: string;
   workerName: string;
   status: ClaimStatus;
+  claimedAt: string;
+  submittedAt?: string;
+}
+
+export interface SubmissionChecklistItem {
+  label: string;
+  completed: boolean;
+}
+
+export interface TaskSubmission {
+  id: string;
+  claimId: string;
+  taskId: string;
+  workerId: string;
+  proofText: string;
+  proofLink: string;
+  proofFileName: string;
+  checklistItems: SubmissionChecklistItem[];
+  status: SubmissionStatus;
+  updatedAt: string;
   submittedAt?: string;
 }
 
@@ -104,4 +126,32 @@ export interface TaskValidationErrors {
   rewardAmount?: string;
   deadlineAt?: string;
   status?: string;
+}
+
+export interface SubmissionFormValues {
+  proofText: string;
+  proofLink: string;
+  proofFileName: string;
+  checklistItems: SubmissionChecklistItem[];
+}
+
+export interface SubmissionValidationErrors {
+  proofText?: string;
+  checklistItems?: string;
+}
+
+export interface SubmissionInput {
+  claimId: string;
+  taskId: string;
+  workerId: string;
+  proofText: string;
+  proofLink: string;
+  proofFileName: string;
+  checklistItems: SubmissionChecklistItem[];
+}
+
+export interface TaskStoreSnapshot {
+  tasks: Task[];
+  claims: TaskClaim[];
+  submissions: TaskSubmission[];
 }

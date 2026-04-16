@@ -1,5 +1,4 @@
-import { seededClaims } from "@/features/tasks/data/taskSeeds";
-import type { Task, TaskClaim, DashboardMetric, VerificationStatus } from "@/features/shared/types/domain";
+import type { Task, TaskClaim, TaskSubmission, DashboardMetric, VerificationStatus } from "@/features/shared/types/domain";
 
 export function formatMoney(amount: number, currency: string) {
   return new Intl.NumberFormat("en-US", {
@@ -17,20 +16,35 @@ export function getTasksForPoster(tasks: Task[], posterId: string) {
   return tasks.filter((task) => task.posterId === posterId);
 }
 
-export function getClaimsForWorker(workerId: string) {
-  return seededClaims.filter((claim) => claim.workerId === workerId);
+export function getClaimsForWorker(claims: TaskClaim[], workerId: string) {
+  return claims.filter((claim) => claim.workerId === workerId);
+}
+
+export function getSubmissionsForWorker(submissions: TaskSubmission[], workerId: string) {
+  return submissions.filter((submission) => submission.workerId === workerId);
+}
+
+export function getClaimForTask(claims: TaskClaim[], taskId: string, workerId: string) {
+  return claims.find((claim) => claim.taskId === taskId && claim.workerId === workerId);
+}
+
+export function getSubmissionForClaim(submissions: TaskSubmission[], claimId: string) {
+  return submissions.find((submission) => submission.claimId === claimId);
 }
 
 export function getWorkerDashboardMetrics(input: {
   tasks: Task[];
+  claims: TaskClaim[];
+  submissions: TaskSubmission[];
   workerId: string;
   verificationStatus: VerificationStatus;
 }): DashboardMetric[] {
-  const claims = getClaimsForWorker(input.workerId);
-  const approvedClaims = claims.filter((claim) => claim.status === "approved").length;
-  const submittedClaims = claims.filter((claim) => claim.status === "submitted").length;
-  const activeClaims = claims.filter((claim) => claim.status === "active").length;
-  const earnings = claims
+  const workerClaims = getClaimsForWorker(input.claims, input.workerId);
+  const workerSubmissions = getSubmissionsForWorker(input.submissions, input.workerId);
+  const approvedClaims = workerClaims.filter((claim) => claim.status === "approved").length;
+  const submittedClaims = workerClaims.filter((claim) => claim.status === "submitted").length;
+  const activeClaims = workerClaims.filter((claim) => claim.status === "active").length;
+  const earnings = workerClaims
     .filter((claim) => claim.status === "approved")
     .map((claim) => input.tasks.find((task) => task.id === claim.taskId))
     .filter((task): task is Task => Boolean(task))
@@ -48,9 +62,9 @@ export function getWorkerDashboardMetrics(input: {
       detail: "Keep work disciplined and within queue limits.",
     },
     {
-      label: "Submitted proof",
-      value: String(submittedClaims),
-      detail: "Awaiting poster review.",
+      label: "Proof queue",
+      value: String(workerSubmissions.length),
+      detail: `${submittedClaims} submissions awaiting review.`,
     },
     {
       label: "Paid-ready",

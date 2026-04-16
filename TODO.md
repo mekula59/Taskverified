@@ -11,10 +11,10 @@
 - Task entity, sample data selectors, and worker/poster dashboard foundations added.
 - Poster task creation form, validation, and frontend-safe local task storage added.
 - Newly created tasks now appear in poster surfaces and shared task browsing when status makes them public.
+- Worker claim flow and proof submission flow added with local persistence for claims and submissions.
+- Worker dashboard and task views now reflect active claims, proof queue, and submitted state.
 
 ## Next Implementation Tasks
-- Implement worker claim flow and active-claim limits.
-- Implement submission flow with structured proof fields and attachment support.
 - Implement poster review actions: approve, reject, request revision, escalate.
 - Implement payout state machine and payout history views.
 - Implement reputation event tracking tied to task outcomes.

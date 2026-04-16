@@ -1,30 +1,40 @@
-import { seededTasks } from "@/features/tasks/data/taskSeeds";
-import type { Task } from "@/features/shared/types/domain";
+import { seededClaims, seededSubmissions, seededTasks } from "@/features/tasks/data/taskSeeds";
+import type { TaskStoreSnapshot } from "@/features/shared/types/domain";
 
 const STORAGE_KEY = "taskverified.tasks";
 
-export function readStoredTasks(): Task[] {
+const seedSnapshot: TaskStoreSnapshot = {
+  tasks: seededTasks,
+  claims: seededClaims,
+  submissions: seededSubmissions,
+};
+
+export function readStoredTaskSnapshot(): TaskStoreSnapshot {
   if (typeof window === "undefined") {
-    return seededTasks;
+    return seedSnapshot;
   }
 
   const raw = window.localStorage.getItem(STORAGE_KEY);
   if (!raw) {
-    return seededTasks;
+    return seedSnapshot;
   }
 
   try {
-    const parsed = JSON.parse(raw) as Task[];
-    return Array.isArray(parsed) ? parsed : seededTasks;
+    const parsed = JSON.parse(raw) as TaskStoreSnapshot;
+    if (!parsed || !Array.isArray(parsed.tasks) || !Array.isArray(parsed.claims) || !Array.isArray(parsed.submissions)) {
+      return seedSnapshot;
+    }
+
+    return parsed;
   } catch {
-    return seededTasks;
+    return seedSnapshot;
   }
 }
 
-export function writeStoredTasks(tasks: Task[]) {
+export function writeStoredTaskSnapshot(snapshot: TaskStoreSnapshot) {
   if (typeof window === "undefined") {
     return;
   }
 
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
 }

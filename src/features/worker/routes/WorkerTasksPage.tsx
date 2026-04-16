@@ -1,15 +1,35 @@
+import { useNavigate } from "react-router-dom";
+
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
-import { formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
+import { formatMoney, getClaimForTask, getPublicTasks } from "@/features/tasks/data/sampleData";
 
 export function WorkerTasksPage() {
   const auth = useAuth();
-  const { tasks } = useTasks();
+  const navigate = useNavigate();
+  const { tasks, claims, claimTask } = useTasks();
   const isClaimEligible = auth.verification?.status === "verified";
   const publicTasks = getPublicTasks(tasks);
+  const workerId = auth.user?.id ?? "";
+  const workerName = auth.profile?.fullName ?? "Worker";
+
+  const handleClaim = (taskId: string) => {
+    if (!isClaimEligible || !workerId) {
+      return;
+    }
+
+    claimTask({
+      taskId,
+      workerId,
+      workerName,
+    });
+
+    navigate(`/worker/submissions?taskId=${taskId}`);
+  };
 
   return (
     <div className="space-y-8">
@@ -20,11 +40,15 @@ export function WorkerTasksPage() {
       />
       <div className="grid gap-6 xl:grid-cols-2">
         {publicTasks.map((task) => (
-          <SectionCard key={task.id} title={task.title} description={task.description}>
+          <SectionCard key={task.id} title={task.title} description={`${task.description} Posted by ${task.posterName}.`}>
             <div className="space-y-4">
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <span>Reward</span>
                 <span className="font-medium text-foreground">{formatMoney(task.rewardAmount, task.rewardCurrency)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <span>Status</span>
+                <span className="capitalize">{task.status}</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {task.proofRequirements.map((item) => (
@@ -33,9 +57,36 @@ export function WorkerTasksPage() {
                   </Badge>
                 ))}
               </div>
-              <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
-                {isClaimEligible ? "Claim action will be enabled once backend mutations are connected." : "Claiming is blocked until verification clears."}
-              </div>
+              {(() => {
+                const existingClaim = getClaimForTask(claims, task.id, workerId);
+
+                if (!isClaimEligible) {
+                  return (
+                    <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
+                      Claiming is blocked until verification clears.
+                    </div>
+                  );
+                }
+
+                if (existingClaim) {
+                  return (
+                    <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-background/70 px-4 py-3">
+                      <p className="text-sm text-muted-foreground">
+                        You already claimed this task. Current status: <span className="font-medium capitalize text-foreground">{existingClaim.status}</span>
+                      </p>
+                      <Button variant="outline" onClick={() => navigate(`/worker/submissions?taskId=${task.id}`)}>
+                        {existingClaim.status === "active" ? "Submit proof" : "View proof submission"}
+                      </Button>
+                    </div>
+                  );
+                }
+
+                return (
+                  <Button onClick={() => handleClaim(task.id)} disabled={task.status !== "open"}>
+                    Claim task
+                  </Button>
+                );
+              })()}
             </div>
           </SectionCard>
         ))}

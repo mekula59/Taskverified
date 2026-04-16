@@ -6,19 +6,21 @@ import { SectionCard } from "@/components/shell/SectionCard";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { Button } from "@/components/ui/button";
-import { getWorkerDashboardMetrics, getClaimsForWorker, getPublicTasks, formatMoney } from "@/features/tasks/data/sampleData";
+import { getWorkerDashboardMetrics, getClaimsForWorker, formatMoney } from "@/features/tasks/data/sampleData";
 
 export function WorkerHomePage() {
   const auth = useAuth();
-  const { tasks } = useTasks();
+  const { tasks, claims, submissions } = useTasks();
   const metrics = getWorkerDashboardMetrics({
     tasks,
+    claims,
+    submissions,
     workerId: auth.user?.id ?? "",
     verificationStatus: auth.verification?.status ?? "unverified",
   });
-  const claims = auth.user ? getClaimsForWorker(auth.user.id) : [];
-  const activeClaimTasks = claims
-    .map((claim) => getPublicTasks(tasks).find((task) => task.id === claim.taskId))
+  const workerClaims = auth.user ? getClaimsForWorker(claims, auth.user.id) : [];
+  const activeClaimTasks = workerClaims
+    .map((claim) => tasks.find((task) => task.id === claim.taskId))
     .filter((task): task is NonNullable<typeof task> => Boolean(task));
 
   return (

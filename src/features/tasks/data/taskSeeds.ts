@@ -1,4 +1,4 @@
-import type { Task, TaskClaim } from "@/features/shared/types/domain";
+import type { Task, TaskClaim, TaskSubmission } from "@/features/shared/types/domain";
 
 export const seededTasks: Task[] = [
   {
@@ -74,6 +74,7 @@ export const seededClaims: TaskClaim[] = [
     workerId: "worker-001",
     workerName: "Nadia Cole",
     status: "active",
+    claimedAt: "2026-04-15T11:00:00.000Z",
   },
   {
     id: "claim-202",
@@ -81,6 +82,7 @@ export const seededClaims: TaskClaim[] = [
     workerId: "worker-001",
     workerName: "Nadia Cole",
     status: "submitted",
+    claimedAt: "2026-04-15T14:00:00.000Z",
     submittedAt: "2026-04-16T15:00:00.000Z",
   },
   {
@@ -89,6 +91,27 @@ export const seededClaims: TaskClaim[] = [
     workerId: "worker-001",
     workerName: "Nadia Cole",
     status: "approved",
+    claimedAt: "2026-04-13T09:00:00.000Z",
     submittedAt: "2026-04-14T15:00:00.000Z",
+  },
+];
+
+export const seededSubmissions: TaskSubmission[] = [
+  {
+    id: "submission-301",
+    claimId: "claim-202",
+    taskId: "task-103",
+    workerId: "worker-001",
+    proofText: "Visited three shops, captured each menu board, and entered the prices into a structured list.",
+    proofLink: "https://example.com/proof/task-103",
+    proofFileName: "pricing-photos.zip",
+    checklistItems: [
+      { label: "Per-location menu photo", completed: true },
+      { label: "Location name", completed: true },
+      { label: "Price table", completed: true },
+    ],
+    status: "submitted",
+    updatedAt: "2026-04-16T15:00:00.000Z",
+    submittedAt: "2026-04-16T15:00:00.000Z",
   },
 ];
