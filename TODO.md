@@ -9,9 +9,10 @@
 - Role selection and profile setup flows added under onboarding routes.
 - Verification now has a real status model and current-user UI.
 - Task entity, sample data selectors, and worker/poster dashboard foundations added.
+- Poster task creation form, validation, and frontend-safe local task storage added.
+- Newly created tasks now appear in poster surfaces and shared task browsing when status makes them public.
 
 ## Next Implementation Tasks
-- Implement poster task creation form with proof requirement modeling.
 - Implement worker claim flow and active-claim limits.
 - Implement submission flow with structured proof fields and attachment support.
 - Implement poster review actions: approve, reject, request revision, escalate.

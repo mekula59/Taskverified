@@ -4,18 +4,21 @@ import { MetricCard } from "@/components/shell/MetricCard";
 import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
 import { useAuth } from "@/features/auth/context/useAuth";
+import { useTasks } from "@/features/tasks/context/useTasks";
 import { Button } from "@/components/ui/button";
 import { getWorkerDashboardMetrics, getClaimsForWorker, getPublicTasks, formatMoney } from "@/features/tasks/data/sampleData";
 
 export function WorkerHomePage() {
   const auth = useAuth();
+  const { tasks } = useTasks();
   const metrics = getWorkerDashboardMetrics({
+    tasks,
     workerId: auth.user?.id ?? "",
     verificationStatus: auth.verification?.status ?? "unverified",
   });
   const claims = auth.user ? getClaimsForWorker(auth.user.id) : [];
   const activeClaimTasks = claims
-    .map((claim) => getPublicTasks().find((task) => task.id === claim.taskId))
+    .map((claim) => getPublicTasks(tasks).find((task) => task.id === claim.taskId))
     .filter((task): task is NonNullable<typeof task> => Boolean(task));
 
   return (

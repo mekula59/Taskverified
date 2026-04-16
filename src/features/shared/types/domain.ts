@@ -8,6 +8,10 @@ export type TaskStatus = "draft" | "open" | "claimed" | "submitted" | "reviewed"
 
 export type ClaimStatus = "active" | "submitted" | "approved";
 
+export type TaskCategory = "testing" | "research" | "community" | "content";
+
+export type RewardCurrency = "USD" | "NGN";
+
 export interface SessionUser {
   id: string;
   email: string;
@@ -45,13 +49,14 @@ export interface Task {
   title: string;
   description: string;
   rewardAmount: number;
-  rewardCurrency: string;
+  rewardCurrency: RewardCurrency;
   proofRequirements: string[];
   claimLimit: number;
   claimCount: number;
   deadlineAt: string;
   status: TaskStatus;
-  category: "testing" | "research" | "community" | "content";
+  category: TaskCategory;
+  createdAt: string;
 }
 
 export interface TaskClaim {
@@ -67,4 +72,36 @@ export interface DashboardMetric {
   label: string;
   value: string;
   detail: string;
+}
+
+export interface TaskCreateInput {
+  title: string;
+  description: string;
+  category: TaskCategory;
+  proofRequirements: string[];
+  rewardAmount: number;
+  rewardCurrency: RewardCurrency;
+  deadlineAt: string;
+  status: TaskStatus;
+}
+
+export interface TaskFormValues {
+  title: string;
+  description: string;
+  category: TaskCategory | "";
+  proofRequirementsText: string;
+  rewardAmount: string;
+  rewardCurrency: RewardCurrency;
+  deadlineAt: string;
+  status: TaskStatus;
+}
+
+export interface TaskValidationErrors {
+  title?: string;
+  description?: string;
+  category?: string;
+  proofRequirementsText?: string;
+  rewardAmount?: string;
+  deadlineAt?: string;
+  status?: string;
 }

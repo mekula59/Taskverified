@@ -1,5 +1,6 @@
 import { CheckCheck, Coins, Fingerprint, ShieldCheck, Star, Wallet } from "lucide-react";
 
+import { seededTasks } from "@/features/tasks/data/taskSeeds";
 import { formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
 
 export const lifecycleSteps = [
@@ -32,7 +33,7 @@ export const lifecycleSteps = [
 export const publicTrustSignals = [
   {
     label: "Live tasks",
-    value: String(getPublicTasks().length),
+    value: String(getPublicTasks(seededTasks).length),
     detail: "Public queue stays small and proof-forward.",
     icon: <ShieldCheck className="h-5 w-5" />,
   },
@@ -50,7 +51,7 @@ export const publicTrustSignals = [
   },
   {
     label: "Reward pool",
-    value: formatMoney(getPublicTasks().reduce((sum, task) => sum + task.rewardAmount, 0), "USD"),
+    value: formatMoney(getPublicTasks(seededTasks).reduce((sum, task) => sum + task.rewardAmount, 0), "USD"),
     detail: "Sample rewards model payout visibility.",
     icon: <Coins className="h-5 w-5" />,
   },

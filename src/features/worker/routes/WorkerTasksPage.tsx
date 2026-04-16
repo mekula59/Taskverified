@@ -2,12 +2,14 @@ import { Badge } from "@/components/ui/badge";
 import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
 import { useAuth } from "@/features/auth/context/useAuth";
+import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
 
 export function WorkerTasksPage() {
   const auth = useAuth();
+  const { tasks } = useTasks();
   const isClaimEligible = auth.verification?.status === "verified";
-  const tasks = getPublicTasks();
+  const publicTasks = getPublicTasks(tasks);
 
   return (
     <div className="space-y-8">
@@ -17,7 +19,7 @@ export function WorkerTasksPage() {
         description="Task cards are now backed by a task entity and respect verification state in the UI foundation."
       />
       <div className="grid gap-6 xl:grid-cols-2">
-        {tasks.map((task) => (
+        {publicTasks.map((task) => (
           <SectionCard key={task.id} title={task.title} description={task.description}>
             <div className="space-y-4">
               <div className="flex items-center justify-between text-sm text-muted-foreground">
