@@ -1,4 +1,4 @@
-import type { Task, TaskClaim, TaskSubmission } from "@/features/shared/types/domain";
+import type { Task, TaskClaim, TaskSubmission, WorkerProfileSummary } from "@/features/shared/types/domain";
 
 export const seededTasks: Task[] = [
   {
@@ -61,7 +61,7 @@ export const seededTasks: Task[] = [
     claimLimit: 2,
     claimCount: 1,
     deadlineAt: "2026-04-24T12:00:00.000Z",
-    status: "reviewed",
+    status: "approved",
     category: "content",
     createdAt: "2026-04-13T10:00:00.000Z",
   },
@@ -96,6 +96,16 @@ export const seededClaims: TaskClaim[] = [
   },
 ];
 
+export const seededWorkerProfiles: WorkerProfileSummary[] = [
+  {
+    userId: "worker-001",
+    fullName: "Nadia Cole",
+    location: "Lagos, NG",
+    bio: "Reliable product tester focused on evidence-rich proof and on-time completion.",
+    verificationStatus: "verified",
+  },
+];
+
 export const seededSubmissions: TaskSubmission[] = [
   {
     id: "submission-301",
@@ -113,5 +123,23 @@ export const seededSubmissions: TaskSubmission[] = [
     status: "submitted",
     updatedAt: "2026-04-16T15:00:00.000Z",
     submittedAt: "2026-04-16T15:00:00.000Z",
+  },
+  {
+    id: "submission-302",
+    claimId: "claim-203",
+    taskId: "task-104",
+    workerId: "worker-001",
+    proofText: "Created both requested event clips, included timestamps, and attached the zipped exports.",
+    proofLink: "https://example.com/proof/task-104",
+    proofFileName: "launch-event-clips.zip",
+    checklistItems: [
+      { label: "2 short clips", completed: true },
+      { label: "Timestamps", completed: true },
+      { label: "One-sentence rationale", completed: true },
+    ],
+    status: "approved",
+    updatedAt: "2026-04-14T15:00:00.000Z",
+    submittedAt: "2026-04-14T15:00:00.000Z",
+    reviewedAt: "2026-04-14T18:00:00.000Z",
   },
 ];

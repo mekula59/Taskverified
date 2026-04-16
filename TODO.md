@@ -13,9 +13,10 @@
 - Newly created tasks now appear in poster surfaces and shared task browsing when status makes them public.
 - Worker claim flow and proof submission flow added with local persistence for claims and submissions.
 - Worker dashboard and task views now reflect active claims, proof queue, and submitted state.
+- Poster review flow added with approval/rejection decisions and optional rejection notes.
+- Review outcomes now propagate across poster review surfaces, worker submission views, and dashboard summaries.
 
 ## Next Implementation Tasks
-- Implement poster review actions: approve, reject, request revision, escalate.
 - Implement payout state machine and payout history views.
 - Implement reputation event tracking tied to task outcomes.
 - Replace local auth and sample data adapters with Supabase-backed queries and mutations.

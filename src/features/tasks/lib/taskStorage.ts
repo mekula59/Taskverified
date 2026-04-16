@@ -1,4 +1,4 @@
-import { seededClaims, seededSubmissions, seededTasks } from "@/features/tasks/data/taskSeeds";
+import { seededClaims, seededSubmissions, seededTasks, seededWorkerProfiles } from "@/features/tasks/data/taskSeeds";
 import type { TaskStoreSnapshot } from "@/features/shared/types/domain";
 
 const STORAGE_KEY = "taskverified.tasks";
@@ -7,6 +7,7 @@ const seedSnapshot: TaskStoreSnapshot = {
   tasks: seededTasks,
   claims: seededClaims,
   submissions: seededSubmissions,
+  workerProfiles: seededWorkerProfiles,
 };
 
 export function readStoredTaskSnapshot(): TaskStoreSnapshot {
@@ -21,7 +22,7 @@ export function readStoredTaskSnapshot(): TaskStoreSnapshot {
 
   try {
     const parsed = JSON.parse(raw) as TaskStoreSnapshot;
-    if (!parsed || !Array.isArray(parsed.tasks) || !Array.isArray(parsed.claims) || !Array.isArray(parsed.submissions)) {
+    if (!parsed || !Array.isArray(parsed.tasks) || !Array.isArray(parsed.claims) || !Array.isArray(parsed.submissions) || !Array.isArray(parsed.workerProfiles)) {
       return seedSnapshot;
     }
 

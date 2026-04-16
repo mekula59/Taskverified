@@ -1,4 +1,4 @@
-import type { Task, TaskClaim, TaskSubmission, DashboardMetric, VerificationStatus } from "@/features/shared/types/domain";
+import type { Task, TaskClaim, TaskSubmission, DashboardMetric, VerificationStatus, WorkerProfileSummary } from "@/features/shared/types/domain";
 
 export function formatMoney(amount: number, currency: string) {
   return new Intl.NumberFormat("en-US", {
@@ -32,6 +32,23 @@ export function getSubmissionForClaim(submissions: TaskSubmission[], claimId: st
   return submissions.find((submission) => submission.claimId === claimId);
 }
 
+export function getWorkerProfile(workerProfiles: WorkerProfileSummary[], workerId: string) {
+  return workerProfiles.find((profile) => profile.userId === workerId);
+}
+
+export function getSubmittedSubmissionsForPoster(input: {
+  tasks: Task[];
+  claims: TaskClaim[];
+  submissions: TaskSubmission[];
+  posterId: string;
+}) {
+  const posterTaskIds = new Set(getTasksForPoster(input.tasks, input.posterId).map((task) => task.id));
+
+  return input.submissions.filter(
+    (submission) => posterTaskIds.has(submission.taskId) && (submission.status === "submitted" || submission.status === "approved" || submission.status === "rejected"),
+  );
+}
+
 export function getWorkerDashboardMetrics(input: {
   tasks: Task[];
   claims: TaskClaim[];
@@ -42,6 +59,7 @@ export function getWorkerDashboardMetrics(input: {
   const workerClaims = getClaimsForWorker(input.claims, input.workerId);
   const workerSubmissions = getSubmissionsForWorker(input.submissions, input.workerId);
   const approvedClaims = workerClaims.filter((claim) => claim.status === "approved").length;
+  const rejectedClaims = workerClaims.filter((claim) => claim.status === "rejected").length;
   const submittedClaims = workerClaims.filter((claim) => claim.status === "submitted").length;
   const activeClaims = workerClaims.filter((claim) => claim.status === "active").length;
   const earnings = workerClaims
@@ -64,7 +82,7 @@ export function getWorkerDashboardMetrics(input: {
     {
       label: "Proof queue",
       value: String(workerSubmissions.length),
-      detail: `${submittedClaims} submissions awaiting review.`,
+      detail: `${submittedClaims} awaiting review, ${rejectedClaims} rejected.`,
     },
     {
       label: "Paid-ready",
@@ -78,7 +96,8 @@ export function getPosterDashboardMetrics(tasks: Task[], posterId: string): Dash
   const posterTasks = getTasksForPoster(tasks, posterId);
   const openTasks = posterTasks.filter((task) => task.status === "open" || task.status === "claimed").length;
   const reviewQueue = posterTasks.filter((task) => task.status === "submitted").length;
-  const paidTasks = posterTasks.filter((task) => task.status === "paid" || task.status === "reviewed").length;
+  const approvedTasks = posterTasks.filter((task) => task.status === "approved").length;
+  const rejectedTasks = posterTasks.filter((task) => task.status === "rejected").length;
   const rewardReserved = posterTasks.reduce((sum, task) => sum + task.rewardAmount, 0);
   const draftTasks = posterTasks.filter((task) => task.status === "draft").length;
 
@@ -99,9 +118,9 @@ export function getPosterDashboardMetrics(tasks: Task[], posterId: string): Dash
       detail: "Current reward pool across sample tasks.",
     },
     {
-      label: "Draft or reviewed",
-      value: String(draftTasks + paidTasks),
-      detail: `${draftTasks} drafts and ${paidTasks} reviewed tasks.`,
+      label: "Draft and decisions",
+      value: String(draftTasks + approvedTasks + rejectedTasks),
+      detail: `${draftTasks} drafts, ${approvedTasks} approved, ${rejectedTasks} rejected.`,
     },
   ];
 }

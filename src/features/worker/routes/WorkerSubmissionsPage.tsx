@@ -23,6 +23,7 @@ export function WorkerSubmissionsPage() {
   const selectedClaim = workerClaims.find((claim) => claim.taskId === selectedTaskId) ?? workerClaims[0];
   const selectedTask = tasks.find((task) => task.id === selectedClaim?.taskId);
   const existingSubmission = selectedClaim ? getSubmissionForClaim(submissions, selectedClaim.id) : undefined;
+  const isLocked = existingSubmission?.status === "approved" || existingSubmission?.status === "rejected";
 
   const initialValues = useMemo(
     () => createSubmissionFormValues(selectedTask?.proofRequirements ?? [], existingSubmission),
@@ -104,11 +105,25 @@ export function WorkerSubmissionsPage() {
         >
           {selectedTask && selectedClaim ? (
             <div className="space-y-5">
+              {existingSubmission?.status === "approved" ? (
+                <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
+                  Submission approved{existingSubmission.reviewedAt ? ` on ${new Date(existingSubmission.reviewedAt).toLocaleDateString()}` : ""}.
+                </div>
+              ) : null}
+              {existingSubmission?.status === "rejected" ? (
+                <div className="space-y-2 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-muted-foreground">
+                  <p>
+                    Submission rejected{existingSubmission.reviewedAt ? ` on ${new Date(existingSubmission.reviewedAt).toLocaleDateString()}` : ""}.
+                  </p>
+                  {existingSubmission.reviewerNotes ? <p>Reviewer notes: <span className="text-foreground">{existingSubmission.reviewerNotes}</span></p> : null}
+                </div>
+              ) : null}
               <div className="space-y-2">
                 <Label htmlFor="proofText">Proof text</Label>
                 <Textarea
                   id="proofText"
                   value={values.proofText}
+                  disabled={isLocked}
                   onChange={(event) => setValues((current) => ({ ...current, proofText: event.target.value }))}
                   placeholder="Describe what you completed and how the attached evidence maps to the requirements."
                 />
@@ -121,6 +136,7 @@ export function WorkerSubmissionsPage() {
                   <Input
                     id="proofLink"
                     value={values.proofLink}
+                    disabled={isLocked}
                     onChange={(event) => setValues((current) => ({ ...current, proofLink: event.target.value }))}
                     placeholder="https://example.com/proof"
                   />
@@ -130,6 +146,7 @@ export function WorkerSubmissionsPage() {
                   <Input
                     id="proofFileName"
                     value={values.proofFileName}
+                    disabled={isLocked}
                     onChange={(event) => setValues((current) => ({ ...current, proofFileName: event.target.value }))}
                     placeholder="screenshots.zip"
                   />
@@ -143,6 +160,7 @@ export function WorkerSubmissionsPage() {
                     <input
                       type="checkbox"
                       checked={item.completed}
+                      disabled={isLocked}
                       onChange={(event) =>
                         setValues((current) => ({
                           ...current,
@@ -158,7 +176,7 @@ export function WorkerSubmissionsPage() {
                 {errors.checklistItems ? <p className="text-sm text-destructive">{errors.checklistItems}</p> : null}
               </div>
 
-              <Button onClick={handleSubmit}>Submit proof</Button>
+              {!isLocked ? <Button onClick={handleSubmit}>Submit proof</Button> : null}
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">Claim a task first, then return here to submit proof.</p>

@@ -1,4 +1,4 @@
-import type { SubmissionInput, Task, TaskClaim, TaskCreateInput, TaskStoreSnapshot, TaskSubmission } from "@/features/shared/types/domain";
+import type { SubmissionInput, SubmissionReviewInput, Task, TaskClaim, TaskCreateInput, TaskStoreSnapshot, TaskSubmission } from "@/features/shared/types/domain";
 
 export function createTaskRecord(current: TaskStoreSnapshot, input: TaskCreateInput, currentUser: { id: string; name: string }): TaskStoreSnapshot {
   const task: Task = {
@@ -75,6 +75,7 @@ export function submitProofRecord(current: TaskStoreSnapshot, input: SubmissionI
   };
 
   return {
+    ...current,
     tasks: current.tasks.map((task) =>
       task.id === input.taskId
         ? {
@@ -95,5 +96,46 @@ export function submitProofRecord(current: TaskStoreSnapshot, input: SubmissionI
     submissions: existingSubmission
       ? current.submissions.map((submission) => (submission.claimId === input.claimId ? nextSubmission : submission))
       : [nextSubmission, ...current.submissions],
+  };
+}
+
+export function reviewSubmissionRecord(current: TaskStoreSnapshot, input: SubmissionReviewInput): TaskStoreSnapshot {
+  const existingSubmission = current.submissions.find((submission) => submission.claimId === input.claimId);
+  if (!existingSubmission) {
+    return current;
+  }
+
+  const now = new Date().toISOString();
+  const nextStatus = input.decision;
+
+  return {
+    ...current,
+    tasks: current.tasks.map((task) =>
+      task.id === input.taskId
+        ? {
+            ...task,
+            status: nextStatus,
+          }
+        : task,
+    ),
+    claims: current.claims.map((claim) =>
+      claim.id === input.claimId
+        ? {
+            ...claim,
+            status: nextStatus,
+          }
+        : claim,
+    ),
+    submissions: current.submissions.map((submission) =>
+      submission.claimId === input.claimId
+        ? {
+            ...submission,
+            status: nextStatus,
+            reviewerNotes: input.reviewerNotes?.trim() || undefined,
+            reviewedAt: now,
+            updatedAt: now,
+          }
+        : submission,
+    ),
   };
 }

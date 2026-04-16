@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { seededClaims, seededSubmissions, seededTasks } from "@/features/tasks/data/taskSeeds";
-import { getClaimsForWorker, getPosterDashboardMetrics, getPublicTasks, getSubmissionForClaim, getWorkerDashboardMetrics } from "@/features/tasks/data/sampleData";
+import { seededClaims, seededSubmissions, seededTasks, seededWorkerProfiles } from "@/features/tasks/data/taskSeeds";
+import { getClaimsForWorker, getPosterDashboardMetrics, getPublicTasks, getSubmissionForClaim, getSubmittedSubmissionsForPoster, getWorkerDashboardMetrics, getWorkerProfile } from "@/features/tasks/data/sampleData";
 
 describe("task sample data", () => {
   it("returns public tasks for discovery", () => {
@@ -32,5 +32,17 @@ describe("task sample data", () => {
 
     expect(claims.length).toBeGreaterThan(0);
     expect(getSubmissionForClaim(seededSubmissions, "claim-202")?.taskId).toBe("task-103");
+  });
+
+  it("finds poster review submissions and worker profile details", () => {
+    const reviewItems = getSubmittedSubmissionsForPoster({
+      tasks: seededTasks,
+      claims: seededClaims,
+      submissions: seededSubmissions,
+      posterId: "poster-001",
+    });
+
+    expect(reviewItems.length).toBeGreaterThan(0);
+    expect(getWorkerProfile(seededWorkerProfiles, "worker-001")?.fullName).toBe("Nadia Cole");
   });
 });

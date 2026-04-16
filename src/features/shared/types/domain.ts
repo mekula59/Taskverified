@@ -4,11 +4,11 @@ export type UserRole = "worker" | "poster";
 
 export type VerificationStatus = "unverified" | "pending" | "verified" | "flagged";
 
-export type TaskStatus = "draft" | "open" | "claimed" | "submitted" | "reviewed" | "paid";
+export type TaskStatus = "draft" | "open" | "claimed" | "submitted" | "approved" | "rejected" | "paid";
 
-export type ClaimStatus = "active" | "submitted" | "approved";
+export type ClaimStatus = "active" | "submitted" | "approved" | "rejected";
 
-export type SubmissionStatus = "draft" | "submitted";
+export type SubmissionStatus = "draft" | "submitted" | "approved" | "rejected";
 
 export type TaskCategory = "testing" | "research" | "community" | "content";
 
@@ -28,6 +28,14 @@ export interface UserProfile {
   location: string;
   bio: string;
   setupCompletedAt: string;
+}
+
+export interface WorkerProfileSummary {
+  userId: string;
+  fullName: string;
+  location: string;
+  bio: string;
+  verificationStatus: VerificationStatus;
 }
 
 export interface VerificationRecord {
@@ -88,6 +96,8 @@ export interface TaskSubmission {
   status: SubmissionStatus;
   updatedAt: string;
   submittedAt?: string;
+  reviewedAt?: string;
+  reviewerNotes?: string;
 }
 
 export interface DashboardMetric {
@@ -150,8 +160,24 @@ export interface SubmissionInput {
   checklistItems: SubmissionChecklistItem[];
 }
 
+export interface SubmissionReviewInput {
+  claimId: string;
+  taskId: string;
+  decision: "approved" | "rejected";
+  reviewerNotes?: string;
+}
+
+export interface ReviewFormValues {
+  reviewerNotes: string;
+}
+
+export interface ReviewValidationErrors {
+  reviewerNotes?: string;
+}
+
 export interface TaskStoreSnapshot {
   tasks: Task[];
   claims: TaskClaim[];
   submissions: TaskSubmission[];
+  workerProfiles: WorkerProfileSummary[];
 }
