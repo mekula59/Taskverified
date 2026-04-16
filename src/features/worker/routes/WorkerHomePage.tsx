@@ -10,11 +10,12 @@ import { getWorkerDashboardMetrics, getClaimsForWorker, formatMoney } from "@/fe
 
 export function WorkerHomePage() {
   const auth = useAuth();
-  const { tasks, claims, submissions } = useTasks();
+  const { tasks, claims, submissions, payouts } = useTasks();
   const metrics = getWorkerDashboardMetrics({
     tasks,
     claims,
     submissions,
+    payouts,
     workerId: auth.user?.id ?? "",
     verificationStatus: auth.verification?.status ?? "unverified",
   });

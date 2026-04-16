@@ -3,12 +3,13 @@ import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
-import { formatMoney, getTasksForPoster } from "@/features/tasks/data/sampleData";
+import { formatMoney, getPayoutsForPoster, getTasksForPoster } from "@/features/tasks/data/sampleData";
 
 export function PosterTasksPage() {
   const auth = useAuth();
-  const { tasks } = useTasks();
+  const { tasks, payouts } = useTasks();
   const posterTasks = auth.user ? getTasksForPoster(tasks, auth.user.id) : [];
+  const posterPayouts = auth.user ? getPayoutsForPoster(payouts, auth.user.id) : [];
 
   return (
     <div className="space-y-8">
@@ -38,6 +39,14 @@ export function PosterTasksPage() {
               <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
                 Deadline: <span className="font-medium text-foreground">{new Date(task.deadlineAt).toLocaleDateString()}</span>
               </div>
+              {(() => {
+                const payout = posterPayouts.find((item) => item.taskId === task.id);
+                return payout ? (
+                  <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
+                    Solana payout: <span className="font-medium capitalize text-foreground">{payout.status.replaceAll("_", " ")}</span>
+                  </div>
+                ) : null;
+              })()}
             </div>
           </SectionCard>
         ))}

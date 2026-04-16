@@ -10,8 +10,8 @@ import { getPosterDashboardMetrics, getTasksForPoster, formatMoney } from "@/fea
 
 export function PosterHomePage() {
   const auth = useAuth();
-  const { tasks } = useTasks();
-  const metrics = getPosterDashboardMetrics(tasks, auth.user?.id ?? "");
+  const { tasks, payouts } = useTasks();
+  const metrics = getPosterDashboardMetrics(tasks, payouts, auth.user?.id ?? "");
   const posterTasks = auth.user ? getTasksForPoster(tasks, auth.user.id) : [];
 
   return (

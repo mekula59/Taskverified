@@ -8,11 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { defaultReviewFormValues, validateReviewForm } from "@/features/tasks/lib/reviewForm";
-import { getSubmittedSubmissionsForPoster, getWorkerProfile } from "@/features/tasks/data/sampleData";
+import { formatMoney, getPayoutForSubmission, getSubmittedSubmissionsForPoster, getWorkerProfile } from "@/features/tasks/data/sampleData";
 
 export function PosterReviewsPage() {
   const auth = useAuth();
-  const { tasks, claims, submissions, workerProfiles, reviewSubmission } = useTasks();
+  const { tasks, claims, submissions, workerProfiles, payouts, reviewSubmission } = useTasks();
   const [selectedClaimId, setSelectedClaimId] = useState<string | null>(null);
   const [reviewValues, setReviewValues] = useState(defaultReviewFormValues);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -32,6 +32,7 @@ export function PosterReviewsPage() {
   const selectedTask = tasks.find((task) => task.id === selectedSubmission?.taskId);
   const selectedClaim = claims.find((claim) => claim.id === selectedSubmission?.claimId);
   const workerProfile = selectedSubmission ? getWorkerProfile(workerProfiles, selectedSubmission.workerId) : undefined;
+  const payout = selectedSubmission ? getPayoutForSubmission(payouts, selectedSubmission.id) : undefined;
 
   const handleDecision = (decision: "approved" | "rejected") => {
     if (!selectedSubmission || !selectedTask) {
@@ -144,6 +145,20 @@ export function PosterReviewsPage() {
                   </div>
                 ))}
               </div>
+
+              {payout ? (
+                <div className="rounded-xl border border-border/60 bg-background/70 p-4 text-sm text-muted-foreground">
+                  <p className="font-medium text-foreground">Solana payout status</p>
+                  <p className="mt-2">
+                    {formatMoney(payout.amount, "USD")} represented as <span className="font-medium text-foreground">{payout.currencyToken}</span>
+                  </p>
+                  <p className="mt-2">
+                    Status: <span className="font-medium capitalize text-foreground">{payout.status.replaceAll("_", " ")}</span>
+                  </p>
+                  <p className="mt-2 break-all">Worker wallet: {payout.workerWalletAddress ?? "Not connected"}</p>
+                  <p className="mt-2 break-all">Poster wallet: {payout.posterWalletAddress ?? "Not connected"}</p>
+                </div>
+              ) : null}
 
               <div className="space-y-2">
                 <Label htmlFor="reviewerNotes">Reviewer notes for rejection</Label>

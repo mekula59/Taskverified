@@ -1,4 +1,4 @@
-import type { Task, TaskClaim, TaskSubmission, DashboardMetric, VerificationStatus, WorkerProfileSummary } from "@/features/shared/types/domain";
+import type { PayoutRecord, Task, TaskClaim, TaskSubmission, WalletProfile, DashboardMetric, VerificationStatus, WorkerProfileSummary } from "@/features/shared/types/domain";
 
 export function formatMoney(amount: number, currency: string) {
   return new Intl.NumberFormat("en-US", {
@@ -36,6 +36,22 @@ export function getWorkerProfile(workerProfiles: WorkerProfileSummary[], workerI
   return workerProfiles.find((profile) => profile.userId === workerId);
 }
 
+export function getWalletProfile(walletProfiles: WalletProfile[], userId: string) {
+  return walletProfiles.find((profile) => profile.userId === userId);
+}
+
+export function getPayoutForSubmission(payouts: PayoutRecord[], submissionId: string) {
+  return payouts.find((payout) => payout.submissionId === submissionId);
+}
+
+export function getPayoutsForPoster(payouts: PayoutRecord[], posterId: string) {
+  return payouts.filter((payout) => payout.posterId === posterId);
+}
+
+export function getPayoutsForWorker(payouts: PayoutRecord[], workerId: string) {
+  return payouts.filter((payout) => payout.workerId === workerId);
+}
+
 export function getSubmittedSubmissionsForPoster(input: {
   tasks: Task[];
   claims: TaskClaim[];
@@ -53,6 +69,7 @@ export function getWorkerDashboardMetrics(input: {
   tasks: Task[];
   claims: TaskClaim[];
   submissions: TaskSubmission[];
+  payouts: PayoutRecord[];
   workerId: string;
   verificationStatus: VerificationStatus;
 }): DashboardMetric[] {
@@ -62,11 +79,10 @@ export function getWorkerDashboardMetrics(input: {
   const rejectedClaims = workerClaims.filter((claim) => claim.status === "rejected").length;
   const submittedClaims = workerClaims.filter((claim) => claim.status === "submitted").length;
   const activeClaims = workerClaims.filter((claim) => claim.status === "active").length;
-  const earnings = workerClaims
-    .filter((claim) => claim.status === "approved")
-    .map((claim) => input.tasks.find((task) => task.id === claim.taskId))
-    .filter((task): task is Task => Boolean(task))
-    .reduce((sum, task) => sum + task.rewardAmount, 0);
+  const workerPayouts = getPayoutsForWorker(input.payouts, input.workerId);
+  const solanaAmount = workerPayouts
+    .filter((payout) => payout.status === "ready_to_release" || payout.status === "released")
+    .reduce((sum, payout) => sum + payout.amount, 0);
 
   return [
     {
@@ -85,21 +101,23 @@ export function getWorkerDashboardMetrics(input: {
       detail: `${submittedClaims} awaiting review, ${rejectedClaims} rejected.`,
     },
     {
-      label: "Paid-ready",
-      value: formatMoney(earnings, "USD"),
-      detail: `${approvedClaims} approved completions.`,
+      label: "Solana payouts",
+      value: `${solanaAmount} USDC`,
+      detail: `${approvedClaims} approved completions with ${workerPayouts.length} payout records.`,
     },
   ];
 }
 
-export function getPosterDashboardMetrics(tasks: Task[], posterId: string): DashboardMetric[] {
+export function getPosterDashboardMetrics(tasks: Task[], payouts: PayoutRecord[], posterId: string): DashboardMetric[] {
   const posterTasks = getTasksForPoster(tasks, posterId);
+  const posterPayouts = getPayoutsForPoster(payouts, posterId);
   const openTasks = posterTasks.filter((task) => task.status === "open" || task.status === "claimed").length;
   const reviewQueue = posterTasks.filter((task) => task.status === "submitted").length;
   const approvedTasks = posterTasks.filter((task) => task.status === "approved").length;
   const rejectedTasks = posterTasks.filter((task) => task.status === "rejected").length;
-  const rewardReserved = posterTasks.reduce((sum, task) => sum + task.rewardAmount, 0);
+  const rewardReserved = posterPayouts.reduce((sum, payout) => sum + payout.amount, 0);
   const draftTasks = posterTasks.filter((task) => task.status === "draft").length;
+  const readyToRelease = posterPayouts.filter((payout) => payout.status === "ready_to_release").length;
 
   return [
     {
@@ -113,9 +131,9 @@ export function getPosterDashboardMetrics(tasks: Task[], posterId: string): Dash
       detail: "Proof waiting for a decision.",
     },
     {
-      label: "Reward exposure",
-      value: formatMoney(rewardReserved, "USD"),
-      detail: "Current reward pool across sample tasks.",
+      label: "Solana release queue",
+      value: `${rewardReserved} USDC`,
+      detail: `${readyToRelease} payouts ready to release.`,
     },
     {
       label: "Draft and decisions",

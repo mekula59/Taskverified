@@ -15,10 +15,12 @@
 - Worker dashboard and task views now reflect active claims, proof queue, and submitted state.
 - Poster review flow added with approval/rejection decisions and optional rejection notes.
 - Review outcomes now propagate across poster review surfaces, worker submission views, and dashboard summaries.
+- Solana wallet scaffolding and Solana-shaped payout records added for workers and posters.
+- Approved submissions can now become ready-to-release Solana payouts and be released with a tx signature placeholder.
 
 ## Next Implementation Tasks
-- Implement payout state machine and payout history views.
 - Implement reputation event tracking tied to task outcomes.
+- Replace wallet scaffolding and payout release placeholder logic with real Solana wallet connection and transfer execution.
 - Replace local auth and sample data adapters with Supabase-backed queries and mutations.
 - Add tests around routing, app shell rendering, and domain state transitions.
 

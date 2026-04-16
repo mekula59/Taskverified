@@ -1,12 +1,19 @@
 import { describe, expect, it } from "vitest";
 
-import { seededClaims, seededSubmissions, seededTasks, seededWorkerProfiles } from "@/features/tasks/data/taskSeeds";
+import { seededClaims, seededPayouts, seededSubmissions, seededTasks, seededWalletProfiles, seededWorkerProfiles } from "@/features/tasks/data/taskSeeds";
 import { claimTaskRecord, reviewSubmissionRecord, submitProofRecord } from "@/features/tasks/lib/taskState";
 
 describe("task state transitions", () => {
   it("claims an open task", () => {
     const next = claimTaskRecord(
-      { tasks: seededTasks, claims: seededClaims, submissions: seededSubmissions, workerProfiles: seededWorkerProfiles },
+      {
+        tasks: seededTasks,
+        claims: seededClaims,
+        submissions: seededSubmissions,
+        workerProfiles: seededWorkerProfiles,
+        walletProfiles: seededWalletProfiles,
+        payouts: seededPayouts,
+      },
       {
         taskId: "task-101",
         workerId: "worker-001",
@@ -20,7 +27,14 @@ describe("task state transitions", () => {
 
   it("submits proof and updates task plus claim state", () => {
     const claimed = claimTaskRecord(
-      { tasks: seededTasks, claims: seededClaims, submissions: seededSubmissions, workerProfiles: seededWorkerProfiles },
+      {
+        tasks: seededTasks,
+        claims: seededClaims,
+        submissions: seededSubmissions,
+        workerProfiles: seededWorkerProfiles,
+        walletProfiles: seededWalletProfiles,
+        payouts: seededPayouts,
+      },
       {
         taskId: "task-101",
         workerId: "worker-001",
@@ -52,6 +66,8 @@ describe("task state transitions", () => {
         claims: seededClaims,
         submissions: seededSubmissions,
         workerProfiles: seededWorkerProfiles,
+        walletProfiles: seededWalletProfiles,
+        payouts: seededPayouts,
       },
       {
         claimId: "claim-202",

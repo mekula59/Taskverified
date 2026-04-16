@@ -1,4 +1,4 @@
-import type { Task, TaskClaim, TaskSubmission, WorkerProfileSummary } from "@/features/shared/types/domain";
+import type { PayoutRecord, Task, TaskClaim, TaskSubmission, WalletProfile, WorkerProfileSummary } from "@/features/shared/types/domain";
 
 export const seededTasks: Task[] = [
   {
@@ -103,6 +103,28 @@ export const seededWorkerProfiles: WorkerProfileSummary[] = [
     location: "Lagos, NG",
     bio: "Reliable product tester focused on evidence-rich proof and on-time completion.",
     verificationStatus: "verified",
+    walletAddress: "So1WORKER001WalletReady111111111111",
+  },
+];
+
+export const seededWalletProfiles: WalletProfile[] = [
+  {
+    userId: "worker-001",
+    role: "worker",
+    displayName: "Nadia Cole",
+    chain: "solana",
+    status: "connected",
+    walletAddress: "So1WORKER001WalletReady111111111111",
+    updatedAt: "2026-04-03T12:00:00.000Z",
+  },
+  {
+    userId: "poster-001",
+    role: "poster",
+    displayName: "TaskVerified Labs",
+    chain: "solana",
+    status: "connected",
+    walletAddress: "So1POSTER001WalletReady111111111111",
+    updatedAt: "2026-04-03T12:05:00.000Z",
   },
 ];
 
@@ -141,5 +163,24 @@ export const seededSubmissions: TaskSubmission[] = [
     updatedAt: "2026-04-14T15:00:00.000Z",
     submittedAt: "2026-04-14T15:00:00.000Z",
     reviewedAt: "2026-04-14T18:00:00.000Z",
+  },
+];
+
+export const seededPayouts: PayoutRecord[] = [
+  {
+    id: "payout-401",
+    taskId: "task-104",
+    claimId: "claim-203",
+    submissionId: "submission-302",
+    workerId: "worker-001",
+    posterId: "poster-001",
+    workerWalletAddress: "So1WORKER001WalletReady111111111111",
+    posterWalletAddress: "So1POSTER001WalletReady111111111111",
+    amount: 20,
+    currencyToken: "USDC",
+    status: "released",
+    txSignature: "solana-tx-placeholder-seeded-401",
+    createdAt: "2026-04-14T18:00:00.000Z",
+    releasedAt: "2026-04-14T18:10:00.000Z",
   },
 ];

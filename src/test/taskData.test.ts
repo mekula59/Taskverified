@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { seededClaims, seededSubmissions, seededTasks, seededWorkerProfiles } from "@/features/tasks/data/taskSeeds";
-import { getClaimsForWorker, getPosterDashboardMetrics, getPublicTasks, getSubmissionForClaim, getSubmittedSubmissionsForPoster, getWorkerDashboardMetrics, getWorkerProfile } from "@/features/tasks/data/sampleData";
+import { seededClaims, seededPayouts, seededSubmissions, seededTasks, seededWalletProfiles, seededWorkerProfiles } from "@/features/tasks/data/taskSeeds";
+import { getClaimsForWorker, getPayoutForSubmission, getPayoutsForPoster, getPayoutsForWorker, getPosterDashboardMetrics, getPublicTasks, getSubmissionForClaim, getSubmittedSubmissionsForPoster, getWalletProfile, getWorkerDashboardMetrics, getWorkerProfile } from "@/features/tasks/data/sampleData";
 
 describe("task sample data", () => {
   it("returns public tasks for discovery", () => {
@@ -13,6 +13,7 @@ describe("task sample data", () => {
       tasks: seededTasks,
       claims: seededClaims,
       submissions: seededSubmissions,
+      payouts: seededPayouts,
       workerId: "worker-001",
       verificationStatus: "verified",
     });
@@ -22,7 +23,7 @@ describe("task sample data", () => {
   });
 
   it("computes poster dashboard metrics", () => {
-    const metrics = getPosterDashboardMetrics(seededTasks, "poster-001");
+    const metrics = getPosterDashboardMetrics(seededTasks, seededPayouts, "poster-001");
 
     expect(metrics).toHaveLength(4);
   });
@@ -44,5 +45,12 @@ describe("task sample data", () => {
 
     expect(reviewItems.length).toBeGreaterThan(0);
     expect(getWorkerProfile(seededWorkerProfiles, "worker-001")?.fullName).toBe("Nadia Cole");
+  });
+
+  it("finds wallet-linked payouts for poster and worker", () => {
+    expect(getPayoutsForPoster(seededPayouts, "poster-001").length).toBeGreaterThan(0);
+    expect(getPayoutsForWorker(seededPayouts, "worker-001").length).toBeGreaterThan(0);
+    expect(getPayoutForSubmission(seededPayouts, "submission-302")?.status).toBe("released");
+    expect(getWalletProfile(seededWalletProfiles, "worker-001")?.walletAddress).toContain("So1");
   });
 });

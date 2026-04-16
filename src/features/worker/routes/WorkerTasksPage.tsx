@@ -6,12 +6,12 @@ import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
-import { formatMoney, getClaimForTask, getPublicTasks } from "@/features/tasks/data/sampleData";
+import { formatMoney, getClaimForTask, getPayoutForSubmission, getPublicTasks, getSubmissionForClaim } from "@/features/tasks/data/sampleData";
 
 export function WorkerTasksPage() {
   const auth = useAuth();
   const navigate = useNavigate();
-  const { tasks, claims, claimTask } = useTasks();
+  const { tasks, claims, submissions, payouts, claimTask } = useTasks();
   const isClaimEligible = auth.verification?.status === "verified";
   const publicTasks = getPublicTasks(tasks);
   const workerId = auth.user?.id ?? "";
@@ -59,6 +59,8 @@ export function WorkerTasksPage() {
               </div>
               {(() => {
                 const existingClaim = getClaimForTask(claims, task.id, workerId);
+                const submission = existingClaim ? getSubmissionForClaim(submissions, existingClaim.id) : undefined;
+                const payout = submission ? getPayoutForSubmission(payouts, submission.id) : undefined;
 
                 if (!isClaimEligible) {
                   return (
@@ -74,6 +76,11 @@ export function WorkerTasksPage() {
                       <p className="text-sm text-muted-foreground">
                         You already claimed this task. Current status: <span className="font-medium capitalize text-foreground">{existingClaim.status}</span>
                       </p>
+                      {payout ? (
+                        <p className="text-sm text-muted-foreground">
+                          Solana payout: <span className="font-medium capitalize text-foreground">{payout.status.replaceAll("_", " ")}</span>
+                        </p>
+                      ) : null}
                       <Button variant="outline" onClick={() => navigate(`/worker/submissions?taskId=${task.id}`)}>
                         {existingClaim.status === "active" ? "Submit proof" : "View proof submission"}
                       </Button>

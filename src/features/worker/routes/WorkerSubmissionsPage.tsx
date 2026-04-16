@@ -10,12 +10,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { createSubmissionFormValues, toSubmissionInput, validateSubmissionForm } from "@/features/tasks/lib/submissionForm";
-import { getClaimsForWorker, getSubmissionForClaim } from "@/features/tasks/data/sampleData";
+import { formatMoney, getClaimsForWorker, getPayoutForSubmission, getSubmissionForClaim } from "@/features/tasks/data/sampleData";
 import type { SubmissionFormValues } from "@/features/shared/types/domain";
 
 export function WorkerSubmissionsPage() {
   const auth = useAuth();
-  const { tasks, claims, submissions, submitProof } = useTasks();
+  const { tasks, claims, submissions, payouts, submitProof } = useTasks();
   const [searchParams, setSearchParams] = useSearchParams();
   const workerId = auth.user?.id ?? "";
   const workerClaims = getClaimsForWorker(claims, workerId);
@@ -23,6 +23,7 @@ export function WorkerSubmissionsPage() {
   const selectedClaim = workerClaims.find((claim) => claim.taskId === selectedTaskId) ?? workerClaims[0];
   const selectedTask = tasks.find((task) => task.id === selectedClaim?.taskId);
   const existingSubmission = selectedClaim ? getSubmissionForClaim(submissions, selectedClaim.id) : undefined;
+  const payout = existingSubmission ? getPayoutForSubmission(payouts, existingSubmission.id) : undefined;
   const isLocked = existingSubmission?.status === "approved" || existingSubmission?.status === "rejected";
 
   const initialValues = useMemo(
@@ -106,8 +107,21 @@ export function WorkerSubmissionsPage() {
           {selectedTask && selectedClaim ? (
             <div className="space-y-5">
               {existingSubmission?.status === "approved" ? (
-                <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
-                  Submission approved{existingSubmission.reviewedAt ? ` on ${new Date(existingSubmission.reviewedAt).toLocaleDateString()}` : ""}.
+                <div className="space-y-2 rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
+                  <p>
+                    Submission approved{existingSubmission.reviewedAt ? ` on ${new Date(existingSubmission.reviewedAt).toLocaleDateString()}` : ""}.
+                  </p>
+                  {payout ? (
+                    <>
+                      <p>
+                        Solana payout: <span className="font-medium capitalize text-foreground">{payout.status.replaceAll("_", " ")}</span>
+                      </p>
+                      <p>
+                        Amount: <span className="font-medium text-foreground">{formatMoney(payout.amount, "USD")} / {payout.currencyToken}</span>
+                      </p>
+                      <p className="break-all">Tx signature: {payout.txSignature ?? "Not released yet"}</p>
+                    </>
+                  ) : null}
                 </div>
               ) : null}
               {existingSubmission?.status === "rejected" ? (
