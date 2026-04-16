@@ -20,6 +20,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       workerProfiles: snapshot.workerProfiles,
       walletProfiles: snapshot.walletProfiles,
       payouts: snapshot.payouts,
+      reputationEvents: snapshot.reputationEvents,
+      reputationSummaries: snapshot.reputationSummaries,
       createTask: (input: TaskCreateInput, currentUser: { id: string; name: string }) => {
         const nextState = createTaskRecord(snapshot, input, currentUser);
         setSnapshot(nextState);

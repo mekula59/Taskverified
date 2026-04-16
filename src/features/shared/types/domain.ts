@@ -16,6 +16,13 @@ export type RewardCurrency = "USD" | "NGN";
 export type WalletRole = "worker" | "poster";
 export type WalletConnectionStatus = "disconnected" | "connected";
 export type PayoutStatus = "pending" | "ready_to_release" | "released" | "failed";
+export type ReputationEventType =
+  | "verification_completed"
+  | "proof_submitted"
+  | "submission_approved"
+  | "submission_rejected"
+  | "payout_released"
+  | "repeat_completed_work";
 
 export interface SessionUser {
   id: string;
@@ -40,6 +47,41 @@ export interface WorkerProfileSummary {
   bio: string;
   verificationStatus: VerificationStatus;
   walletAddress?: string;
+}
+
+export interface ReputationEvent {
+  id: string;
+  workerId: string;
+  type: ReputationEventType;
+  detail: string;
+  scoreDelta: number;
+  createdAt: string;
+  taskId?: string;
+  claimId?: string;
+  submissionId?: string;
+  payoutId?: string;
+  category?: TaskCategory;
+}
+
+export interface CategoryStrength {
+  category: TaskCategory;
+  completedCount: number;
+  approvalRate: number;
+}
+
+export interface WorkerReputationSummary {
+  workerId: string;
+  verificationStatus: VerificationStatus;
+  tasksCompleted: number;
+  proofSubmitted: number;
+  approvals: number;
+  rejections: number;
+  approvalRate: number;
+  payoutsReleased: number;
+  trustScore: number;
+  categoryStrengths: CategoryStrength[];
+  updatedAt: string;
+  explanation: string[];
 }
 
 export interface WalletProfile {
@@ -219,4 +261,6 @@ export interface TaskStoreSnapshot {
   workerProfiles: WorkerProfileSummary[];
   walletProfiles: WalletProfile[];
   payouts: PayoutRecord[];
+  reputationEvents: ReputationEvent[];
+  reputationSummaries: WorkerReputationSummary[];
 }

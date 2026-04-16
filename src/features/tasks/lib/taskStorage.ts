@@ -1,4 +1,5 @@
-import { seededClaims, seededPayouts, seededSubmissions, seededTasks, seededWalletProfiles, seededWorkerProfiles } from "@/features/tasks/data/taskSeeds";
+import { seededClaims, seededPayouts, seededReputationEvents, seededReputationSummaries, seededSubmissions, seededTasks, seededWalletProfiles, seededWorkerProfiles } from "@/features/tasks/data/taskSeeds";
+import { withReputation } from "@/features/tasks/lib/reputation";
 import type { TaskStoreSnapshot } from "@/features/shared/types/domain";
 
 const STORAGE_KEY = "taskverified.tasks";
@@ -10,6 +11,8 @@ const seedSnapshot: TaskStoreSnapshot = {
   workerProfiles: seededWorkerProfiles,
   walletProfiles: seededWalletProfiles,
   payouts: seededPayouts,
+  reputationEvents: seededReputationEvents,
+  reputationSummaries: seededReputationSummaries,
 };
 
 export function readStoredTaskSnapshot(): TaskStoreSnapshot {
@@ -36,7 +39,14 @@ export function readStoredTaskSnapshot(): TaskStoreSnapshot {
       return seedSnapshot;
     }
 
-    return parsed;
+    return withReputation({
+      tasks: parsed.tasks,
+      claims: parsed.claims,
+      submissions: parsed.submissions,
+      workerProfiles: parsed.workerProfiles,
+      walletProfiles: parsed.walletProfiles,
+      payouts: parsed.payouts,
+    });
   } catch {
     return seedSnapshot;
   }

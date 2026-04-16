@@ -10,12 +10,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { createSubmissionFormValues, toSubmissionInput, validateSubmissionForm } from "@/features/tasks/lib/submissionForm";
-import { formatMoney, getClaimsForWorker, getPayoutForSubmission, getSubmissionForClaim } from "@/features/tasks/data/sampleData";
+import { formatMoney, getClaimsForWorker, getPayoutForSubmission, getSubmissionForClaim, getSubmissionTrustStatus, getWorkerReputationSummary } from "@/features/tasks/data/sampleData";
 import type { SubmissionFormValues } from "@/features/shared/types/domain";
 
 export function WorkerSubmissionsPage() {
   const auth = useAuth();
-  const { tasks, claims, submissions, payouts, submitProof } = useTasks();
+  const { tasks, claims, submissions, payouts, reputationSummaries, submitProof } = useTasks();
   const [searchParams, setSearchParams] = useSearchParams();
   const workerId = auth.user?.id ?? "";
   const workerClaims = getClaimsForWorker(claims, workerId);
@@ -25,6 +25,7 @@ export function WorkerSubmissionsPage() {
   const existingSubmission = selectedClaim ? getSubmissionForClaim(submissions, selectedClaim.id) : undefined;
   const payout = existingSubmission ? getPayoutForSubmission(payouts, existingSubmission.id) : undefined;
   const isLocked = existingSubmission?.status === "approved" || existingSubmission?.status === "rejected";
+  const reputation = getWorkerReputationSummary(reputationSummaries, workerId);
 
   const initialValues = useMemo(
     () => createSubmissionFormValues(selectedTask?.proofRequirements ?? [], existingSubmission),
@@ -106,6 +107,11 @@ export function WorkerSubmissionsPage() {
         >
           {selectedTask && selectedClaim ? (
             <div className="space-y-5">
+              {reputation ? (
+                <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
+                  Trust score <span className="font-medium text-foreground">{reputation.trustScore}</span> · {reputation.approvalRate}% approval rate · {reputation.payoutsReleased} released Solana payouts
+                </div>
+              ) : null}
               {existingSubmission?.status === "approved" ? (
                 <div className="space-y-2 rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
                   <p>
@@ -142,6 +148,9 @@ export function WorkerSubmissionsPage() {
                   placeholder="Describe what you completed and how the attached evidence maps to the requirements."
                 />
                 {errors.proofText ? <p className="text-sm text-destructive">{errors.proofText}</p> : null}
+                {existingSubmission ? (
+                  <p className="text-xs text-muted-foreground">{getSubmissionTrustStatus(existingSubmission.status)}</p>
+                ) : null}
               </div>
 
               <div className="grid gap-5 md:grid-cols-2">

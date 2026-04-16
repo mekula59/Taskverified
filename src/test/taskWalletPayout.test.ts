@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { seededClaims, seededPayouts, seededSubmissions, seededTasks, seededWalletProfiles, seededWorkerProfiles } from "@/features/tasks/data/taskSeeds";
+import { seededClaims, seededPayouts, seededReputationEvents, seededReputationSummaries, seededSubmissions, seededTasks, seededWalletProfiles, seededWorkerProfiles } from "@/features/tasks/data/taskSeeds";
 import { connectWalletRecord, releasePayoutRecord, reviewSubmissionRecord } from "@/features/tasks/lib/taskState";
 
 describe("wallet and payout transitions", () => {
@@ -13,6 +13,8 @@ describe("wallet and payout transitions", () => {
         workerProfiles: seededWorkerProfiles,
         walletProfiles: seededWalletProfiles,
         payouts: seededPayouts,
+        reputationEvents: seededReputationEvents,
+        reputationSummaries: seededReputationSummaries,
       },
       {
         claimId: "claim-202",
@@ -46,6 +48,8 @@ describe("wallet and payout transitions", () => {
             createdAt: "2026-04-16T15:00:00.000Z",
           },
         ],
+        reputationEvents: seededReputationEvents,
+        reputationSummaries: seededReputationSummaries,
       },
       {
         userId: "worker-001",
@@ -82,6 +86,8 @@ describe("wallet and payout transitions", () => {
             createdAt: "2026-04-16T15:00:00.000Z",
           },
         ],
+        reputationEvents: seededReputationEvents,
+        reputationSummaries: seededReputationSummaries,
       },
       "payout-release",
     );

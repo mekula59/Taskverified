@@ -1,4 +1,17 @@
-import type { PayoutRecord, Task, TaskClaim, TaskSubmission, WalletProfile, DashboardMetric, VerificationStatus, WorkerProfileSummary } from "@/features/shared/types/domain";
+import type {
+  DashboardMetric,
+  PayoutRecord,
+  ReputationEvent,
+  Task,
+  TaskCategory,
+  TaskClaim,
+  TaskSubmission,
+  VerificationStatus,
+  WalletProfile,
+  WorkerProfileSummary,
+  WorkerReputationSummary,
+} from "@/features/shared/types/domain";
+import { getSubmissionTrustStatus } from "@/features/tasks/lib/reputation";
 
 export function formatMoney(amount: number, currency: string) {
   return new Intl.NumberFormat("en-US", {
@@ -36,6 +49,32 @@ export function getWorkerProfile(workerProfiles: WorkerProfileSummary[], workerI
   return workerProfiles.find((profile) => profile.userId === workerId);
 }
 
+export function getWorkerReputationSummary(reputationSummaries: WorkerReputationSummary[], workerId: string) {
+  return reputationSummaries.find((summary) => summary.workerId === workerId);
+}
+
+export function getReputationEventsForWorker(reputationEvents: ReputationEvent[], workerId: string) {
+  return reputationEvents.filter((event) => event.workerId === workerId);
+}
+
+export function getTrustScoreTone(score: number) {
+  if (score >= 80) {
+    return "High";
+  }
+
+  if (score >= 55) {
+    return "Stable";
+  }
+
+  return "Building";
+}
+
+export function formatCategoryLabel(category: TaskCategory) {
+  return category.charAt(0).toUpperCase() + category.slice(1);
+}
+
+export { getSubmissionTrustStatus };
+
 export function getWalletProfile(walletProfiles: WalletProfile[], userId: string) {
   return walletProfiles.find((profile) => profile.userId === userId);
 }
@@ -70,6 +109,7 @@ export function getWorkerDashboardMetrics(input: {
   claims: TaskClaim[];
   submissions: TaskSubmission[];
   payouts: PayoutRecord[];
+  reputationSummaries: WorkerReputationSummary[];
   workerId: string;
   verificationStatus: VerificationStatus;
 }): DashboardMetric[] {
@@ -83,6 +123,10 @@ export function getWorkerDashboardMetrics(input: {
   const solanaAmount = workerPayouts
     .filter((payout) => payout.status === "ready_to_release" || payout.status === "released")
     .reduce((sum, payout) => sum + payout.amount, 0);
+  const reputation = getWorkerReputationSummary(input.reputationSummaries, input.workerId);
+  const trustScore = reputation?.trustScore ?? 0;
+  const approvalRate = reputation?.approvalRate ?? 0;
+  const payoutsReleased = reputation?.payoutsReleased ?? 0;
 
   return [
     {
@@ -99,6 +143,11 @@ export function getWorkerDashboardMetrics(input: {
       label: "Proof queue",
       value: String(workerSubmissions.length),
       detail: `${submittedClaims} awaiting review, ${rejectedClaims} rejected.`,
+    },
+    {
+      label: "Trust score",
+      value: String(trustScore),
+      detail: `${approvalRate}% approval rate with ${payoutsReleased} released Solana payouts.`,
     },
     {
       label: "Solana payouts",

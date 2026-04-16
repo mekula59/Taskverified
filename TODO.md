@@ -17,9 +17,11 @@
 - Review outcomes now propagate across poster review surfaces, worker submission views, and dashboard summaries.
 - Solana wallet scaffolding and Solana-shaped payout records added for workers and posters.
 - Approved submissions can now become ready-to-release Solana payouts and be released with a tx signature placeholder.
+- Reputation events and trust summaries now derive from verification, proof submission, review outcomes, repeat completed work, and released Solana payouts.
+- Worker and poster surfaces now show typed trust context instead of placeholder reputation copy.
 
 ## Next Implementation Tasks
-- Implement reputation event tracking tied to task outcomes.
+- Connect verification updates from the auth flow into the shared worker trust store instead of relying on seeded worker summaries.
 - Replace wallet scaffolding and payout release placeholder logic with real Solana wallet connection and transfer execution.
 - Replace local auth and sample data adapters with Supabase-backed queries and mutations.
 - Add tests around routing, app shell rendering, and domain state transitions.

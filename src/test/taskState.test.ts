@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { seededClaims, seededPayouts, seededSubmissions, seededTasks, seededWalletProfiles, seededWorkerProfiles } from "@/features/tasks/data/taskSeeds";
+import { seededClaims, seededPayouts, seededReputationEvents, seededReputationSummaries, seededSubmissions, seededTasks, seededWalletProfiles, seededWorkerProfiles } from "@/features/tasks/data/taskSeeds";
 import { claimTaskRecord, reviewSubmissionRecord, submitProofRecord } from "@/features/tasks/lib/taskState";
 
 describe("task state transitions", () => {
@@ -13,6 +13,8 @@ describe("task state transitions", () => {
         workerProfiles: seededWorkerProfiles,
         walletProfiles: seededWalletProfiles,
         payouts: seededPayouts,
+        reputationEvents: seededReputationEvents,
+        reputationSummaries: seededReputationSummaries,
       },
       {
         taskId: "task-101",
@@ -34,6 +36,8 @@ describe("task state transitions", () => {
         workerProfiles: seededWorkerProfiles,
         walletProfiles: seededWalletProfiles,
         payouts: seededPayouts,
+        reputationEvents: seededReputationEvents,
+        reputationSummaries: seededReputationSummaries,
       },
       {
         taskId: "task-101",
@@ -68,6 +72,8 @@ describe("task state transitions", () => {
         workerProfiles: seededWorkerProfiles,
         walletProfiles: seededWalletProfiles,
         payouts: seededPayouts,
+        reputationEvents: seededReputationEvents,
+        reputationSummaries: seededReputationSummaries,
       },
       {
         claimId: "claim-202",

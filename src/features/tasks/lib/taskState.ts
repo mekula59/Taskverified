@@ -1,4 +1,5 @@
 import { generateSolanaWalletAddress, generateTxSignature } from "@/features/tasks/lib/wallet";
+import { withReputation } from "@/features/tasks/lib/reputation";
 import type { SubmissionInput, SubmissionReviewInput, Task, TaskClaim, TaskCreateInput, TaskStoreSnapshot, TaskSubmission, WalletConnectInput, WalletProfile } from "@/features/shared/types/domain";
 
 export function createTaskRecord(current: TaskStoreSnapshot, input: TaskCreateInput, currentUser: { id: string; name: string }): TaskStoreSnapshot {
@@ -19,10 +20,10 @@ export function createTaskRecord(current: TaskStoreSnapshot, input: TaskCreateIn
     createdAt: new Date().toISOString(),
   };
 
-  return {
+  return withReputation({
     ...current,
     tasks: [task, ...current.tasks],
-  };
+  });
 }
 
 export function claimTaskRecord(current: TaskStoreSnapshot, input: { taskId: string; workerId: string; workerName: string }): TaskStoreSnapshot {
@@ -50,11 +51,11 @@ export function claimTaskRecord(current: TaskStoreSnapshot, input: { taskId: str
     claimedAt: new Date().toISOString(),
   };
 
-  return {
+  return withReputation({
     ...current,
     tasks: nextTasks,
     claims: [nextClaim, ...current.claims],
-  };
+  });
 }
 
 export function submitProofRecord(current: TaskStoreSnapshot, input: SubmissionInput): TaskStoreSnapshot {
@@ -75,7 +76,7 @@ export function submitProofRecord(current: TaskStoreSnapshot, input: SubmissionI
     submittedAt: now,
   };
 
-  return {
+  return withReputation({
     ...current,
     tasks: current.tasks.map((task) =>
       task.id === input.taskId
@@ -97,7 +98,7 @@ export function submitProofRecord(current: TaskStoreSnapshot, input: SubmissionI
     submissions: existingSubmission
       ? current.submissions.map((submission) => (submission.claimId === input.claimId ? nextSubmission : submission))
       : [nextSubmission, ...current.submissions],
-  };
+  });
 }
 
 export function reviewSubmissionRecord(current: TaskStoreSnapshot, input: SubmissionReviewInput): TaskStoreSnapshot {
@@ -138,7 +139,7 @@ export function reviewSubmissionRecord(current: TaskStoreSnapshot, input: Submis
         ]
       : current.payouts.filter((payout) => payout.claimId !== input.claimId);
 
-  return {
+  return withReputation({
     ...current,
     tasks: current.tasks.map((task) =>
       task.id === input.taskId
@@ -168,7 +169,7 @@ export function reviewSubmissionRecord(current: TaskStoreSnapshot, input: Submis
         : submission,
     ),
     payouts: nextPayouts,
-  };
+  });
 }
 
 export function connectWalletRecord(current: TaskStoreSnapshot, input: WalletConnectInput): TaskStoreSnapshot {
@@ -222,12 +223,12 @@ export function connectWalletRecord(current: TaskStoreSnapshot, input: WalletCon
     };
   });
 
-  return {
+  return withReputation({
     ...current,
     walletProfiles,
     workerProfiles,
     payouts,
-  };
+  });
 }
 
 export function releasePayoutRecord(current: TaskStoreSnapshot, payoutId: string): TaskStoreSnapshot {
@@ -238,7 +239,7 @@ export function releasePayoutRecord(current: TaskStoreSnapshot, payoutId: string
 
   const now = new Date().toISOString();
 
-  return {
+  return withReputation({
     ...current,
     tasks: current.tasks.map((task) =>
       task.id === payout.taskId
@@ -258,5 +259,5 @@ export function releasePayoutRecord(current: TaskStoreSnapshot, payoutId: string
           }
         : item,
     ),
-  };
+  });
 }

@@ -1,4 +1,5 @@
-import type { PayoutRecord, Task, TaskClaim, TaskSubmission, WalletProfile, WorkerProfileSummary } from "@/features/shared/types/domain";
+import { buildReputationState } from "@/features/tasks/lib/reputation";
+import type { PayoutRecord, ReputationEvent, Task, TaskClaim, TaskSubmission, WalletProfile, WorkerProfileSummary, WorkerReputationSummary } from "@/features/shared/types/domain";
 
 export const seededTasks: Task[] = [
   {
@@ -184,3 +185,14 @@ export const seededPayouts: PayoutRecord[] = [
     releasedAt: "2026-04-14T18:10:00.000Z",
   },
 ];
+
+const seededReputation = buildReputationState({
+  tasks: seededTasks,
+  claims: seededClaims,
+  submissions: seededSubmissions,
+  workerProfiles: seededWorkerProfiles,
+  payouts: seededPayouts,
+});
+
+export const seededReputationEvents: ReputationEvent[] = seededReputation.reputationEvents;
+export const seededReputationSummaries: WorkerReputationSummary[] = seededReputation.reputationSummaries;

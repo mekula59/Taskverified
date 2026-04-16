@@ -8,11 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { defaultReviewFormValues, validateReviewForm } from "@/features/tasks/lib/reviewForm";
-import { formatMoney, getPayoutForSubmission, getSubmittedSubmissionsForPoster, getWorkerProfile } from "@/features/tasks/data/sampleData";
+import { formatCategoryLabel, formatMoney, getPayoutForSubmission, getSubmittedSubmissionsForPoster, getWorkerProfile, getWorkerReputationSummary, getTrustScoreTone } from "@/features/tasks/data/sampleData";
 
 export function PosterReviewsPage() {
   const auth = useAuth();
-  const { tasks, claims, submissions, workerProfiles, payouts, reviewSubmission } = useTasks();
+  const { tasks, claims, submissions, workerProfiles, payouts, reputationSummaries, reviewSubmission } = useTasks();
   const [selectedClaimId, setSelectedClaimId] = useState<string | null>(null);
   const [reviewValues, setReviewValues] = useState(defaultReviewFormValues);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -32,6 +32,7 @@ export function PosterReviewsPage() {
   const selectedTask = tasks.find((task) => task.id === selectedSubmission?.taskId);
   const selectedClaim = claims.find((claim) => claim.id === selectedSubmission?.claimId);
   const workerProfile = selectedSubmission ? getWorkerProfile(workerProfiles, selectedSubmission.workerId) : undefined;
+  const workerReputation = selectedSubmission ? getWorkerReputationSummary(reputationSummaries, selectedSubmission.workerId) : undefined;
   const payout = selectedSubmission ? getPayoutForSubmission(payouts, selectedSubmission.id) : undefined;
 
   const handleDecision = (decision: "approved" | "rejected") => {
@@ -105,6 +106,29 @@ export function PosterReviewsPage() {
                   <p className="mt-2">
                     Verification: <span className="font-medium capitalize text-foreground">{workerProfile?.verificationStatus ?? "unknown"}</span>
                   </p>
+                  {workerReputation ? (
+                    <>
+                      <p className="mt-2">
+                        Trust score:{" "}
+                        <span className="font-medium text-foreground">
+                          {workerReputation.trustScore} · {getTrustScoreTone(workerReputation.trustScore)}
+                        </span>
+                      </p>
+                      <p className="mt-2">
+                        Completed work: <span className="font-medium text-foreground">{workerReputation.tasksCompleted}</span> · Approval rate:{" "}
+                        <span className="font-medium text-foreground">{workerReputation.approvalRate}%</span>
+                      </p>
+                      <p className="mt-2">
+                        Solana payouts released: <span className="font-medium text-foreground">{workerReputation.payoutsReleased}</span>
+                      </p>
+                      <p className="mt-2">
+                        Strongest category:{" "}
+                        <span className="font-medium text-foreground">
+                          {workerReputation.categoryStrengths[0] ? formatCategoryLabel(workerReputation.categoryStrengths[0].category) : "Still forming"}
+                        </span>
+                      </p>
+                    </>
+                  ) : null}
                 </div>
                 <div className="rounded-xl border border-border/60 bg-background/70 p-4 text-sm text-muted-foreground">
                   <p>
