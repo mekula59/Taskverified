@@ -16,6 +16,8 @@ export type RewardCurrency = "USD" | "NGN";
 export type WalletRole = "worker" | "poster";
 export type WalletConnectionStatus = "disconnected" | "connected";
 export type PayoutStatus = "pending" | "ready_to_release" | "released" | "failed";
+export type WalletProviderName = "phantom";
+export type SolanaCluster = "devnet";
 export type ReputationEventType =
   | "verification_completed"
   | "proof_submitted"
@@ -89,7 +91,9 @@ export interface WalletProfile {
   role: WalletRole;
   displayName: string;
   chain: "solana";
+  cluster: SolanaCluster;
   status: WalletConnectionStatus;
+  provider?: WalletProviderName;
   walletAddress?: string;
   updatedAt?: string;
 }
@@ -244,6 +248,14 @@ export interface WalletConnectInput {
   userId: string;
   role: WalletRole;
   displayName: string;
+  walletAddress: string;
+  provider: WalletProviderName;
+  cluster: SolanaCluster;
+}
+
+export interface WalletDisconnectInput {
+  userId: string;
+  role: WalletRole;
 }
 
 export interface ReviewFormValues {

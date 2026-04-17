@@ -2,50 +2,30 @@ import { Button } from "@/components/ui/button";
 import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
 import { useAuth } from "@/features/auth/context/useAuth";
+import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getPayoutsForPoster, getWalletProfile } from "@/features/tasks/data/sampleData";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export function PosterPayoutsPage() {
   const auth = useAuth();
-  const { payouts, walletProfiles, connectWallet, releasePayout } = useTasks();
+  const { payouts, walletProfiles, releasePayout } = useTasks();
+  const { connected, publicKey } = useWallet();
   const posterId = auth.user?.id ?? "";
   const posterName = auth.profile?.fullName ?? "Poster";
   const wallet = getWalletProfile(walletProfiles, posterId);
   const posterPayouts = getPayoutsForPoster(payouts, posterId);
+  const isLivePosterWalletConnected = connected && publicKey?.toBase58() === wallet?.walletAddress;
 
   return (
     <div className="space-y-8">
       <PageIntro
         eyebrow="Poster"
         title="Poster payouts follow approved proof through Solana-ready release."
-        description="This area now tracks Solana wallet readiness and lets posters release approved payouts once both wallets are connected."
+        description="This area now tracks real Phantom wallet readiness on Solana devnet and lets posters release approved payouts once the live poster and worker wallets are connected."
       />
-      <SectionCard title="Poster wallet" description="Frontend-safe Solana wallet scaffolding for release actions.">
-        <div className="space-y-4">
-          <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
-            {wallet?.status === "connected" ? (
-              <>
-                Connected to Solana wallet
-                <div className="mt-2 break-all font-medium text-foreground">{wallet.walletAddress}</div>
-              </>
-            ) : (
-              "No Solana wallet connected yet."
-            )}
-          </div>
-          {wallet?.status !== "connected" ? (
-            <Button
-              onClick={() =>
-                connectWallet({
-                  userId: posterId,
-                  role: "poster",
-                  displayName: posterName,
-                })
-              }
-            >
-              Connect Solana wallet
-            </Button>
-          ) : null}
-        </div>
+      <SectionCard title="Poster wallet" description="Real Phantom-first connection for payout release on Solana devnet.">
+        <SolanaWalletStatusCard userId={posterId} role="poster" displayName={posterName} />
       </SectionCard>
 
       <SectionCard title="Release queue" description="Approved submissions become Solana-shaped payouts here.">
@@ -63,12 +43,17 @@ export function PosterPayoutsPage() {
                   <p className="break-all">Tx signature: {payout.txSignature ?? "Not released yet"}</p>
                 </div>
                 {payout.status === "ready_to_release" ? (
-                  <Button onClick={() => releasePayout(payout.id)}>Release on Solana</Button>
+                  <Button onClick={() => releasePayout(payout.id)} disabled={!isLivePosterWalletConnected}>
+                    Release on Solana
+                  </Button>
                 ) : null}
               </div>
             </div>
           ))}
         </div>
+        {!isLivePosterWalletConnected ? (
+          <p className="mt-4 text-sm text-muted-foreground">Poster release stays blocked until the live Phantom wallet is connected on Solana devnet.</p>
+        ) : null}
       </SectionCard>
     </div>
   );

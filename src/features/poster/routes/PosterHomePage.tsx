@@ -4,6 +4,7 @@ import { MetricCard } from "@/components/shell/MetricCard";
 import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
 import { useAuth } from "@/features/auth/context/useAuth";
+import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { Button } from "@/components/ui/button";
 import { getPosterDashboardMetrics, getTasksForPoster, formatMoney } from "@/features/tasks/data/sampleData";
@@ -53,6 +54,9 @@ export function PosterHomePage() {
           <p className="text-sm text-muted-foreground">
             Poster verification stays visible so trust expectations apply to both sides of the platform, even before backend review tooling is added.
           </p>
+        </SectionCard>
+        <SectionCard title="Solana release wallet">
+          <SolanaWalletStatusCard userId={auth.user?.id ?? ""} role="poster" displayName={auth.profile?.fullName ?? "Poster"} />
         </SectionCard>
       </div>
     </div>

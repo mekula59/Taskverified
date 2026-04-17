@@ -4,6 +4,7 @@ import { MetricCard } from "@/components/shell/MetricCard";
 import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
 import { useAuth } from "@/features/auth/context/useAuth";
+import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { Button } from "@/components/ui/button";
 import { formatCategoryLabel, formatMoney, getClaimsForWorker, getWorkerDashboardMetrics, getWorkerReputationSummary, getTrustScoreTone } from "@/features/tasks/data/sampleData";
@@ -81,6 +82,9 @@ export function WorkerHomePage() {
               </div>
             ) : null}
           </div>
+        </SectionCard>
+        <SectionCard title="Solana payout destination">
+          <SolanaWalletStatusCard userId={auth.user?.id ?? ""} role="worker" displayName={auth.profile?.fullName ?? "Worker"} />
         </SectionCard>
       </div>
     </div>

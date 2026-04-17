@@ -19,10 +19,11 @@
 - Approved submissions can now become ready-to-release Solana payouts and be released with a tx signature placeholder.
 - Reputation events and trust summaries now derive from verification, proof submission, review outcomes, repeat completed work, and released Solana payouts.
 - Worker and poster surfaces now show typed trust context instead of placeholder reputation copy.
+- Real Phantom-first Solana wallet connection is now wired for worker and poster payout flows, with live wallet addresses synced into local task state on devnet.
 
 ## Next Implementation Tasks
 - Connect verification updates from the auth flow into the shared worker trust store instead of relying on seeded worker summaries.
-- Replace wallet scaffolding and payout release placeholder logic with real Solana wallet connection and transfer execution.
+- Replace payout release placeholder logic with real Solana transaction building, signing, and submission.
 - Replace local auth and sample data adapters with Supabase-backed queries and mutations.
 - Add tests around routing, app shell rendering, and domain state transitions.
 

@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-import type { PayoutRecord, ReputationEvent, SubmissionInput, SubmissionReviewInput, Task, TaskClaim, TaskCreateInput, TaskSubmission, WalletConnectInput, WalletProfile, WorkerProfileSummary, WorkerReputationSummary } from "@/features/shared/types/domain";
+import type { PayoutRecord, ReputationEvent, SubmissionInput, SubmissionReviewInput, Task, TaskClaim, TaskCreateInput, TaskSubmission, WalletConnectInput, WalletDisconnectInput, WalletProfile, WorkerProfileSummary, WorkerReputationSummary } from "@/features/shared/types/domain";
 
 export interface TasksContextValue {
   tasks: Task[];
@@ -16,6 +16,7 @@ export interface TasksContextValue {
   submitProof: (input: SubmissionInput) => TaskSubmission;
   reviewSubmission: (input: SubmissionReviewInput) => TaskSubmission | null;
   connectWallet: (input: WalletConnectInput) => WalletProfile;
+  disconnectWallet: (input: WalletDisconnectInput) => WalletProfile | null;
   releasePayout: (payoutId: string) => PayoutRecord | null;
 }
 

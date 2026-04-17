@@ -6,3 +6,15 @@ export function generateSolanaWalletAddress(seed: string) {
 export function generateTxSignature(seed: string) {
   return `solana-tx-placeholder-${seed}-${Date.now()}`;
 }
+
+export function formatWalletAddress(address?: string) {
+  if (!address) {
+    return "Not connected";
+  }
+
+  if (address.length <= 12) {
+    return address;
+  }
+
+  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+}

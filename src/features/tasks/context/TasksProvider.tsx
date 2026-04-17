@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { TasksContext, type TasksContextValue } from "@/features/tasks/context/TasksContext";
-import { connectWalletRecord, createTaskRecord, claimTaskRecord, releasePayoutRecord, reviewSubmissionRecord, submitProofRecord } from "@/features/tasks/lib/taskState";
+import { connectWalletRecord, createTaskRecord, claimTaskRecord, disconnectWalletRecord, releasePayoutRecord, reviewSubmissionRecord, submitProofRecord } from "@/features/tasks/lib/taskState";
 import { readStoredTaskSnapshot, writeStoredTaskSnapshot } from "@/features/tasks/lib/taskStorage";
 import type { PayoutRecord, Task, TaskClaim, TaskCreateInput, TaskStoreSnapshot, TaskSubmission, WalletProfile } from "@/features/shared/types/domain";
 
@@ -54,6 +54,15 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         const nextState = connectWalletRecord(snapshot, input);
         setSnapshot(nextState);
         return nextState.walletProfiles.find((wallet) => wallet.userId === input.userId && wallet.role === input.role) as WalletProfile;
+      },
+      disconnectWallet: (input) => {
+        const nextState = disconnectWalletRecord(snapshot, input);
+        if (nextState === snapshot) {
+          return null;
+        }
+
+        setSnapshot(nextState);
+        return nextState.walletProfiles.find((wallet) => wallet.userId === input.userId && wallet.role === input.role) ?? null;
       },
       releasePayout: (payoutId) => {
         const nextState = releasePayoutRecord(snapshot, payoutId);

@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button";
 import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
 import { useAuth } from "@/features/auth/context/useAuth";
+import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getPayoutsForWorker, getWalletProfile } from "@/features/tasks/data/sampleData";
 
 export function WorkerPayoutsPage() {
   const auth = useAuth();
-  const { payouts, walletProfiles, connectWallet } = useTasks();
+  const { payouts, walletProfiles } = useTasks();
   const workerId = auth.user?.id ?? "";
   const workerName = auth.profile?.fullName ?? "Worker";
   const wallet = getWalletProfile(walletProfiles, workerId);
@@ -18,34 +18,10 @@ export function WorkerPayoutsPage() {
       <PageIntro
         eyebrow="Worker"
         title="Payout visibility follows approved proof through Solana-ready release."
-        description="Workers can connect a Solana wallet here and see whether approved work is pending, ready to release, released, or failed."
+        description="Workers can connect a real Phantom wallet on Solana devnet here and route approved payouts to the connected destination address."
       />
-      <SectionCard title="Worker wallet" description="Frontend-safe Solana wallet connection scaffolding.">
-        <div className="space-y-4">
-          <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
-            {wallet?.status === "connected" ? (
-              <>
-                Connected to Solana wallet
-                <div className="mt-2 break-all font-medium text-foreground">{wallet.walletAddress}</div>
-              </>
-            ) : (
-              "No Solana wallet connected yet."
-            )}
-          </div>
-          {wallet?.status !== "connected" ? (
-            <Button
-              onClick={() =>
-                connectWallet({
-                  userId: workerId,
-                  role: "worker",
-                  displayName: workerName,
-                })
-              }
-            >
-              Connect Solana wallet
-            </Button>
-          ) : null}
-        </div>
+      <SectionCard title="Worker wallet" description="Real Phantom-first connection for demo payouts on Solana devnet.">
+        <SolanaWalletStatusCard userId={workerId} role="worker" displayName={workerName} />
       </SectionCard>
 
       <SectionCard title="Payout records" description="Wallet-linked payout visibility tied to your approved work.">
@@ -64,6 +40,9 @@ export function WorkerPayoutsPage() {
             </div>
           ))}
         </div>
+        {wallet?.status !== "connected" ? (
+          <p className="mt-4 text-sm text-muted-foreground">Connect Phantom to set the live payout destination for future approved work.</p>
+        ) : null}
       </SectionCard>
     </div>
   );

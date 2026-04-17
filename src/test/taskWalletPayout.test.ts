@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { seededClaims, seededPayouts, seededReputationEvents, seededReputationSummaries, seededSubmissions, seededTasks, seededWalletProfiles, seededWorkerProfiles } from "@/features/tasks/data/taskSeeds";
-import { connectWalletRecord, releasePayoutRecord, reviewSubmissionRecord } from "@/features/tasks/lib/taskState";
+import { connectWalletRecord, disconnectWalletRecord, releasePayoutRecord, reviewSubmissionRecord } from "@/features/tasks/lib/taskState";
 
 describe("wallet and payout transitions", () => {
   it("creates a ready_to_release payout when approved wallets are connected", () => {
@@ -55,10 +55,13 @@ describe("wallet and payout transitions", () => {
         userId: "worker-001",
         role: "worker",
         displayName: "Nadia Cole",
+        walletAddress: "F4ntomRealWorkerWallet111111111111111111111",
+        provider: "phantom",
+        cluster: "devnet",
       },
     );
 
-    expect(next.walletProfiles.find((wallet) => wallet.userId === "worker-001")?.walletAddress).toContain("So1");
+    expect(next.walletProfiles.find((wallet) => wallet.userId === "worker-001")?.walletAddress).toContain("F4nt");
     expect(next.payouts[0]?.status).toBe("ready_to_release");
   });
 
@@ -95,5 +98,42 @@ describe("wallet and payout transitions", () => {
     expect(next.payouts[0]?.status).toBe("released");
     expect(next.payouts[0]?.txSignature).toContain("solana-tx-placeholder");
     expect(next.tasks.find((task) => task.id === "task-103")?.status).toBe("paid");
+  });
+
+  it("disconnects a wallet and returns unreleased payouts to pending", () => {
+    const next = disconnectWalletRecord(
+      {
+        tasks: seededTasks,
+        claims: seededClaims,
+        submissions: seededSubmissions,
+        workerProfiles: seededWorkerProfiles,
+        walletProfiles: seededWalletProfiles,
+        payouts: [
+          {
+            id: "payout-ready",
+            taskId: "task-103",
+            claimId: "claim-202",
+            submissionId: "submission-301",
+            workerId: "worker-001",
+            posterId: "poster-001",
+            workerWalletAddress: "So1WORKER001WalletReady111111111111",
+            posterWalletAddress: "So1POSTER001WalletReady111111111111",
+            amount: 32,
+            currencyToken: "USDC",
+            status: "ready_to_release",
+            createdAt: "2026-04-16T15:00:00.000Z",
+          },
+        ],
+        reputationEvents: seededReputationEvents,
+        reputationSummaries: seededReputationSummaries,
+      },
+      {
+        userId: "poster-001",
+        role: "poster",
+      },
+    );
+
+    expect(next.walletProfiles.find((wallet) => wallet.userId === "poster-001")?.status).toBe("disconnected");
+    expect(next.payouts[0]?.status).toBe("pending");
   });
 });

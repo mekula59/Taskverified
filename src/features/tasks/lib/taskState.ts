@@ -1,6 +1,6 @@
-import { generateSolanaWalletAddress, generateTxSignature } from "@/features/tasks/lib/wallet";
+import { generateTxSignature } from "@/features/tasks/lib/wallet";
 import { withReputation } from "@/features/tasks/lib/reputation";
-import type { SubmissionInput, SubmissionReviewInput, Task, TaskClaim, TaskCreateInput, TaskStoreSnapshot, TaskSubmission, WalletConnectInput, WalletProfile } from "@/features/shared/types/domain";
+import type { SubmissionInput, SubmissionReviewInput, Task, TaskClaim, TaskCreateInput, TaskStoreSnapshot, TaskSubmission, WalletConnectInput, WalletDisconnectInput, WalletProfile } from "@/features/shared/types/domain";
 
 export function createTaskRecord(current: TaskStoreSnapshot, input: TaskCreateInput, currentUser: { id: string; name: string }): TaskStoreSnapshot {
   const task: Task = {
@@ -179,8 +179,10 @@ export function connectWalletRecord(current: TaskStoreSnapshot, input: WalletCon
     role: input.role,
     displayName: input.displayName,
     chain: "solana",
+    cluster: input.cluster,
     status: "connected",
-    walletAddress: generateSolanaWalletAddress(`${input.role}-${input.userId}`),
+    provider: input.provider,
+    walletAddress: input.walletAddress,
     updatedAt: now,
   };
 
@@ -231,9 +233,61 @@ export function connectWalletRecord(current: TaskStoreSnapshot, input: WalletCon
   });
 }
 
+export function disconnectWalletRecord(current: TaskStoreSnapshot, input: WalletDisconnectInput): TaskStoreSnapshot {
+  const nextWalletProfiles = current.walletProfiles.map((wallet) =>
+    wallet.userId === input.userId && wallet.role === input.role
+      ? {
+          ...wallet,
+          status: "disconnected" as const,
+          walletAddress: undefined,
+          updatedAt: new Date().toISOString(),
+        }
+      : wallet,
+  );
+
+  const nextWorkerProfiles =
+    input.role === "worker"
+      ? current.workerProfiles.map((profile) =>
+          profile.userId === input.userId ? { ...profile, walletAddress: undefined } : profile,
+        )
+      : current.workerProfiles;
+
+  const nextPayouts = current.payouts.map((payout) => {
+    const workerWallet =
+      nextWalletProfiles.find((wallet) => wallet.userId === payout.workerId && wallet.role === "worker" && wallet.status === "connected")
+        ?.walletAddress ?? undefined;
+    const posterWallet =
+      nextWalletProfiles.find((wallet) => wallet.userId === payout.posterId && wallet.role === "poster" && wallet.status === "connected")
+        ?.walletAddress ?? undefined;
+
+    return {
+      ...payout,
+      workerWalletAddress: workerWallet,
+      posterWalletAddress: posterWallet,
+      status:
+        payout.status === "released" || payout.status === "failed"
+          ? payout.status
+          : workerWallet && posterWallet
+            ? "ready_to_release"
+            : "pending",
+    };
+  });
+
+  return withReputation({
+    ...current,
+    walletProfiles: nextWalletProfiles,
+    workerProfiles: nextWorkerProfiles,
+    payouts: nextPayouts,
+  });
+}
+
 export function releasePayoutRecord(current: TaskStoreSnapshot, payoutId: string): TaskStoreSnapshot {
   const payout = current.payouts.find((item) => item.id === payoutId);
-  if (!payout || payout.status !== "ready_to_release") {
+  const posterWallet = payout
+    ? current.walletProfiles.find((wallet) => wallet.userId === payout.posterId && wallet.role === "poster" && wallet.status === "connected")
+    : undefined;
+
+  if (!payout || payout.status !== "ready_to_release" || !posterWallet?.walletAddress) {
     return current;
   }
 
