@@ -13,25 +13,32 @@ export function SignInPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState("");
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const next = (location.state as { from?: string } | null)?.from;
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    auth.signInWithEmail(email);
+    setSubmitError(null);
     const normalized = email.trim().toLowerCase();
 
-    if (normalized === "worker@taskverified.demo") {
-      navigate(next ?? "/worker");
-      return;
-    }
+    try {
+      await auth.signInWithEmail(email);
 
-    if (normalized === "poster@taskverified.demo") {
-      navigate(next ?? "/poster");
-      return;
-    }
+      if (normalized === "worker@taskverified.demo") {
+        navigate(next ?? "/worker");
+        return;
+      }
 
-    navigate("/onboarding/role");
+      if (normalized === "poster@taskverified.demo") {
+        navigate(next ?? "/poster");
+        return;
+      }
+
+      navigate("/onboarding/role");
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Unable to create a secure session.");
+    }
   };
 
   return (
@@ -39,7 +46,7 @@ export function SignInPage() {
       <PageIntro
         eyebrow="Auth"
         title="Sign in to continue through a trust-first flow."
-        description="Auth is frontend-safe for now, but the session shape is ready to swap behind a Supabase adapter later."
+        description="This sign-in now creates a real Supabase-backed session so profile, verification, tasks, and payouts can all resolve from backend truth."
       />
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <SectionCard title="Sign in" description="Use a real email shape. Demo entries are available below.">
@@ -56,9 +63,10 @@ export function SignInPage() {
               />
             </div>
             <Button type="submit">Continue</Button>
+            {submitError ?? auth.error ? <p className="text-sm text-destructive">{submitError ?? auth.error}</p> : null}
           </form>
         </SectionCard>
-        <SectionCard title="Demo accounts" description="Useful while backend auth is not wired.">
+        <SectionCard title="Demo accounts" description="Useful for walking the full product loop with canonical backend data.">
           <div className="space-y-3 text-sm text-muted-foreground">
             <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3">
               Worker demo: <span className="font-medium text-foreground">worker@taskverified.demo</span>

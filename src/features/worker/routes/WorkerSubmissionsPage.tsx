@@ -8,6 +8,7 @@ import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/features/auth/context/useAuth";
+import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { createSubmissionFormValues, toSubmissionInput, validateSubmissionForm } from "@/features/tasks/lib/submissionForm";
 import { formatMoney, getClaimsForWorker, getPayoutForSubmission, getSubmissionForClaim, getSubmissionTrustStatus, getWorkerReputationSummary } from "@/features/tasks/data/sampleData";
@@ -34,6 +35,7 @@ export function WorkerSubmissionsPage() {
 
   const [values, setValues] = useState<SubmissionFormValues>(initialValues);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     setValues(initialValues);
@@ -49,7 +51,7 @@ export function WorkerSubmissionsPage() {
     setErrors({});
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedClaim || !selectedTask || !workerId) {
       return;
     }
@@ -60,14 +62,20 @@ export function WorkerSubmissionsPage() {
       return;
     }
 
-    submitProof(
-      toSubmissionInput({
-        claimId: selectedClaim.id,
-        taskId: selectedTask.id,
-        workerId,
-        values,
-      }),
-    );
+    setSubmitError(null);
+
+    try {
+      await submitProof(
+        toSubmissionInput({
+          claimId: selectedClaim.id,
+          taskId: selectedTask.id,
+          workerId,
+          values,
+        }),
+      );
+    } catch (nextError) {
+      setSubmitError(nextError instanceof Error ? nextError.message : "Unable to submit proof.");
+    }
   };
 
   return (
@@ -75,7 +83,7 @@ export function WorkerSubmissionsPage() {
       <PageIntro
         eyebrow="Worker"
         title="Proof submission is the center of worker execution."
-        description="Claims and submissions now persist in the local task layer so workers can move from claimed work into submitted proof without backend wiring yet."
+        description="Claims and submissions are now persisted in the backend so workers can move from claimed work into submitted proof against real state."
       />
       <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <SectionCard title="Your claimed tasks" description="Choose a claim to submit proof against.">
@@ -125,7 +133,11 @@ export function WorkerSubmissionsPage() {
                       <p>
                         Amount: <span className="font-medium text-foreground">{formatMoney(payout.amount, "USD")} / {payout.currencyToken}</span>
                       </p>
+                      <p>
+                        Devnet transfer: <span className="font-medium text-foreground">{formatLamportsAsSol(payout.transferAmountLamports)}</span>
+                      </p>
                       <p className="break-all">Tx signature: {payout.txSignature ?? "Not released yet"}</p>
+                      {payout.failureReason ? <p>Failure reason: <span className="text-foreground">{payout.failureReason}</span></p> : null}
                     </>
                   ) : null}
                 </div>
@@ -200,6 +212,7 @@ export function WorkerSubmissionsPage() {
               </div>
 
               {!isLocked ? <Button onClick={handleSubmit}>Submit proof</Button> : null}
+              {submitError ? <p className="text-sm text-destructive">{submitError}</p> : null}
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">Claim a task first, then return here to submit proof.</p>

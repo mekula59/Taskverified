@@ -32,7 +32,7 @@ export function WorkerHomePage() {
       <PageIntro
         eyebrow="Worker"
         title={`Welcome, ${auth.profile?.fullName ?? "worker"}`}
-        description="The dashboard foundation is now wired to auth state, verification status, and typed task data instead of placeholder strings."
+        description="Your dashboard is wired to backend auth, verification, task, payout, and reputation state."
         actions={
           <Button asChild>
             <Link to="/worker/tasks">Browse tasks</Link>
@@ -63,7 +63,7 @@ export function WorkerHomePage() {
         <SectionCard title="Verification impact">
           <div className="space-y-3 text-sm text-muted-foreground">
             <p>
-              Workers with a verified status can claim live tasks. Pending or unverified states should keep the claim button disabled once backend enforcement is added.
+              Workers with a verified status can claim live tasks. Pending or unverified states stay blocked at the mutation layer, not just in the UI.
             </p>
             {reputation ? (
               <div className="rounded-2xl border border-border/60 bg-background/70 p-4">

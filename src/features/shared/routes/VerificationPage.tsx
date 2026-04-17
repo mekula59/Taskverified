@@ -32,7 +32,7 @@ export function VerificationPage() {
       <PageIntro
         eyebrow="Shared"
         title="Verification is modeled as a real state, not a marketing badge."
-        description="This page now reflects the current frontend-safe auth state so a Supabase-backed verification record can slot in later without changing the UI contract."
+        description="This page reflects the current backend verification record tied to the authenticated TaskVerified identity."
       />
       <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
         <SectionCard title="Current status">

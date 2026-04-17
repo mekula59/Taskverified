@@ -11,6 +11,10 @@ export function AuthGate({ role }: AuthGateProps) {
   const auth = useAuth();
   const location = useLocation();
 
+  if (auth.isLoading) {
+    return null;
+  }
+
   if (!auth.isAuthenticated) {
     return <Navigate to="/signin" replace state={{ from: location.pathname }} />;
   }

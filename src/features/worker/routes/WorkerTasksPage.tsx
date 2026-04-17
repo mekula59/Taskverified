@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,19 +18,26 @@ export function WorkerTasksPage() {
   const workerId = auth.user?.id ?? "";
   const workerName = auth.profile?.fullName ?? "Worker";
   const reputation = getWorkerReputationSummary(reputationSummaries, workerId);
+  const [claimError, setClaimError] = useState<string | null>(null);
 
-  const handleClaim = (taskId: string) => {
+  const handleClaim = async (taskId: string) => {
     if (!isClaimEligible || !workerId) {
       return;
     }
 
-    claimTask({
-      taskId,
-      workerId,
-      workerName,
-    });
+    setClaimError(null);
 
-    navigate(`/worker/submissions?taskId=${taskId}`);
+    try {
+      await claimTask({
+        taskId,
+        workerId,
+        workerName,
+      });
+
+      navigate(`/worker/submissions?taskId=${taskId}`);
+    } catch (nextError) {
+      setClaimError(nextError instanceof Error ? nextError.message : "Unable to claim the task.");
+    }
   };
 
   return (
@@ -37,7 +45,7 @@ export function WorkerTasksPage() {
       <PageIntro
         eyebrow="Worker"
         title="Claimable work"
-        description="Task cards are now backed by a task entity and respect verification state in the UI foundation."
+        description="Task cards are backed by real backend task state and only allow claims when verification and task rules are satisfied."
       />
       {reputation ? (
         <div className="rounded-2xl border border-border/60 bg-background/70 p-4 text-sm text-muted-foreground">
@@ -45,6 +53,7 @@ export function WorkerTasksPage() {
           <span className="font-medium text-foreground">{reputation.trustScore}</span>, with {reputation.approvalRate}% approval and {reputation.payoutsReleased} released Solana payouts.
         </div>
       ) : null}
+      {claimError ? <p className="text-sm text-destructive">{claimError}</p> : null}
       <div className="grid gap-6 xl:grid-cols-2">
         {publicTasks.map((task) => (
           <SectionCard key={task.id} title={task.title} description={`${task.description} Posted by ${task.posterName}.`}>

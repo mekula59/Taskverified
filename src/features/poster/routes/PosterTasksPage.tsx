@@ -16,7 +16,7 @@ export function PosterTasksPage() {
       <PageIntro
         eyebrow="Poster"
         title="Posted tasks"
-        description="These cards now come from a shared task entity so task creation, task listing, and dashboards all work from the same frontend-safe model."
+        description="These cards now come from the canonical backend task model so task creation, task listing, and dashboards stay in sync."
       />
       <div className="grid gap-6 xl:grid-cols-2">
         {posterTasks.map((task) => (

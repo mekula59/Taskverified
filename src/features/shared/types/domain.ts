@@ -171,10 +171,26 @@ export interface PayoutRecord {
   posterWalletAddress?: string;
   amount: number;
   currencyToken: "USDC" | "SOL";
+  transferAmountLamports?: number;
   status: PayoutStatus;
   txSignature?: string;
+  failureReason?: string;
   createdAt: string;
   releasedAt?: string;
+}
+
+export interface PayoutReleasePreparation {
+  payoutId: string;
+  posterWalletAddress: string;
+  workerWalletAddress: string;
+  transferAmountLamports: number;
+  transferAmountSol: number;
+}
+
+export interface PayoutReleaseFailureInput {
+  payoutId: string;
+  failureReason: string;
+  txSignature?: string;
 }
 
 export interface DashboardMetric {

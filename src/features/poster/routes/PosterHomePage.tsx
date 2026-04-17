@@ -20,7 +20,7 @@ export function PosterHomePage() {
       <PageIntro
         eyebrow="Poster"
         title={`${auth.profile?.fullName ?? "Poster"} dashboard`}
-        description="The poster dashboard foundation is now wired to a typed task entity and ready for real task, review, and payout queries later."
+        description="The poster dashboard is wired to canonical backend task, review, payout, and wallet state."
         actions={
           <Button asChild>
             <Link to="/poster/tasks/new">Create task</Link>
@@ -33,7 +33,7 @@ export function PosterHomePage() {
         ))}
       </div>
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-        <SectionCard title="Live task foundation" description="Current sample tasks owned by this poster.">
+        <SectionCard title="Live tasks" description="Current backend tasks owned by this poster.">
           <div className="space-y-3">
             {posterTasks.map((task) => (
               <div key={task.id} className="rounded-2xl border border-border/60 bg-background/70 p-4">
@@ -52,7 +52,7 @@ export function PosterHomePage() {
         </SectionCard>
         <SectionCard title="Verification posture">
           <p className="text-sm text-muted-foreground">
-            Poster verification stays visible so trust expectations apply to both sides of the platform, even before backend review tooling is added.
+            Poster verification stays visible so trust expectations apply to both sides of the platform through the same backend identity model.
           </p>
         </SectionCard>
         <SectionCard title="Solana release wallet">

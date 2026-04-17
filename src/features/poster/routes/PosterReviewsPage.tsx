@@ -6,6 +6,7 @@ import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/features/auth/context/useAuth";
+import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { defaultReviewFormValues, validateReviewForm } from "@/features/tasks/lib/reviewForm";
 import { formatCategoryLabel, formatMoney, getPayoutForSubmission, getSubmittedSubmissionsForPoster, getWorkerProfile, getWorkerReputationSummary, getTrustScoreTone } from "@/features/tasks/data/sampleData";
@@ -16,6 +17,7 @@ export function PosterReviewsPage() {
   const [selectedClaimId, setSelectedClaimId] = useState<string | null>(null);
   const [reviewValues, setReviewValues] = useState(defaultReviewFormValues);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [reviewError, setReviewError] = useState<string | null>(null);
 
   const reviewItems = useMemo(
     () =>
@@ -35,7 +37,7 @@ export function PosterReviewsPage() {
   const workerReputation = selectedSubmission ? getWorkerReputationSummary(reputationSummaries, selectedSubmission.workerId) : undefined;
   const payout = selectedSubmission ? getPayoutForSubmission(payouts, selectedSubmission.id) : undefined;
 
-  const handleDecision = (decision: "approved" | "rejected") => {
+  const handleDecision = async (decision: "approved" | "rejected") => {
     if (!selectedSubmission || !selectedTask) {
       return;
     }
@@ -46,15 +48,21 @@ export function PosterReviewsPage() {
       return;
     }
 
-    reviewSubmission({
-      claimId: selectedSubmission.claimId,
-      taskId: selectedTask.id,
-      decision,
-      reviewerNotes: reviewValues.reviewerNotes,
-    });
+    setReviewError(null);
 
-    setReviewValues(defaultReviewFormValues);
-    setErrors({});
+    try {
+      await reviewSubmission({
+        claimId: selectedSubmission.claimId,
+        taskId: selectedTask.id,
+        decision,
+        reviewerNotes: reviewValues.reviewerNotes,
+      });
+
+      setReviewValues(defaultReviewFormValues);
+      setErrors({});
+    } catch (nextError) {
+      setReviewError(nextError instanceof Error ? nextError.message : "Unable to save the review decision.");
+    }
   };
 
   return (
@@ -62,7 +70,7 @@ export function PosterReviewsPage() {
       <PageIntro
         eyebrow="Poster"
         title="Review is where trust is enforced."
-        description="Submitted proof now appears here for approval or rejection. Review decisions stay lightweight and typed so payout and reputation can layer on later."
+        description="Submitted proof appears here for approval or rejection, with review decisions persisted into the canonical trust and payout flow."
       />
       <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <SectionCard title="Review queue" description="Submitted, approved, and rejected proof for your tasks.">
@@ -177,10 +185,14 @@ export function PosterReviewsPage() {
                     {formatMoney(payout.amount, "USD")} represented as <span className="font-medium text-foreground">{payout.currencyToken}</span>
                   </p>
                   <p className="mt-2">
+                    Devnet transfer: <span className="font-medium text-foreground">{formatLamportsAsSol(payout.transferAmountLamports)}</span>
+                  </p>
+                  <p className="mt-2">
                     Status: <span className="font-medium capitalize text-foreground">{payout.status.replaceAll("_", " ")}</span>
                   </p>
                   <p className="mt-2 break-all">Worker wallet: {payout.workerWalletAddress ?? "Not connected"}</p>
                   <p className="mt-2 break-all">Poster wallet: {payout.posterWalletAddress ?? "Not connected"}</p>
+                  {payout.failureReason ? <p className="mt-2">Failure reason: <span className="text-foreground">{payout.failureReason}</span></p> : null}
                 </div>
               ) : null}
 
@@ -201,6 +213,7 @@ export function PosterReviewsPage() {
                   Reject submission
                 </Button>
               </div>
+              {reviewError ? <p className="text-sm text-destructive">{reviewError}</p> : null}
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">No submitted proof is available for review yet.</p>

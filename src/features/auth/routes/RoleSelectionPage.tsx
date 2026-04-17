@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BriefcaseBusiness, UserRoundSearch } from "lucide-react";
 
@@ -33,10 +34,17 @@ const roleCards: Array<{
 export function RoleSelectionPage() {
   const auth = useAuth();
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSelect = (role: UserRole) => {
-    auth.chooseRole(role);
-    navigate("/onboarding/profile");
+  const handleSelect = async (role: UserRole) => {
+    setError(null);
+
+    try {
+      await auth.chooseRole(role);
+      navigate("/onboarding/profile");
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Unable to save the selected role.");
+    }
   };
 
   return (
@@ -67,6 +75,7 @@ export function RoleSelectionPage() {
           </SectionCard>
         ))}
       </div>
+      {error ?? auth.error ? <p className="text-sm text-destructive">{error ?? auth.error}</p> : null}
     </div>
   );
 }

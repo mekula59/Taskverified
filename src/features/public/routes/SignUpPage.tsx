@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { PageIntro } from "@/components/shell/PageIntro";
@@ -8,10 +9,17 @@ import { Button } from "@/components/ui/button";
 export function SignUpPage() {
   const auth = useAuth();
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
-  const handleContinue = (role: "worker" | "poster") => {
-    auth.continueDemoAsRole(role);
-    navigate(role === "worker" ? "/worker" : "/poster");
+  const handleContinue = async (role: "worker" | "poster") => {
+    setError(null);
+
+    try {
+      await auth.continueDemoAsRole(role);
+      navigate(role === "worker" ? "/worker" : "/poster");
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Unable to start the selected role path.");
+    }
   };
 
   return (
@@ -19,7 +27,7 @@ export function SignUpPage() {
       <PageIntro
         eyebrow="Auth"
         title="Start with a clean, role-aware foundation."
-        description="Sign-up remains frontend-safe in this phase. You can enter onboarding through sign-in with a new email or use a demo path to inspect the worker and poster foundations."
+        description="You can enter onboarding with a new Supabase-backed session through sign in, or use a seeded backend demo path to inspect the worker and poster flows."
       />
       <div className="grid gap-6 lg:grid-cols-2">
         <SectionCard title="Worker demo path" description="Inspect claiming, proof, verification, and payout framing.">
@@ -29,6 +37,7 @@ export function SignUpPage() {
           <Button onClick={() => handleContinue("poster")}>Open poster foundation</Button>
         </SectionCard>
       </div>
+      {error ?? auth.error ? <p className="text-sm text-destructive">{error ?? auth.error}</p> : null}
     </div>
   );
 }

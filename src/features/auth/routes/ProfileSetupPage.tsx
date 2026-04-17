@@ -23,13 +23,20 @@ export function ProfileSetupPage() {
   );
 
   const [form, setForm] = useState(initial);
+  const [error, setError] = useState<string | null>(null);
 
   const roleLabel = auth.user?.role === "worker" ? "worker" : "poster";
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    auth.saveProfile(form);
-    navigate(auth.routeForRole(auth.user?.role));
+    setError(null);
+
+    try {
+      await auth.saveProfile(form);
+      navigate(auth.routeForRole(auth.user?.role));
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Unable to save the profile.");
+    }
   };
 
   return (
@@ -78,6 +85,7 @@ export function ProfileSetupPage() {
             />
           </div>
           <Button type="submit">Save profile</Button>
+          {error ?? auth.error ? <p className="text-sm text-destructive">{error ?? auth.error}</p> : null}
         </form>
       </SectionCard>
     </div>

@@ -1,6 +1,7 @@
 import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
 import { useAuth } from "@/features/auth/context/useAuth";
+import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getPayoutsForWorker, getWalletProfile } from "@/features/tasks/data/sampleData";
@@ -32,11 +33,15 @@ export function WorkerPayoutsPage() {
                 Amount: <span className="font-medium text-foreground">{formatMoney(payout.amount, "USD")} / {payout.currencyToken}</span>
               </p>
               <p className="mt-2">
+                Devnet transfer: <span className="font-medium text-foreground">{formatLamportsAsSol(payout.transferAmountLamports)}</span>
+              </p>
+              <p className="mt-2">
                 Status: <span className="font-medium capitalize text-foreground">{payout.status.replaceAll("_", " ")}</span>
               </p>
               <p className="mt-2 break-all">Worker wallet: {payout.workerWalletAddress ?? "Not connected"}</p>
               <p className="mt-2 break-all">Poster wallet: {payout.posterWalletAddress ?? "Not connected"}</p>
               <p className="mt-2 break-all">Tx signature: {payout.txSignature ?? "Not released yet"}</p>
+              {payout.failureReason ? <p className="mt-2">Failure reason: <span className="text-foreground">{payout.failureReason}</span></p> : null}
             </div>
           ))}
         </div>

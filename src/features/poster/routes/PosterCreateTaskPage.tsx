@@ -17,7 +17,7 @@ import type { TaskCategory, RewardCurrency, TaskStatus } from "@/features/shared
 
 const categoryOptions: TaskCategory[] = ["testing", "research", "community", "content"];
 const currencyOptions: RewardCurrency[] = ["USD", "NGN"];
-const statusOptions: TaskStatus[] = ["draft", "open", "claimed", "submitted", "reviewed", "paid"];
+const statusOptions: TaskStatus[] = ["draft", "open"];
 
 export function PosterCreateTaskPage() {
   const auth = useAuth();
@@ -25,9 +25,11 @@ export function PosterCreateTaskPage() {
   const navigate = useNavigate();
   const [values, setValues] = useState(defaultTaskFormValues);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setSubmitError(null);
     const nextErrors = validateTaskForm(values);
     setErrors(nextErrors);
 
@@ -39,13 +41,17 @@ export function PosterCreateTaskPage() {
       return;
     }
 
-    createTask(toTaskCreateInput(values), {
-      id: auth.user.id,
-      name: auth.profile.fullName,
-    });
+    try {
+      await createTask(toTaskCreateInput(values), {
+        id: auth.user.id,
+        name: auth.profile.fullName,
+      });
 
-    setValues(defaultTaskFormValues);
-    navigate("/poster/tasks");
+      setValues(defaultTaskFormValues);
+      navigate("/poster/tasks");
+    } catch (nextError) {
+      setSubmitError(nextError instanceof Error ? nextError.message : "Unable to create the task.");
+    }
   };
 
   return (
@@ -53,14 +59,14 @@ export function PosterCreateTaskPage() {
       <PageIntro
         eyebrow="Poster"
         title="Task creation should produce reviewable work."
-        description="This form creates a typed task in the frontend-safe local store so it immediately appears across the product shell and remains easy to replace with Supabase later."
+        description="This form creates a real backend task record so it immediately appears across poster, worker, and shared product surfaces."
       />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {posterTrustSignals.map((signal) => (
           <MetricCard key={signal.label} label={signal.label} value={signal.value} detail={signal.detail} icon={signal.icon} />
         ))}
       </div>
-      <SectionCard title="Create task" description="All fields below are stored in the local task layer and reused across poster and public task views.">
+      <SectionCard title="Create task" description="All fields below are persisted in Supabase and reused across poster, worker, and shared task views.">
         <form className="space-y-5" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <Label htmlFor="title">Title</Label>
@@ -173,6 +179,7 @@ export function PosterCreateTaskPage() {
           </div>
 
           <Button type="submit">Create task</Button>
+          {submitError ? <p className="text-sm text-destructive">{submitError}</p> : null}
         </form>
       </SectionCard>
     </div>

@@ -38,7 +38,7 @@ export function SolanaWalletStatusCard({ userId, role, displayName, className }:
         localWallet.walletAddress !== adapterWalletAddress ||
         localWallet.provider !== "phantom"
       ) {
-        connectWallet({
+        void connectWallet({
           userId,
           role,
           displayName,
@@ -51,10 +51,10 @@ export function SolanaWalletStatusCard({ userId, role, displayName, className }:
       return;
     }
 
-    if (!connecting && localWallet?.status === "connected") {
-      disconnectWallet({ userId, role });
+    if (!connecting && !wallet && localWallet?.status === "connected") {
+      void disconnectWallet({ userId, role });
     }
-  }, [adapterWalletAddress, connectWallet, connected, connecting, disconnectWallet, displayName, localWallet?.provider, localWallet?.status, localWallet?.walletAddress, role, userId]);
+  }, [adapterWalletAddress, connectWallet, connected, connecting, disconnectWallet, displayName, localWallet?.provider, localWallet?.status, localWallet?.walletAddress, role, userId, wallet]);
 
   const handleConnect = async () => {
     if (!phantomWallet || !isPhantomAvailable) {
@@ -81,7 +81,7 @@ export function SolanaWalletStatusCard({ userId, role, displayName, className }:
     try {
       await disconnect();
     } finally {
-      disconnectWallet({ userId, role });
+      void disconnectWallet({ userId, role });
     }
   };
 

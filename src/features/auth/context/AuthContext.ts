@@ -4,13 +4,15 @@ import type { AuthState, SessionUser, UserRole, UserProfile, VerificationRecord 
 
 export interface AuthContextValue extends AuthState {
   isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
   needsRoleSelection: boolean;
   needsProfileSetup: boolean;
-  signInWithEmail: (email: string) => void;
-  continueDemoAsRole: (role: UserRole) => void;
-  chooseRole: (role: UserRole) => void;
-  saveProfile: (input: { fullName: string; location: string; bio: string }) => void;
-  signOut: () => void;
+  signInWithEmail: (email: string) => Promise<void>;
+  continueDemoAsRole: (role: UserRole) => Promise<void>;
+  chooseRole: (role: UserRole) => Promise<void>;
+  saveProfile: (input: { fullName: string; location: string; bio: string }) => Promise<void>;
+  signOut: () => Promise<void>;
   routeForRole: (role?: UserRole | null) => string;
 }
 
