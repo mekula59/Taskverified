@@ -9,7 +9,8 @@ export interface AuthContextValue extends AuthState {
   needsRoleSelection: boolean;
   needsProfileSetup: boolean;
   signInWithEmail: (email: string) => Promise<void>;
-  continueDemoAsRole: (role: UserRole) => Promise<void>;
+  signUpWithEmail: (email: string) => Promise<void>;
+  signInWithWallet: (input: { walletAddress: string; signMessage: (message: Uint8Array) => Promise<Uint8Array> }) => Promise<string>;
   chooseRole: (role: UserRole) => Promise<void>;
   saveProfile: (input: { fullName: string; location: string; bio: string }) => Promise<void>;
   signOut: () => Promise<void>;

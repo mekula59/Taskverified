@@ -13,6 +13,7 @@ import { PosterPayoutsPage } from "@/features/poster/routes/PosterPayoutsPage";
 import { PosterReviewsPage } from "@/features/poster/routes/PosterReviewsPage";
 import { PosterTasksPage } from "@/features/poster/routes/PosterTasksPage";
 import { HomePage } from "@/features/public/routes/HomePage";
+import { AuthCallbackPage } from "@/features/public/routes/AuthCallbackPage";
 import { SignInPage } from "@/features/public/routes/SignInPage";
 import { SignUpPage } from "@/features/public/routes/SignUpPage";
 import { TaskDirectoryPage } from "@/features/public/routes/TaskDirectoryPage";
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
       { path: "tasks", element: <TaskDirectoryPage /> },
       { path: "signin", element: <SignInPage /> },
       { path: "signup", element: <SignUpPage /> },
+      { path: "auth/callback", element: <AuthCallbackPage /> },
       { path: "verify", element: <VerificationPage /> },
     ],
   },

@@ -112,6 +112,13 @@ export interface AuthState {
   verification: VerificationRecord | null;
 }
 
+export interface WalletAuthChallenge {
+  walletAddress: string;
+  nonce: string;
+  message: string;
+  expiresAt: string;
+}
+
 export interface Task {
   id: string;
   posterId: string;

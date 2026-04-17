@@ -1,5 +1,21 @@
 create extension if not exists pgcrypto;
 
+create table if not exists public.wallet_auth_identities (
+  wallet_address text primary key,
+  user_id uuid not null unique references auth.users (id) on delete cascade,
+  provider text not null default 'phantom' check (provider in ('phantom')),
+  created_at timestamptz not null default timezone('utc', now()),
+  last_authenticated_at timestamptz not null default timezone('utc', now())
+);
+
+create table if not exists public.wallet_auth_challenges (
+  wallet_address text primary key,
+  nonce text not null,
+  message text not null,
+  expires_at timestamptz not null,
+  created_at timestamptz not null default timezone('utc', now())
+);
+
 create table if not exists public.profiles (
   user_id uuid primary key references auth.users (id) on delete cascade,
   email text,
@@ -131,12 +147,15 @@ create index if not exists idx_tasks_poster_id on public.tasks (poster_id);
 create index if not exists idx_tasks_status on public.tasks (status);
 create index if not exists idx_claims_worker_id on public.task_claims (worker_id);
 create index if not exists idx_claims_task_id on public.task_claims (task_id);
+create unique index if not exists idx_profiles_wallet_address on public.profiles (wallet_address) where wallet_address is not null;
 create index if not exists idx_submissions_worker_id on public.submissions (worker_id);
 create index if not exists idx_submissions_task_id on public.submissions (task_id);
 create index if not exists idx_payouts_worker_id on public.payouts (worker_id);
 create index if not exists idx_payouts_poster_id on public.payouts (poster_id);
 create index if not exists idx_reputation_events_worker_id on public.reputation_events (worker_id);
 
+alter table public.wallet_auth_identities enable row level security;
+alter table public.wallet_auth_challenges enable row level security;
 alter table public.profiles enable row level security;
 alter table public.verification_records enable row level security;
 alter table public.tasks enable row level security;
@@ -152,6 +171,12 @@ create policy "authenticated can read profiles"
 on public.profiles for select
 to authenticated
 using (true);
+
+drop policy if exists "authenticated can read wallet identities" on public.wallet_auth_identities;
+create policy "authenticated can read wallet identities"
+on public.wallet_auth_identities for select
+to authenticated
+using (auth.uid() = user_id);
 
 drop policy if exists "users can upsert own profile" on public.profiles;
 create policy "users can upsert own profile"

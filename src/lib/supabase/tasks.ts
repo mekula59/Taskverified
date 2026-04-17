@@ -209,11 +209,19 @@ export async function preparePayoutReleaseMutation(payoutId: string): Promise<Pa
 }
 
 export async function completePayoutReleaseMutation(input: { payoutId: string; txSignature: string }): Promise<PayoutRecord | null> {
-  const snapshot = await rpcMutation("complete_payout_release", {
-    p_payout_id: input.payoutId,
-    p_tx_signature: input.txSignature,
+  const supabase = requireSupabase();
+  const { error } = await supabase.functions.invoke("complete-payout-release", {
+    body: {
+      payoutId: input.payoutId,
+      txSignature: input.txSignature,
+    },
   });
 
+  if (error) {
+    throw error;
+  }
+
+  const snapshot = await fetchTaskSnapshot();
   return snapshot.payouts.find((payout) => payout.id === input.payoutId) ?? null;
 }
 

@@ -1,25 +1,85 @@
-import type { AuthState, SessionUser, UserRole, UserProfile, VerificationRecord } from "@/features/shared/types/domain";
+import type { AuthState, SessionUser, UserProfile, UserRole, WalletAuthChallenge } from "@/features/shared/types/domain";
 import { mapVerification, type BackendProfileRow, type BackendVerificationRow } from "@/lib/supabase/mappers";
 import { requireSupabase } from "@/lib/supabase/client";
 
-const demoProfiles = {
-  worker: {
-    email: "worker@taskverified.demo",
-    fullName: "Nadia Cole",
-    location: "Lagos, NG",
-    bio: "Reliable product tester focused on evidence-rich proof and on-time completion.",
-    verificationStatus: "verified" as const,
-    verificationNotes: "Identity and payout readiness confirmed. Eligible to claim live work.",
-  },
-  poster: {
-    email: "poster@taskverified.demo",
-    fullName: "TaskVerified Labs",
-    location: "Remote",
-    bio: "Startup team posting tightly scoped, proof-based tasks for product feedback and community operations.",
-    verificationStatus: "pending" as const,
-    verificationNotes: "Organization review in progress. Posting remains available for the current MVP loop.",
-  },
-};
+export function formatAuthError(error: unknown, fallback: string) {
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  const normalized = message.toLowerCase();
+
+  if (normalized.includes("email rate limit exceeded") || normalized.includes("rate limit")) {
+    return "Too many email requests were sent recently. Wait a minute, then try again or continue with Phantom.";
+  }
+
+  if (normalized.includes("for security purposes")) {
+    return "Email sign-in is temporarily paused for security throttling. Wait a minute, then try again or continue with Phantom.";
+  }
+
+  if (normalized.includes("invalid login credentials")) {
+    return "We couldn't verify that account. Open your latest TaskVerified magic link or request a new one.";
+  }
+
+  if (normalized.includes("user not found")) {
+    return "No TaskVerified account was found for that email yet. Use sign up or continue with Phantom.";
+  }
+
+  if (normalized.includes("network")) {
+    return "TaskVerified couldn't reach Supabase. Check your connection and try again.";
+  }
+
+  if (normalized.includes("wallet auth challenge expired")) {
+    return "That Phantom sign-in request expired. Start the wallet flow again.";
+  }
+
+  if (normalized.includes("wallet signature verification failed")) {
+    return "Phantom signature verification failed. Approve the exact TaskVerified message and try again.";
+  }
+
+  if (normalized.includes("phantom connected, but message signing is unavailable")) {
+    return "Phantom connected, but signing is not available yet. Unlock the wallet and try again.";
+  }
+
+  return message || fallback;
+}
+
+function getAuthRedirectUrl() {
+  const configuredSiteUrl = import.meta.env.VITE_SITE_URL?.trim();
+
+  if (configuredSiteUrl) {
+    return new URL("/auth/callback", configuredSiteUrl).toString();
+  }
+
+  if (typeof window !== "undefined") {
+    return new URL("/auth/callback", window.location.origin).toString();
+  }
+
+  return "http://localhost:5173/auth/callback";
+}
+
+function getCallbackUrl(url?: string) {
+  if (url) {
+    return new URL(url);
+  }
+
+  if (typeof window !== "undefined") {
+    return new URL(window.location.href);
+  }
+
+  return new URL(getAuthRedirectUrl());
+}
+
+function encodeUtf8(input: string) {
+  return new TextEncoder().encode(input);
+}
+
+function encodeBase64(bytes: Uint8Array) {
+  let binary = "";
+
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+
+  return btoa(binary);
+}
 
 async function fetchAuthShape(userId: string): Promise<Pick<AuthState, "profile" | "verification">> {
   const supabase = requireSupabase();
@@ -87,107 +147,146 @@ export async function getAuthStateFromSupabase(): Promise<AuthState> {
   };
 }
 
-async function ensureAnonymousSession(contactEmail: string, role?: UserRole) {
+export async function exchangeEmailAuthCode(code: string) {
   const supabase = requireSupabase();
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function completeEmailAuthCallback(url?: string) {
+  const supabase = requireSupabase();
+  const callbackUrl = getCallbackUrl(url);
+  const code = callbackUrl.searchParams.get("code");
+  const tokenHash = callbackUrl.searchParams.get("token_hash");
+  const rawType = callbackUrl.searchParams.get("type");
+  const accessToken = callbackUrl.searchParams.get("access_token") ?? callbackUrl.hash.match(/access_token=([^&]+)/)?.[1];
+
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  const existingEmail = session?.user?.email ?? session?.user?.user_metadata.contact_email ?? null;
-
-  if (session?.user && existingEmail && existingEmail !== contactEmail) {
-    const { error: signOutError } = await supabase.auth.signOut();
-    if (signOutError) {
-      throw signOutError;
-    }
-  }
-
-  const {
-    data: { session: refreshedSession },
-  } = await supabase.auth.getSession();
-
-  if (!refreshedSession?.user) {
-    const { error } = await supabase.auth.signInAnonymously();
-    if (error) {
-      throw error;
-    }
-  }
-
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    throw userError ?? new Error("No authenticated Supabase user is available.");
-  }
-
-  const metadata = {
-    ...user.user_metadata,
-    contact_email: contactEmail,
-    role: role ?? user.user_metadata.role ?? null,
-  };
-
-  const { error: updateError } = await supabase.auth.updateUser({
-    data: metadata,
-  });
-
-  if (updateError) {
-    throw updateError;
-  }
-
-  return user.id;
-}
-
-async function seedDemoPosterTasks(userId: string) {
-  const supabase = requireSupabase();
-  const { count, error: countError } = await supabase
-    .from("tasks")
-    .select("id", { count: "exact", head: true })
-    .eq("poster_id", userId);
-
-  if (countError) {
-    throw countError;
-  }
-
-  if ((count ?? 0) > 0) {
+  if (session?.user) {
     return;
   }
 
-  const demoTasks = [
-    {
-      p_title: "Test mobile onboarding and attach annotated screenshots",
-      p_description: "Run the onboarding flow on mobile, capture friction points, and explain exactly where trust or clarity drops.",
-      p_category: "testing",
-      p_proof_requirements: ["Screenshot set from start to finish", "Short summary of friction points", "One improvement recommendation"],
-      p_reward_amount: 30,
-      p_reward_currency: "USD",
-      p_deadline_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3).toISOString(),
-      p_status: "open",
-    },
-    {
-      p_title: "Verify community onboarding instructions against the live flow",
-      p_description: "Compare the written community onboarding guide to the actual product flow and note any mismatches with proof.",
-      p_category: "community",
-      p_proof_requirements: ["Written mismatch report", "Link to live flow or screenshots", "Checklist confirming each step reviewed"],
-      p_reward_amount: 20,
-      p_reward_currency: "USD",
-      p_deadline_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 5).toISOString(),
-      p_status: "open",
-    },
-  ] as const;
+  if (code) {
+    await exchangeEmailAuthCode(code);
+    return;
+  }
 
-  for (const task of demoTasks) {
-    const { error } = await supabase.rpc("create_task", task);
-    if (error) {
-      throw error;
+  if (tokenHash && rawType) {
+    const type = rawType === "signup" ? "email" : rawType;
+
+    if (type === "email" || type === "recovery" || type === "invite" || type === "email_change") {
+      const { error } = await supabase.auth.verifyOtp({
+        token_hash: tokenHash,
+        type,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      return;
     }
+  }
+
+  if (accessToken) {
+    return;
+  }
+
+  throw new Error("The email sign-in link is missing the Supabase callback parameters needed to finish authentication.");
+}
+
+async function requestEmailAuth(email: string, shouldCreateUser: boolean) {
+  const supabase = requireSupabase();
+  const normalized = email.trim().toLowerCase();
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email: normalized,
+    options: {
+      emailRedirectTo: getAuthRedirectUrl(),
+      shouldCreateUser,
+      data: {
+        contact_email: normalized,
+      },
+    },
+  });
+
+  if (error) {
+    throw error;
   }
 }
 
 export async function signInWithSupabaseEmail(email: string) {
-  const normalized = email.trim().toLowerCase();
-  return ensureAnonymousSession(normalized);
+  return requestEmailAuth(email, false);
+}
+
+export async function signUpWithSupabaseEmail(email: string) {
+  return requestEmailAuth(email, true);
+}
+
+export async function beginWalletAuthChallenge(walletAddress: string): Promise<WalletAuthChallenge> {
+  const supabase = requireSupabase();
+  const { data, error } = await supabase.functions.invoke<WalletAuthChallenge>("auth-wallet", {
+    body: {
+      action: "nonce",
+      walletAddress,
+    },
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  if (!data) {
+    throw new Error("Unable to start wallet authentication.");
+  }
+
+  return data;
+}
+
+export async function signInWithSupabaseWallet(input: {
+  walletAddress: string;
+  signMessage: (message: Uint8Array) => Promise<Uint8Array>;
+}) {
+  const supabase = requireSupabase();
+  const challenge = await beginWalletAuthChallenge(input.walletAddress);
+  const message = challenge.message;
+  const signatureBytes = await input.signMessage(encodeUtf8(message));
+  const signature = encodeBase64(signatureBytes);
+
+  const { data, error } = await supabase.functions.invoke<{
+    email: string;
+    password: string;
+  }>("auth-wallet", {
+    body: {
+      action: "verify",
+      walletAddress: input.walletAddress,
+      message,
+      signature,
+    },
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  if (!data?.email || !data.password) {
+    throw new Error("Wallet verification completed, but a sign-in session could not be created.");
+  }
+
+  const signInResult = await supabase.auth.signInWithPassword({
+    email: data.email,
+    password: data.password,
+  });
+
+  if (signInResult.error) {
+    throw signInResult.error;
+  }
 }
 
 export async function chooseSupabaseRole(role: UserRole) {
@@ -225,6 +324,8 @@ export async function saveSupabaseProfile(input: { fullName: string; location: s
   }
 
   const email = user.email ?? user.user_metadata.contact_email ?? "";
+  const walletAddress = (user.user_metadata.wallet_address as string | undefined) ?? null;
+  const walletProvider = (user.user_metadata.wallet_provider as string | undefined) ?? null;
   const now = new Date().toISOString();
 
   const { error: profileError } = await supabase.from("profiles").upsert(
@@ -236,6 +337,9 @@ export async function saveSupabaseProfile(input: { fullName: string; location: s
       location: input.location.trim(),
       bio: input.bio.trim(),
       verification_status: input.role === "worker" ? "pending" : "unverified",
+      wallet_address: walletAddress,
+      wallet_provider: walletProvider,
+      wallet_connection_status: walletAddress ? "connected" : "disconnected",
       updated_at: now,
     },
     {
@@ -265,61 +369,6 @@ export async function saveSupabaseProfile(input: { fullName: string; location: s
 
   if (verificationError) {
     throw verificationError;
-  }
-}
-
-export async function provisionDemoSupabaseAccount(role: UserRole) {
-  const demo = demoProfiles[role];
-  const userId = await ensureAnonymousSession(demo.email, role);
-  const supabase = requireSupabase();
-  const now = new Date().toISOString();
-
-  const { error: profileError } = await supabase.from("profiles").upsert(
-    {
-      user_id: userId,
-      email: demo.email,
-      role,
-      full_name: demo.fullName,
-      location: demo.location,
-      bio: demo.bio,
-      verification_status: demo.verificationStatus,
-      updated_at: now,
-      wallet_connection_status: "disconnected",
-    },
-    { onConflict: "user_id" },
-  );
-
-  if (profileError) {
-    throw profileError;
-  }
-
-  const verificationPayload: VerificationRecord & { updated_at?: string } = {
-    userId,
-    status: demo.verificationStatus,
-    submittedAt: now,
-    reviewedAt: role === "worker" ? now : undefined,
-    notes: demo.verificationNotes,
-    updated_at: now,
-  };
-
-  const { error: verificationError } = await supabase.from("verification_records").upsert(
-    {
-      user_id: verificationPayload.userId,
-      status: verificationPayload.status,
-      submitted_at: verificationPayload.submittedAt,
-      reviewed_at: verificationPayload.reviewedAt ?? null,
-      notes: verificationPayload.notes,
-      updated_at: now,
-    },
-    { onConflict: "user_id" },
-  );
-
-  if (verificationError) {
-    throw verificationError;
-  }
-
-  if (role === "poster") {
-    await seedDemoPosterTasks(userId);
   }
 }
 

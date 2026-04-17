@@ -44,12 +44,12 @@ export function WorkerTasksPage() {
     <div className="space-y-8">
       <PageIntro
         eyebrow="Worker"
-        title="Claimable work"
-        description="Task cards are backed by real backend task state and only allow claims when verification and task rules are satisfied."
+        title="Work you can trust enough to claim"
+        description="Each task carries live status, proof requirements, and poster identity so you can decide quickly and claim cleanly."
       />
       {reputation ? (
         <div className="rounded-2xl border border-border/60 bg-background/70 p-4 text-sm text-muted-foreground">
-          Your current trust posture is <span className="font-medium text-foreground">{getTrustScoreTone(reputation.trustScore).toLowerCase()}</span> at{" "}
+          Your trust standing is <span className="font-medium text-foreground">{getTrustScoreTone(reputation.trustScore).toLowerCase()}</span> at{" "}
           <span className="font-medium text-foreground">{reputation.trustScore}</span>, with {reputation.approvalRate}% approval and {reputation.payoutsReleased} released Solana payouts.
         </div>
       ) : null}
@@ -66,6 +66,9 @@ export function WorkerTasksPage() {
                 <span>Status</span>
                 <span className="capitalize">{task.status}</span>
               </div>
+              <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">Trust signal:</span> Posted by {task.posterName} with explicit proof requirements before payout release.
+              </div>
               <div className="flex flex-wrap gap-2">
                 {task.proofRequirements.map((item) => (
                   <Badge key={item} variant="secondary" className="rounded-full">
@@ -81,7 +84,7 @@ export function WorkerTasksPage() {
                 if (!isClaimEligible) {
                   return (
                     <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
-                      Claiming is blocked until verification clears.
+                      Claiming stays locked until your verification clears.
                     </div>
                   );
                 }
@@ -90,7 +93,7 @@ export function WorkerTasksPage() {
                   return (
                     <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-background/70 px-4 py-3">
                       <p className="text-sm text-muted-foreground">
-                        You already claimed this task. Current status: <span className="font-medium capitalize text-foreground">{existingClaim.status}</span>
+                        You already hold this task. Current status: <span className="font-medium capitalize text-foreground">{existingClaim.status}</span>
                       </p>
                       {payout ? (
                         <p className="text-sm text-muted-foreground">

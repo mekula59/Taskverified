@@ -6,6 +6,8 @@
 - Core route boundaries documented and scaffolded.
 - Product docs added for sitemap, screens, and schema planning.
 - Supabase-backed auth/session structure now exists as the canonical identity layer.
+- Real passwordless email auth now uses Supabase magic links instead of anonymous session fallback.
+- Real Phantom wallet auth now uses a backend nonce/signature verification flow and restores the same canonical user identity.
 - Role selection and profile setup flows added under onboarding routes.
 - Verification now has a real status model and current-user UI.
 - Task entity, shared selectors, and worker/poster dashboard foundations added.
@@ -26,8 +28,8 @@
 ## Next Implementation Tasks
 - Add a real verification review path so worker verification can move from `pending` to `verified` without seeding.
 - Add integration coverage for Supabase RPC invariant failures and end-to-end trust-loop mutations.
-- Remove or archive legacy local-only state helpers that are no longer used in the app runtime.
 - Add a wallet-balance preflight check and cleaner retry path for failed devnet payout releases.
+- Add automated coverage for the auth callback and wallet sign-in edge-function flow.
 
 ## Guardrails
 - Stay inside the core MVP loop.

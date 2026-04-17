@@ -4,10 +4,12 @@ import { AuthContext, type AuthContextValue } from "@/features/auth/context/Auth
 import type { AuthState, UserRole } from "@/features/shared/types/domain";
 import {
   chooseSupabaseRole,
+  formatAuthError,
   getAuthStateFromSupabase,
-  provisionDemoSupabaseAccount,
   saveSupabaseProfile,
   signInWithSupabaseEmail,
+  signInWithSupabaseWallet,
+  signUpWithSupabaseEmail,
   signOutFromSupabase,
 } from "@/lib/supabase/auth";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase/client";
@@ -28,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setError("Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable backend truth.");
       setState(emptyAuthState);
       setIsLoading(false);
-      return;
+      return emptyAuthState;
     }
 
     setIsLoading(true);
@@ -37,9 +39,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const nextState = await getAuthStateFromSupabase();
       setState(nextState);
+      return nextState;
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "Unable to load auth state.");
       setState(emptyAuthState);
+      return emptyAuthState;
     } finally {
       setIsLoading(false);
     }
@@ -80,6 +84,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return "/onboarding/role";
     };
 
+    const routeForState = (nextState: AuthState) => {
+      if (!nextState.user) {
+        return "/signin";
+      }
+
+      if (!nextState.user.role) {
+        return "/onboarding/role";
+      }
+
+      if (!nextState.profile) {
+        return "/onboarding/profile";
+      }
+
+      return routeForRole(nextState.user.role);
+    };
+
     return {
       ...state,
       isAuthenticated,
@@ -92,30 +112,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         try {
           await signInWithSupabaseEmail(email);
-
-          const normalized = email.trim().toLowerCase();
-          if (normalized === "worker@taskverified.demo") {
-            await provisionDemoSupabaseAccount("worker");
-          }
-
-          if (normalized === "poster@taskverified.demo") {
-            await provisionDemoSupabaseAccount("poster");
-          }
-
-          await loadAuthState();
         } catch (nextError) {
-          setError(nextError instanceof Error ? nextError.message : "Unable to sign in.");
+          setError(formatAuthError(nextError, "Unable to sign in."));
           throw nextError;
         }
       },
-      continueDemoAsRole: async (role: UserRole) => {
+      signUpWithEmail: async (email: string) => {
         setError(null);
 
         try {
-          await provisionDemoSupabaseAccount(role);
-          await loadAuthState();
+          await signUpWithSupabaseEmail(email);
         } catch (nextError) {
-          setError(nextError instanceof Error ? nextError.message : "Unable to start the demo account.");
+          setError(formatAuthError(nextError, "Unable to create the account."));
+          throw nextError;
+        }
+      },
+      signInWithWallet: async (input) => {
+        setError(null);
+
+        try {
+          await signInWithSupabaseWallet(input);
+          const nextState = await loadAuthState();
+          return routeForState(nextState);
+        } catch (nextError) {
+          setError(formatAuthError(nextError, "Unable to sign in with Phantom."));
           throw nextError;
         }
       },

@@ -82,11 +82,11 @@ export function WorkerSubmissionsPage() {
     <div className="space-y-8">
       <PageIntro
         eyebrow="Worker"
-        title="Proof submission is the center of worker execution."
-        description="Claims and submissions are now persisted in the backend so workers can move from claimed work into submitted proof against real state."
+        title="Proof is how work becomes trust."
+        description="Submit clear evidence against the exact task requirements, then track review and payout state all the way to Solana."
       />
       <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <SectionCard title="Your claimed tasks" description="Choose a claim to submit proof against.">
+        <SectionCard title="Your claimed tasks" description="Choose the task whose proof you want to put under review.">
           <div className="space-y-3">
             {workerClaims.map((claim) => {
               const task = tasks.find((item) => item.id === claim.taskId);
@@ -111,7 +111,7 @@ export function WorkerSubmissionsPage() {
 
         <SectionCard
           title={selectedTask ? `Submit proof for ${selectedTask.title}` : "Select a claim"}
-          description="Proof text is required. Link and file fields are placeholders for later backend attachment support."
+          description="Strong proof reduces review friction and moves payout state forward faster."
         >
           {selectedTask && selectedClaim ? (
             <div className="space-y-5">
@@ -123,12 +123,12 @@ export function WorkerSubmissionsPage() {
               {existingSubmission?.status === "approved" ? (
                 <div className="space-y-2 rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
                   <p>
-                    Submission approved{existingSubmission.reviewedAt ? ` on ${new Date(existingSubmission.reviewedAt).toLocaleDateString()}` : ""}.
+                    Proof approved{existingSubmission.reviewedAt ? ` on ${new Date(existingSubmission.reviewedAt).toLocaleDateString()}` : ""}.
                   </p>
                   {payout ? (
                     <>
                       <p>
-                        Solana payout: <span className="font-medium capitalize text-foreground">{payout.status.replaceAll("_", " ")}</span>
+                        Solana payout state: <span className="font-medium capitalize text-foreground">{payout.status.replaceAll("_", " ")}</span>
                       </p>
                       <p>
                         Amount: <span className="font-medium text-foreground">{formatMoney(payout.amount, "USD")} / {payout.currencyToken}</span>
@@ -145,7 +145,7 @@ export function WorkerSubmissionsPage() {
               {existingSubmission?.status === "rejected" ? (
                 <div className="space-y-2 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-muted-foreground">
                   <p>
-                    Submission rejected{existingSubmission.reviewedAt ? ` on ${new Date(existingSubmission.reviewedAt).toLocaleDateString()}` : ""}.
+                    Proof rejected{existingSubmission.reviewedAt ? ` on ${new Date(existingSubmission.reviewedAt).toLocaleDateString()}` : ""}.
                   </p>
                   {existingSubmission.reviewerNotes ? <p>Reviewer notes: <span className="text-foreground">{existingSubmission.reviewerNotes}</span></p> : null}
                 </div>
@@ -211,7 +211,7 @@ export function WorkerSubmissionsPage() {
                 {errors.checklistItems ? <p className="text-sm text-destructive">{errors.checklistItems}</p> : null}
               </div>
 
-              {!isLocked ? <Button onClick={handleSubmit}>Submit proof</Button> : null}
+              {!isLocked ? <Button onClick={handleSubmit}>Submit for review</Button> : null}
               {submitError ? <p className="text-sm text-destructive">{submitError}</p> : null}
             </div>
           ) : (
