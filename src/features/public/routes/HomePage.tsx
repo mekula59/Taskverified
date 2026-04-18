@@ -11,20 +11,20 @@ const publicTasks = getPublicTasks(seededTasks);
 const homepageExamples = publicTasks.slice(0, 2);
 const releasedPayouts = seededPayouts.filter((payout) => payout.status === "released");
 
-const operatingPrinciples = [
+const operatingProofs = [
   {
-    title: "Real people, tightly scoped work",
-    description: "TaskVerified is built for small operational jobs that still need a human in the loop: testing, research, community verification, and structured content work.",
+    title: "The work is scoped before anyone starts",
+    description: "Single-claim availability, explicit proof requirements, and payout consequence are visible before commitment.",
     icon: <BadgeCheck className="h-5 w-5" />,
   },
   {
-    title: "Proof before approval",
-    description: "Every task ships with explicit proof requirements so review is based on evidence, not vague completion claims or back-and-forth chat.",
+    title: "Review is tied to evidence",
+    description: "Approval is judged against submitted proof, not vague completion claims or back-and-forth chat.",
     icon: <Eye className="h-5 w-5" />,
   },
   {
-    title: "Solana where it matters",
-    description: "Solana gives the payout rail speed, low-cost settlement, and wallet-native custody without turning the whole product into crypto theater.",
+    title: "Solana closes the loop cleanly",
+    description: "Wallet-native release is visible when value actually moves, without turning the product into crypto theater.",
     icon: <Wallet className="h-5 w-5" />,
   },
 ] as const;
@@ -65,7 +65,7 @@ export function HomePage() {
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
                     <p className="text-sm font-semibold text-slate-950">Work is scoped before anyone starts</p>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">Each task already carries a single clear claim slot, evidence requirements, and payout consequence. The trust model is visible before commitment.</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">Each task already carries clear availability, evidence requirements, and payout consequence. The trust model is visible before commitment.</p>
                   </div>
                   <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
                     <p className="text-sm font-semibold text-slate-950">Release only happens after review</p>
@@ -100,7 +100,7 @@ export function HomePage() {
             </div>
 
             <div className="space-y-3">
-              {lifecycleSteps.map((step, index) => (
+              {lifecycleSteps.slice(0, 3).map((step, index) => (
                 <div key={step.title} className="rounded-2xl border border-white/10 bg-white/6 p-4 backdrop-blur">
                   <div className="flex items-start gap-4">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-emerald-100">
@@ -118,48 +118,34 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-6 shadow-sm sm:p-8">
-          <div className="space-y-4">
+      <section className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.92))] p-6 shadow-sm sm:p-8">
+        <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+          <div className="max-w-3xl space-y-4">
             <Badge variant="secondary" className="rounded-full px-3 py-1">
-              Product story
+              Operating proof
             </Badge>
-            <h2 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">Why Solana belongs here</h2>
+            <h2 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">The product earns trust by making the operating loop visible.</h2>
             <p className="text-base leading-7 text-slate-600">
-              Solana is not the headline. It is the infrastructure choice that makes small payouts practical, fast, and visible without adding operational drag.
+              The case for TaskVerified should fit on one screen: scoped work, explicit proof, review against evidence, and wallet-native release when value actually moves.
             </p>
           </div>
-          <div className="mt-6 space-y-4">
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-              <p className="text-sm font-semibold text-slate-950">Low-value tasks need low-friction settlement</p>
-              <p className="mt-2 text-sm leading-6 text-slate-600">If the work is small, payout overhead cannot dominate the economics. Solana keeps release lightweight.</p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-              <p className="text-sm font-semibold text-slate-950">Wallets make payout custody explicit</p>
-              <p className="mt-2 text-sm leading-6 text-slate-600">The same identity that does the work can remain tied to the address that receives the payout.</p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-              <p className="text-sm font-semibold text-slate-950">The product stays operational, not speculative</p>
-              <p className="mt-2 text-sm leading-6 text-slate-600">TaskVerified uses chain where it improves execution, not as a substitute for a clear trust model.</p>
-            </div>
+          <div className="rounded-[1.5rem] border border-slate-200 bg-white/90 px-5 py-4 text-sm leading-6 text-slate-600 xl:max-w-sm">
+            Solana stays in the supporting role it should have: payout infrastructure, wallet identity, and visible release consequence.
           </div>
         </div>
-
-        <div className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.92))] p-6 shadow-sm sm:p-8">
-          <div className="grid gap-4">
-            {operatingPrinciples.map((principle, index) => (
-              <div key={principle.title} className="grid gap-4 rounded-[1.5rem] border border-slate-200 bg-white/85 p-5 md:grid-cols-[auto_1fr_auto] md:items-start">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-emerald-200">
-                  {principle.icon}
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold tracking-tight text-slate-950">{principle.title}</h3>
-                  <p className="mt-2 text-sm leading-7 text-slate-600">{principle.description}</p>
-                </div>
-                <div className="text-sm font-semibold text-slate-400">0{index + 1}</div>
+        <div className="mt-8 grid gap-4">
+          {operatingProofs.map((principle, index) => (
+            <div key={principle.title} className="grid gap-4 rounded-[1.5rem] border border-slate-200 bg-white/85 p-5 md:grid-cols-[auto_1fr_auto] md:items-start">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-emerald-200">
+                {principle.icon}
               </div>
-            ))}
-          </div>
+              <div>
+                <h3 className="text-xl font-semibold tracking-tight text-slate-950">{principle.title}</h3>
+                <p className="mt-2 text-sm leading-7 text-slate-600">{principle.description}</p>
+              </div>
+              <div className="text-sm font-semibold text-slate-400">0{index + 1}</div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -201,7 +187,7 @@ export function HomePage() {
                   ))}
                 </div>
                 <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
-                  <span>{task.claimCount >= task.claimLimit ? "Claim slot filled" : "Claim slot open"}</span>
+                  <span>{task.claimCount >= task.claimLimit ? "Currently unavailable" : "Currently available"}</span>
                   <span className="capitalize">{task.status}</span>
                 </div>
               </div>
@@ -216,10 +202,6 @@ export function HomePage() {
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                 <p className="text-sm font-semibold text-white">The review bar is explicit</p>
                 <p className="mt-2 text-sm leading-6 text-white/70">Proof requirements are part of the task itself, so approval is tied to evidence instead of vague delivery claims.</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-sm font-semibold text-white">The payout consequence is visible</p>
-                <p className="mt-2 text-sm leading-6 text-white/70">Released payouts are recorded as the end of the trust loop, not treated as background bookkeeping.</p>
               </div>
               {releasedPayouts[0] ? (
                 <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4">

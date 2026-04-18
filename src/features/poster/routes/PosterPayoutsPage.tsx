@@ -140,7 +140,7 @@ export function PosterPayoutsPage() {
                             ? "The release path exists, but one or both payout wallets are still missing so the chain step cannot open."
                             : payout.status === "released"
                               ? "This payout has already crossed the line: signed, transferred, and recorded back into TaskVerified."
-                              : "The release attempt failed and needs inspection before another signature attempt."}
+                              : "The release attempt failed and stays blocked until the required wallet and payout checks pass again."}
                       </p>
 
                       <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -201,7 +201,7 @@ export function PosterPayoutsPage() {
                     ) : null}
                     {payout.status === "failed" ? (
                       <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-800">
-                        Release failed. Review the reason below before retrying.
+                        Release failed. Review the reason below and restore release readiness before signing again.
                       </div>
                     ) : null}
 

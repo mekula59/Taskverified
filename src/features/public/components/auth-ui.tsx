@@ -335,11 +335,11 @@ export function AuthShell({
 
       <div className="relative flex h-full flex-col justify-between gap-3.5">
         <div className="space-y-3">
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             <div className="inline-flex items-center rounded-full border border-white/14 bg-white/6 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-50/90">
               {brandEyebrow}
             </div>
-            <div className="space-y-3" style={{ viewTransitionName: "taskverified-auth-brand-copy" }}>
+            <div className="space-y-2.5" style={{ viewTransitionName: "taskverified-auth-brand-copy" }}>
               <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white/55">TaskVerified</p>
               <h2 className={cn("max-w-md font-semibold leading-tight tracking-tight", compact ? "text-[1.75rem]" : "text-[1.8rem] sm:text-[1.95rem]")}>
                 {brandTitle}
@@ -351,24 +351,24 @@ export function AuthShell({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {trustPills.map((pill, index) => (
-              <AuthTrustPill key={pill} label={pill} isActive={compact ? index < 2 : true} />
+            {trustPills.slice(0, compact ? 2 : 3).map((pill) => (
+              <AuthTrustPill key={pill} label={pill} />
             ))}
           </div>
 
           {!compact ? null : (
-            <div className="rounded-[1.35rem] border border-white/10 bg-white/8 p-4 backdrop-blur">
+            <div className="rounded-[1.35rem] border border-white/10 bg-white/8 p-3.5 backdrop-blur">
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/58">{features[0]?.title}</p>
-              <p className="mt-2 text-sm leading-6 text-white/75">{features[0]?.description}</p>
+              <p className="mt-1.5 text-sm leading-5 text-white/75">{features[0]?.description}</p>
             </div>
           )}
         </div>
 
         <div className="space-y-2">
-          <div className={cn("rounded-[1.5rem] border border-white/10 bg-black/18 backdrop-blur", compact ? "p-3.5" : "p-4")}>
+          <div className={cn("rounded-[1.5rem] border border-white/10 bg-black/18 backdrop-blur", compact ? "hidden" : "p-4")}>
             <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/52">{insightsEyebrow}</p>
             <div className="mt-3 space-y-3">
-              {insights.slice(0, compact ? 1 : 1).map((insight) => (
+              {insights.slice(0, 1).map((insight) => (
                 <div key={insight.title} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5">
                   <p className="text-sm font-semibold">{insight.title}</p>
                   <p className="mt-1.5 text-sm leading-5 text-white/70">{insight.description}</p>
@@ -394,15 +394,15 @@ export function AuthShell({
           <div className="relative lg:hidden">
             <div
               className={cn(
-                "relative overflow-hidden rounded-t-[2rem] px-4 pt-4 sm:px-5 sm:pt-5",
+                "relative overflow-hidden rounded-t-[2rem] px-4 pt-4 sm:px-5 sm:pt-4.5",
               )}
               style={{ viewTransitionName: "taskverified-auth-green-slab-mobile" }}
             >
               {renderBrandStage(true)}
             </div>
-            <div className="relative z-10 px-4 pb-4 pt-3 sm:px-5 sm:pb-5 sm:pt-4">
+            <div className="relative z-10 px-4 pb-4 pt-2.5 sm:px-5 sm:pb-4.5 sm:pt-3">
               <div
-                className="rounded-[1.65rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.97),rgba(248,250,252,0.95))] p-4 shadow-[0_26px_72px_-40px_rgba(15,23,42,0.42)] backdrop-blur"
+                className="rounded-[1.65rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.97),rgba(248,250,252,0.95))] p-4 shadow-[0_26px_72px_-40px_rgba(15,23,42,0.42)] backdrop-blur sm:p-4.5"
                 style={{ viewTransitionName: "taskverified-auth-form-stage-mobile" }}
               >
                 {renderFormStage(true)}

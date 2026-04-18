@@ -43,19 +43,19 @@ export function WorkerTasksPage() {
     <div className="space-y-8">
       <section className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.92))] p-6 shadow-sm sm:p-8">
         <div className="grid gap-6 xl:grid-cols-[1.04fr_0.96fr] xl:items-start">
-          <div className="space-y-5">
+          <div className="space-y-4">
             <Badge variant="secondary" className="rounded-full px-3 py-1">
               Worker
             </Badge>
             <div className="space-y-3">
               <h1 className="text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">Claim work that already shows you how trust will be judged.</h1>
               <p className="max-w-2xl text-base leading-7 text-slate-600">
-                Each task spells out proof requirements, single-worker availability, and payout implications before you commit. The point is not more listings. The point is cleaner judgment.
+                Each task spells out proof requirements, current availability, and payout implications before you commit. The point is not more listings. The point is cleaner judgment.
               </p>
             </div>
             {reputation ? (
-              <div className="rounded-[1.5rem] border border-slate-200 bg-white/85 p-5">
-                <p className="text-sm leading-7 text-slate-600">
+              <div className="rounded-[1.35rem] border border-slate-200 bg-white/85 px-4 py-3">
+                <p className="text-sm leading-6 text-slate-600">
                   Your trust standing is <span className="font-semibold text-slate-950">{getTrustScoreTone(reputation.trustScore).toLowerCase()}</span> at{" "}
                   <span className="font-semibold text-slate-950">{reputation.trustScore}</span>, with {reputation.approvalRate}% approval and {reputation.payoutsReleased} released Solana payouts.
                 </p>
@@ -128,17 +128,10 @@ export function WorkerTasksPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="rounded-[1.35rem] border border-slate-200 bg-slate-950 p-4 text-white">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-100/70">Trust signal</p>
-                    <p className="mt-3 text-sm leading-6 text-white/72">
-                      Explicit proof requirements are visible before claim, and payout only advances after review against that evidence.
-                    </p>
-                  </div>
-
                   <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50/85 p-4">
                     <div className="flex items-center justify-between text-sm text-slate-500">
                       <span>
-                        Claim slot {task.claimCount >= task.claimLimit ? "filled" : "open"}
+                        {task.claimCount >= task.claimLimit ? "Currently unavailable" : "Currently available"}
                       </span>
                       <span className="capitalize">{task.status}</span>
                     </div>
@@ -162,7 +155,7 @@ export function WorkerTasksPage() {
                 if (existingClaim) {
                   return (
                     <div className="flex flex-col gap-3 rounded-[1.35rem] border border-slate-200 bg-slate-50/85 px-4 py-4">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Current worker state</p>
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Current state</p>
                       <p className="text-sm text-slate-600">
                         You already hold this task. Current status: <span className="font-medium capitalize text-slate-950">{existingClaim.status}</span>
                       </p>
@@ -181,7 +174,7 @@ export function WorkerTasksPage() {
                 return (
                   <div className="rounded-[1.35rem] border border-slate-950 bg-slate-950 p-4 text-white shadow-[0_20px_50px_-30px_rgba(15,23,42,0.7)]">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-100/70">Claim checkpoint</p>
-                    <p className="mt-3 text-sm leading-6 text-white/72">Claiming means you accept the proof bar already shown above and move this task into your proof workflow.</p>
+                    <p className="mt-3 text-sm leading-6 text-white/72">Claiming means you accept the proof bar already shown above.</p>
                     <Button className="mt-4 h-12 rounded-xl bg-white px-5 text-slate-950 hover:bg-slate-100" onClick={() => handleClaim(task.id)} disabled={task.status !== "open"}>
                       Claim task
                       <ArrowRight className="h-4 w-4" />

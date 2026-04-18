@@ -1,16 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { BadgeCheck, ShieldCheck, Wallet } from "lucide-react";
+import { BadgeCheck, ShieldCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/features/auth/context/useAuth";
-import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { createSubmissionFormValues, toSubmissionInput, validateSubmissionForm } from "@/features/tasks/lib/submissionForm";
-import { formatMoney, getClaimsForWorker, getPayoutForSubmission, getSubmissionForClaim, getSubmissionTrustStatus, getWorkerReputationSummary } from "@/features/tasks/data/sampleData";
+import { getClaimsForWorker, getPayoutForSubmission, getSubmissionForClaim, getSubmissionTrustStatus, getWorkerReputationSummary } from "@/features/tasks/data/sampleData";
 import type { SubmissionFormValues } from "@/features/shared/types/domain";
 
 export function WorkerSubmissionsPage() {
@@ -111,22 +110,12 @@ export function WorkerSubmissionsPage() {
             </p>
           </div>
           <div className="rounded-[1.75rem] border border-slate-200 bg-slate-950 p-5 text-white">
-            <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
-              <div className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-emerald-200" />
-                <p className="mt-4 text-sm font-semibold">Map proof to requirements</p>
-                <p className="mt-2 text-sm leading-6 text-white/68">Strong submissions reduce review ambiguity.</p>
+                <p className="text-sm font-semibold">Submission discipline</p>
               </div>
-              <div className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
-                <BadgeCheck className="h-5 w-5 text-emerald-200" />
-                <p className="mt-4 text-sm font-semibold">Review becomes visible</p>
-                <p className="mt-2 text-sm leading-6 text-white/68">Approval or rejection now reads like a product state, not a hidden admin action.</p>
-              </div>
-              <div className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
-                <Wallet className="h-5 w-5 text-emerald-200" />
-                <p className="mt-4 text-sm font-semibold">Payout follows evidence</p>
-                <p className="mt-2 text-sm leading-6 text-white/68">You can see when approved work starts to move toward release.</p>
-              </div>
+              <p className="text-sm leading-6 text-white/72">Map the package to the requirement list, then submit one proof set that a reviewer can actually clear or reject.</p>
             </div>
           </div>
         </div>
@@ -161,7 +150,7 @@ export function WorkerSubmissionsPage() {
 
               {reputation ? (
                 <div className="rounded-xl border border-slate-200 bg-slate-50/85 px-4 py-3 text-sm text-slate-600">
-                  Trust score <span className="font-medium text-slate-950">{reputation.trustScore}</span> · {reputation.approvalRate}% approval rate · {reputation.payoutsReleased} released Solana payouts
+                  Trust score <span className="font-medium text-slate-950">{reputation.trustScore}</span> · {reputation.approvalRate}% approval
                 </div>
               ) : null}
               {!isLocked ? (
@@ -208,16 +197,8 @@ export function WorkerSubmissionsPage() {
                   {payout ? (
                     <>
                       <p>
-                        Solana payout state: <span className="font-medium capitalize text-emerald-950">{payout.status.replaceAll("_", " ")}</span>
+                        Payout state: <span className="font-medium capitalize text-emerald-950">{payout.status.replaceAll("_", " ")}</span>
                       </p>
-                      <p>
-                        Amount: <span className="font-medium text-emerald-950">{formatMoney(payout.amount, "USD")} / {payout.currencyToken}</span>
-                      </p>
-                      <p>
-                        Devnet transfer: <span className="font-medium text-emerald-950">{formatLamportsAsSol(payout.transferAmountLamports)}</span>
-                      </p>
-                      <p className="break-all">Tx signature: {payout.txSignature ?? "Not released yet"}</p>
-                      {payout.failureReason ? <p>Failure reason: <span className="text-emerald-950">{payout.failureReason}</span></p> : null}
                     </>
                   ) : null}
                 </div>
@@ -248,39 +229,34 @@ export function WorkerSubmissionsPage() {
                 {existingSubmission ? <p className="mt-2 text-xs text-muted-foreground">{getSubmissionTrustStatus(existingSubmission.status)}</p> : null}
               </div>
 
-              <div className="grid gap-5 md:grid-cols-2">
-                <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50/85 p-5">
+              <div className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="grid gap-5 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="proofLink">Proof link</Label>
                     <p className="text-sm leading-6 text-slate-600">Attach the most direct link a reviewer can open to verify the work.</p>
+                    <Input
+                      id="proofLink"
+                      value={values.proofLink}
+                      disabled={isLocked}
+                      onChange={(event) => setValues((current) => ({ ...current, proofLink: event.target.value }))}
+                      placeholder="https://example.com/proof"
+                      className="mt-4 border-slate-200 bg-white"
+                    />
                   </div>
-                  <Input
-                    id="proofLink"
-                    value={values.proofLink}
-                    disabled={isLocked}
-                    onChange={(event) => setValues((current) => ({ ...current, proofLink: event.target.value }))}
-                    placeholder="https://example.com/proof"
-                    className="mt-4 border-slate-200 bg-white"
-                  />
-                </div>
-                <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50/85 p-5">
                   <div className="space-y-2">
                     <Label htmlFor="proofFileName">Proof file placeholder</Label>
                     <p className="text-sm leading-6 text-slate-600">Name the file package that carries screenshots, exports, or other supporting evidence.</p>
+                    <Input
+                      id="proofFileName"
+                      value={values.proofFileName}
+                      disabled={isLocked}
+                      onChange={(event) => setValues((current) => ({ ...current, proofFileName: event.target.value }))}
+                      placeholder="screenshots.zip"
+                      className="mt-4 border-slate-200 bg-white"
+                    />
                   </div>
-                  <Input
-                    id="proofFileName"
-                    value={values.proofFileName}
-                    disabled={isLocked}
-                    onChange={(event) => setValues((current) => ({ ...current, proofFileName: event.target.value }))}
-                    placeholder="screenshots.zip"
-                    className="mt-4 border-slate-200 bg-white"
-                  />
                 </div>
-              </div>
-
-              <div className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="space-y-2">
+                <div className="mt-5 space-y-2">
                   <Label>Checklist</Label>
                   <p className="text-sm leading-6 text-slate-600">Mark each requirement only when it is actually represented in the submission package.</p>
                 </div>
