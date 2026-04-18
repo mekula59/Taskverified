@@ -170,7 +170,19 @@ drop policy if exists "authenticated can read profiles" on public.profiles;
 create policy "authenticated can read profiles"
 on public.profiles for select
 to authenticated
-using (true);
+using (
+  auth.uid() = user_id
+  or (
+    role = 'worker'
+    and exists (
+      select 1
+      from public.task_claims
+      join public.tasks on public.tasks.id = public.task_claims.task_id
+      where public.task_claims.worker_id = public.profiles.user_id
+        and public.tasks.poster_id = auth.uid()
+    )
+  )
+);
 
 drop policy if exists "authenticated can read wallet identities" on public.wallet_auth_identities;
 create policy "authenticated can read wallet identities"
@@ -202,43 +214,94 @@ drop policy if exists "authenticated can read tasks" on public.tasks;
 create policy "authenticated can read tasks"
 on public.tasks for select
 to authenticated
-using (true);
+using (
+  poster_id = auth.uid()
+  or status in ('open', 'claimed', 'submitted')
+  or exists (
+    select 1
+    from public.task_claims
+    where public.task_claims.task_id = public.tasks.id
+      and public.task_claims.worker_id = auth.uid()
+  )
+);
 
 drop policy if exists "authenticated can read claims" on public.task_claims;
 create policy "authenticated can read claims"
 on public.task_claims for select
 to authenticated
-using (true);
+using (
+  worker_id = auth.uid()
+  or exists (
+    select 1
+    from public.tasks
+    where public.tasks.id = public.task_claims.task_id
+      and public.tasks.poster_id = auth.uid()
+  )
+);
 
 drop policy if exists "authenticated can read submissions" on public.submissions;
 create policy "authenticated can read submissions"
 on public.submissions for select
 to authenticated
-using (true);
+using (
+  worker_id = auth.uid()
+  or exists (
+    select 1
+    from public.tasks
+    where public.tasks.id = public.submissions.task_id
+      and public.tasks.poster_id = auth.uid()
+  )
+);
 
 drop policy if exists "authenticated can read reviews" on public.submission_reviews;
 create policy "authenticated can read reviews"
 on public.submission_reviews for select
 to authenticated
-using (true);
+using (
+  poster_id = auth.uid()
+  or exists (
+    select 1
+    from public.task_claims
+    where public.task_claims.id = public.submission_reviews.claim_id
+      and public.task_claims.worker_id = auth.uid()
+  )
+);
 
 drop policy if exists "authenticated can read payouts" on public.payouts;
 create policy "authenticated can read payouts"
 on public.payouts for select
 to authenticated
-using (true);
+using (worker_id = auth.uid() or poster_id = auth.uid());
 
 drop policy if exists "authenticated can read reputation events" on public.reputation_events;
 create policy "authenticated can read reputation events"
 on public.reputation_events for select
 to authenticated
-using (true);
+using (
+  worker_id = auth.uid()
+  or exists (
+    select 1
+    from public.task_claims
+    join public.tasks on public.tasks.id = public.task_claims.task_id
+    where public.task_claims.worker_id = public.reputation_events.worker_id
+      and public.tasks.poster_id = auth.uid()
+  )
+);
 
 drop policy if exists "authenticated can read reputation summaries" on public.reputation_summaries;
 create policy "authenticated can read reputation summaries"
 on public.reputation_summaries for select
 to authenticated
-using (true);
+using (
+  worker_id = auth.uid()
+  or exists (
+    select 1
+    from public.task_claims
+    join public.tasks on public.tasks.id = public.task_claims.task_id
+    where public.task_claims.worker_id = public.reputation_summaries.worker_id
+      and public.tasks.poster_id = auth.uid()
+  )
+);
 
 create or replace function public.current_taskverified_user_id()
 returns uuid

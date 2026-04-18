@@ -44,6 +44,10 @@ type BackendSnapshot = {
   reputationSummaries: BackendReputationSummaryRow[];
 };
 
+function uniqueIds(values: Array<string | null | undefined>) {
+  return Array.from(new Set(values.filter((value): value is string => Boolean(value))));
+}
+
 function emptySnapshot(): TaskStoreSnapshot {
   return {
     tasks: [],
@@ -79,22 +83,52 @@ function mapBackendSnapshot(snapshot: BackendSnapshot): TaskStoreSnapshot {
 
 export async function fetchTaskSnapshot(): Promise<TaskStoreSnapshot> {
   const supabase = requireSupabase();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError) {
+    throw userError;
+  }
+
+  if (!user) {
+    return emptySnapshot();
+  }
+
   const [
     { data: tasks, error: tasksError },
     { data: claims, error: claimsError },
     { data: submissions, error: submissionsError },
-    { data: profiles, error: profilesError },
     { data: payouts, error: payoutsError },
-    { data: reputationEvents, error: reputationEventsError },
-    { data: reputationSummaries, error: reputationSummariesError },
   ] = await Promise.all([
     supabase.from("tasks").select("*").order("created_at", { ascending: false }),
     supabase.from("task_claims").select("*").order("claimed_at", { ascending: false }),
     supabase.from("submissions").select("*").order("updated_at", { ascending: false }),
-    supabase.from("profiles").select("*"),
     supabase.from("payouts").select("*").order("created_at", { ascending: false }),
-    supabase.from("reputation_events").select("*").order("created_at", { ascending: false }),
-    supabase.from("reputation_summaries").select("*"),
+  ]);
+
+  const visibleProfileIds = uniqueIds([
+    user.id,
+    ...((claims ?? []) as BackendClaimRow[]).map((claim) => claim.worker_id),
+    ...((submissions ?? []) as BackendSubmissionRow[]).map((submission) => submission.worker_id),
+    ...((payouts ?? []) as BackendPayoutRow[]).flatMap((payout) => [payout.worker_id, payout.poster_id]),
+  ]);
+  const visibleWorkerIds = uniqueIds([
+    user.id,
+    ...((claims ?? []) as BackendClaimRow[]).map((claim) => claim.worker_id),
+    ...((submissions ?? []) as BackendSubmissionRow[]).map((submission) => submission.worker_id),
+    ...((payouts ?? []) as BackendPayoutRow[]).map((payout) => payout.worker_id),
+  ]);
+
+  const [
+    { data: profiles, error: profilesError },
+    { data: reputationEvents, error: reputationEventsError },
+    { data: reputationSummaries, error: reputationSummariesError },
+  ] = await Promise.all([
+    supabase.from("profiles").select("*").in("user_id", visibleProfileIds),
+    supabase.from("reputation_events").select("*").in("worker_id", visibleWorkerIds).order("created_at", { ascending: false }),
+    supabase.from("reputation_summaries").select("*").in("worker_id", visibleWorkerIds),
   ]);
 
   const firstError =
