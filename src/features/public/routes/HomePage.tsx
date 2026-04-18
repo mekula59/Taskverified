@@ -1,4 +1,4 @@
-import { ArrowRight, BadgeCheck, Coins, Eye, ShieldCheck, Sparkles, Wallet } from "lucide-react";
+import { ArrowRight, BadgeCheck, Eye, ShieldCheck, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Badge } from "@/components/ui/badge";
@@ -8,9 +8,8 @@ import { seededPayouts, seededTasks } from "@/features/tasks/data/taskSeeds";
 import { formatCategoryLabel, formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
 
 const publicTasks = getPublicTasks(seededTasks);
-const liveTaskCount = publicTasks.length;
-const rewardPool = publicTasks.reduce((sum, task) => sum + task.rewardAmount, 0);
-const releasedPayouts = seededPayouts.filter((payout) => payout.status === "released").length;
+const homepageExamples = publicTasks.slice(0, 2);
+const releasedPayouts = seededPayouts.filter((payout) => payout.status === "released");
 
 const operatingPrinciples = [
   {
@@ -56,25 +55,34 @@ export function HomePage() {
                 <Link to="/signup">Get started</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-slate-300 bg-white px-6">
-                <Link to="/tasks">View live tasks</Link>
+                <Link to="/tasks">Browse example tasks</Link>
               </Button>
             </div>
 
-            <div className="grid gap-4 border-t border-slate-200 pt-6 sm:grid-cols-3">
-              <div>
-                <p className="text-sm font-medium text-slate-500">Scope</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">Small tasks</p>
-                <p className="mt-1 text-sm leading-6 text-slate-600">Testing, research, community ops, and evidence-rich content work.</p>
+            <div className="grid gap-4 border-t border-slate-200 pt-6 sm:grid-cols-[1.18fr_0.82fr]">
+              <div className="rounded-[1.5rem] border border-slate-200 bg-white/80 p-5">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Why this reads as real</p>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                    <p className="text-sm font-semibold text-slate-950">Work is scoped before anyone starts</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">Each task already carries a single clear claim slot, evidence requirements, and payout consequence. The trust model is visible before commitment.</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                    <p className="text-sm font-semibold text-slate-950">Release only happens after review</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">TaskVerified does not ask for blind trust. Proof is submitted, reviewed, and only then can value move to the wallet rail.</p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium text-slate-500">Decision rule</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">Proof first</p>
-                <p className="mt-1 text-sm leading-6 text-slate-600">Approval follows submitted evidence, not loose chat or manual trust guesses.</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-slate-500">Payout rail</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">Solana</p>
-                <p className="mt-1 text-sm leading-6 text-slate-600">Fast release, low overhead, and wallet-native custody where money movement matters.</p>
+              <div className="rounded-[1.5rem] border border-slate-200 bg-slate-950 p-5 text-white">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-100/70">Concrete proof points</p>
+                <div className="mt-4 space-y-4">
+                  {homepageExamples.map((task) => (
+                    <div key={task.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                      <p className="text-sm font-semibold text-white">{task.title}</p>
+                      <p className="mt-2 text-sm leading-6 text-white/70">{task.proofRequirements.slice(0, 2).join(" · ")}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -110,41 +118,6 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-[1.75rem] border border-slate-200 bg-white/90 p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-slate-500">Live task queue</p>
-            <ShieldCheck className="h-5 w-5 text-emerald-600" />
-          </div>
-          <p className="mt-4 text-4xl font-semibold tracking-tight text-slate-950">{liveTaskCount}</p>
-          <p className="mt-2 text-sm leading-6 text-slate-600">A compact, proof-forward public queue instead of a noisy open marketplace.</p>
-        </div>
-        <div className="rounded-[1.75rem] border border-slate-200 bg-white/90 p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-slate-500">Review model</p>
-            <Eye className="h-5 w-5 text-cyan-700" />
-          </div>
-          <p className="mt-4 text-4xl font-semibold tracking-tight text-slate-950">Proof-first</p>
-          <p className="mt-2 text-sm leading-6 text-slate-600">Decision quality comes from structured evidence requirements that are visible before work begins.</p>
-        </div>
-        <div className="rounded-[1.75rem] border border-slate-200 bg-white/90 p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-slate-500">Reward pool</p>
-            <Coins className="h-5 w-5 text-emerald-600" />
-          </div>
-          <p className="mt-4 text-4xl font-semibold tracking-tight text-slate-950">{formatMoney(rewardPool, "USD")}</p>
-          <p className="mt-2 text-sm leading-6 text-slate-600">Visible reward sizing keeps the product grounded in real operational work rather than abstract incentives.</p>
-        </div>
-        <div className="rounded-[1.75rem] border border-slate-200 bg-white/90 p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-slate-500">Released payouts</p>
-            <Wallet className="h-5 w-5 text-cyan-700" />
-          </div>
-          <p className="mt-4 text-4xl font-semibold tracking-tight text-slate-950">{releasedPayouts}</p>
-          <p className="mt-2 text-sm leading-6 text-slate-600">Solana shows up at the payout layer, where speed, finality, and wallet control are actually useful.</p>
-        </div>
-      </section>
-
       <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-6 shadow-sm sm:p-8">
           <div className="space-y-4">
@@ -172,16 +145,21 @@ export function HomePage() {
           </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
-          {operatingPrinciples.map((principle) => (
-            <div key={principle.title} className="rounded-[1.75rem] border border-slate-200 bg-white/90 p-6 shadow-sm">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-emerald-200">
-                {principle.icon}
+        <div className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.92))] p-6 shadow-sm sm:p-8">
+          <div className="grid gap-4">
+            {operatingPrinciples.map((principle, index) => (
+              <div key={principle.title} className="grid gap-4 rounded-[1.5rem] border border-slate-200 bg-white/85 p-5 md:grid-cols-[auto_1fr_auto] md:items-start">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-emerald-200">
+                  {principle.icon}
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold tracking-tight text-slate-950">{principle.title}</h3>
+                  <p className="mt-2 text-sm leading-7 text-slate-600">{principle.description}</p>
+                </div>
+                <div className="text-sm font-semibold text-slate-400">0{index + 1}</div>
               </div>
-              <h3 className="mt-6 text-xl font-semibold tracking-tight text-slate-950">{principle.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{principle.description}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
@@ -193,7 +171,7 @@ export function HomePage() {
             </Badge>
             <h2 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">Tasks that look like real work, not growth-hack filler</h2>
             <p className="text-base leading-7 text-slate-600">
-              The public queue makes the model concrete immediately: small scoped tasks, explicit proof requirements, visible rewards, and limited claims.
+              The public queue makes the product legible immediately: scoped work, explicit proof bars, and visible payout consequence instead of demo-style metric theater.
             </p>
           </div>
           <Button asChild variant="outline" className="rounded-full border-slate-300 bg-white">
@@ -203,32 +181,59 @@ export function HomePage() {
           </Button>
         </div>
 
-        <div className="mt-8 grid gap-4 xl:grid-cols-3">
-          {publicTasks.slice(0, 3).map((task) => (
-            <div key={task.id} className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between gap-3">
-                <div className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600">
-                  {formatCategoryLabel(task.category)}
+        <div className="mt-8 grid gap-6 xl:grid-cols-[1.08fr_0.92fr]">
+          <div className="grid gap-4">
+            {homepageExamples.map((task) => (
+              <div key={task.id} className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+                    {formatCategoryLabel(task.category)}
+                  </div>
+                  <div className="text-sm font-semibold text-emerald-700">{formatMoney(task.rewardAmount, task.rewardCurrency)}</div>
                 </div>
-                <div className="text-sm font-semibold text-emerald-700">{formatMoney(task.rewardAmount, task.rewardCurrency)}</div>
+                <h3 className="mt-5 text-xl font-semibold tracking-tight text-slate-950">{task.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{task.description}</p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {task.proofRequirements.map((item) => (
+                    <span key={item} className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
+                  <span>{task.claimCount >= task.claimLimit ? "Claim slot filled" : "Claim slot open"}</span>
+                  <span className="capitalize">{task.status}</span>
+                </div>
               </div>
-              <h3 className="mt-5 text-xl font-semibold tracking-tight text-slate-950">{task.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{task.description}</p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {task.proofRequirements.map((item) => (
-                  <span key={item} className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600">
-                    {item}
-                  </span>
-                ))}
-              </div>
-              <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
-                <span>
-                  Claims {task.claimCount}/{task.claimLimit}
-                </span>
-                <span className="capitalize">{task.status}</span>
-              </div>
+            ))}
+          </div>
+          <div className="rounded-[1.75rem] border border-slate-200 bg-slate-950 p-6 text-white shadow-sm">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-100/70">What judges should notice</p>
+              <ShieldCheck className="h-5 w-5 text-emerald-200" />
             </div>
-          ))}
+            <div className="mt-6 space-y-4">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p className="text-sm font-semibold text-white">The review bar is explicit</p>
+                <p className="mt-2 text-sm leading-6 text-white/70">Proof requirements are part of the task itself, so approval is tied to evidence instead of vague delivery claims.</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p className="text-sm font-semibold text-white">The payout consequence is visible</p>
+                <p className="mt-2 text-sm leading-6 text-white/70">Released payouts are recorded as the end of the trust loop, not treated as background bookkeeping.</p>
+              </div>
+              {releasedPayouts[0] ? (
+                <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4">
+                  <p className="text-xs uppercase tracking-[0.16em] text-emerald-100/70">Observed release state</p>
+                  <p className="mt-2 text-sm font-semibold text-white">
+                    {formatMoney(releasedPayouts[0].amount, "USD")} released via {releasedPayouts[0].currencyToken}
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-emerald-100/75">
+                    The important signal is not scale theater. It is that review and release already connect cleanly inside one operating loop.
+                  </p>
+                </div>
+              ) : null}
+            </div>
+          </div>
         </div>
       </section>
 

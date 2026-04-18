@@ -137,7 +137,7 @@ export function getWorkerDashboardMetrics(input: {
     {
       label: "Active claims",
       value: String(activeClaims),
-      detail: "Keep work disciplined and within queue limits.",
+      detail: "Keep work disciplined and focused on one live claim at a time.",
     },
     {
       label: "Proof queue",

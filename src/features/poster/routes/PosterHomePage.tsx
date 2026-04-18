@@ -41,7 +41,7 @@ export function PosterHomePage() {
                   <div>
                     <div className="font-medium">{task.title}</div>
                     <div className="mt-1 text-sm text-muted-foreground">
-                      <span className="capitalize">{task.status}</span> · {task.claimCount} of {task.claimLimit} claims used
+                      <span className="capitalize">{task.status}</span> · {task.claimCount >= task.claimLimit ? "claim slot filled" : "claim slot open"}
                     </div>
                   </div>
                   <div className="text-sm font-medium text-foreground">{formatMoney(task.rewardAmount, task.rewardCurrency)}</div>

@@ -24,8 +24,8 @@ export function TaskDirectoryPage() {
                 <span className="font-medium text-foreground">{formatMoney(task.rewardAmount, task.rewardCurrency)}</span>
               </div>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>Claims</span>
-                <span>{task.claimCount} / {task.claimLimit}</span>
+                <span>Claim slot</span>
+                <span>{task.claimCount >= task.claimLimit ? "Filled" : "Open"}</span>
               </div>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <span>Category</span>

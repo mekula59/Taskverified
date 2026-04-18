@@ -136,4 +136,44 @@ describe("wallet and payout transitions", () => {
     expect(next.walletProfiles.find((wallet) => wallet.userId === "poster-001")?.status).toBe("disconnected");
     expect(next.payouts[0]?.status).toBe("pending");
   });
+
+  it("recovers a failed payout when the required wallets are connected again", () => {
+    const next = connectWalletRecord(
+      {
+        tasks: seededTasks,
+        claims: seededClaims,
+        submissions: seededSubmissions,
+        workerProfiles: seededWorkerProfiles,
+        walletProfiles: seededWalletProfiles.filter((wallet) => wallet.userId !== "worker-001"),
+        payouts: [
+          {
+            id: "payout-failed",
+            taskId: "task-103",
+            claimId: "claim-202",
+            submissionId: "submission-301",
+            workerId: "worker-001",
+            posterId: "poster-001",
+            posterWalletAddress: "So1POSTER001WalletReady111111111111",
+            amount: 32,
+            currencyToken: "USDC",
+            status: "failed",
+            failureReason: "Poster wallet was not connected.",
+            createdAt: "2026-04-16T15:00:00.000Z",
+          },
+        ],
+        reputationEvents: seededReputationEvents,
+        reputationSummaries: seededReputationSummaries,
+      },
+      {
+        userId: "worker-001",
+        role: "worker",
+        displayName: "Nadia Cole",
+        walletAddress: "F4ntomRealWorkerWallet111111111111111111111",
+        provider: "phantom",
+        cluster: "devnet",
+      },
+    );
+
+    expect(next.payouts[0]?.status).toBe("ready_to_release");
+  });
 });

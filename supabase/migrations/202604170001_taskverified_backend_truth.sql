@@ -278,7 +278,7 @@ begin
     return;
   end if;
 
-  if v_payout.status in ('released', 'failed') then
+  if v_payout.status = 'released' then
     return;
   end if;
 
@@ -298,8 +298,8 @@ begin
   set worker_wallet_address = v_worker_wallet,
       poster_wallet_address = v_poster_wallet,
       failure_reason = case
-        when status = 'failed' then failure_reason
-        else null
+        when v_worker_wallet is not null and v_poster_wallet is not null then null
+        else failure_reason
       end,
       status = case
         when v_worker_wallet is not null and v_poster_wallet is not null then 'ready_to_release'
@@ -330,7 +330,7 @@ begin
     select id
     from public.payouts
     where (worker_id = p_user_id or poster_id = p_user_id)
-      and status in ('pending', 'ready_to_release')
+      and status in ('pending', 'ready_to_release', 'failed')
   loop
     perform public.refresh_payout_record(v_payout_id);
   end loop;

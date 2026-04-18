@@ -10,7 +10,7 @@ export const lifecycleSteps = [
   },
   {
     title: "Claim task",
-    description: "Verified workers claim available work within clear queue limits.",
+    description: "Verified workers claim an available task with one clear active claim slot.",
   },
   {
     title: "Submit proof",

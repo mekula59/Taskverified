@@ -211,7 +211,7 @@ export function connectWalletRecord(current: TaskStoreSnapshot, input: WalletCon
         : walletProfiles.find((wallet) => wallet.userId === payout.posterId && wallet.role === "poster")?.walletAddress) ??
       payout.posterWalletAddress;
     const nextStatus =
-      payout.status === "released" || payout.status === "failed"
+      payout.status === "released"
         ? payout.status
         : nextWorkerWallet && nextPosterWallet
           ? "ready_to_release"
@@ -265,7 +265,7 @@ export function disconnectWalletRecord(current: TaskStoreSnapshot, input: Wallet
       workerWalletAddress: workerWallet,
       posterWalletAddress: posterWallet,
       status:
-        payout.status === "released" || payout.status === "failed"
+        payout.status === "released"
           ? payout.status
           : workerWallet && posterWallet
             ? "ready_to_release"
