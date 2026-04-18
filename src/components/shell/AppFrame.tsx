@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { ShieldCheck } from "lucide-react";
 
 import { useAuth } from "@/features/auth/context/useAuth";
@@ -13,8 +13,19 @@ interface AppFrameProps {
 
 export function AppFrame({ area }: AppFrameProps) {
   const auth = useAuth();
+  const location = useLocation();
   const navigation = navigationByArea[area];
   const isPublicArea = area === "public";
+  const isAuthRoute = isPublicArea && (location.pathname === "/auth" || location.pathname === "/signin" || location.pathname === "/signup");
+  const publicNavigation = isPublicArea
+    ? navigation
+        .filter((item) =>
+          item.to === "/" ||
+          item.to === "/tasks" ||
+          (!isAuthRoute && (item.to === "/signin" || item.to === "/signup")),
+        )
+        .map((item) => (item.to === "/signup" ? { ...item, label: "Get started" } : item))
+    : navigation;
   const areaLabel =
     isPublicArea
       ? "Public"
@@ -44,7 +55,7 @@ export function AppFrame({ area }: AppFrameProps) {
           </Link>
 
           <nav className="ml-auto hidden items-center gap-2 md:flex">
-            {navigation.map((item) => (
+            {publicNavigation.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -84,16 +95,7 @@ export function AppFrame({ area }: AppFrameProps) {
               </>
             ) : (
               <>
-                {isPublicArea ? (
-                  <>
-                    <Button asChild size="sm" variant="ghost" className="text-slate-700 hover:bg-white">
-                      <Link to="/signin">Sign in</Link>
-                    </Button>
-                    <Button asChild size="sm" className="rounded-full bg-slate-950 px-4 text-white hover:bg-slate-800">
-                      <Link to="/signup">Get started</Link>
-                    </Button>
-                  </>
-                ) : (
+                {isPublicArea ? null : (
                   <Button asChild size="sm" variant="outline">
                     <Link to="/signin">Sign in</Link>
                   </Button>
@@ -105,7 +107,7 @@ export function AppFrame({ area }: AppFrameProps) {
 
         <div className={isPublicArea ? "mx-auto w-full max-w-[1280px] px-4 pb-3 sm:px-6 lg:px-8 md:hidden" : "container pb-3 md:hidden"}>
           <nav className="flex gap-2 overflow-x-auto">
-            {navigation.map((item) => (
+            {publicNavigation.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -130,7 +132,16 @@ export function AppFrame({ area }: AppFrameProps) {
         </div>
       </header>
 
-      <main className={isPublicArea ? "mx-auto w-full max-w-[1280px] px-4 py-8 sm:px-6 md:py-12 lg:px-8" : "container py-10 md:py-14"}>
+      <main
+        className={
+          isPublicArea
+            ? cn(
+                "mx-auto w-full max-w-[1280px] px-4 py-8 sm:px-6 lg:px-8",
+                isAuthRoute ? "md:py-6" : "md:py-12",
+              )
+            : "container py-10 md:py-14"
+        }
+      >
         <Outlet />
       </main>
     </div>
