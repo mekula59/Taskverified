@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { TasksContext, type TasksContextValue } from "@/features/tasks/context/TasksContext";
 import { useAuth } from "@/features/auth/context/useAuth";
-import { isSupabaseConfigured } from "@/lib/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase/client";
 import {
   claimTaskMutation,
   completePayoutReleaseMutation,
@@ -23,16 +23,27 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   const [snapshot, setSnapshot] = useState<TaskStoreSnapshot>(emptySnapshot);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isRefreshingRef = useRef(false);
+  const pendingRefreshRef = useRef(false);
 
-  const refresh = useCallback(async () => {
+  const refreshSnapshot = useCallback(async (background = false) => {
     if (!isSupabaseConfigured || !auth.user) {
       setSnapshot(emptySnapshot());
       setIsLoading(false);
       return;
     }
 
-    setIsLoading(true);
-    setError(null);
+    if (isRefreshingRef.current) {
+      pendingRefreshRef.current = true;
+      return;
+    }
+
+    isRefreshingRef.current = true;
+
+    if (!background) {
+      setIsLoading(true);
+      setError(null);
+    }
 
     try {
       const nextSnapshot = await fetchTaskSnapshot();
@@ -41,23 +52,62 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       setError(nextError instanceof Error ? nextError.message : "Unable to load task data.");
       setSnapshot(emptySnapshot());
     } finally {
-      setIsLoading(false);
+      isRefreshingRef.current = false;
+
+      if (!background) {
+        setIsLoading(false);
+      }
+
+      if (pendingRefreshRef.current) {
+        pendingRefreshRef.current = false;
+        void refreshSnapshot(true);
+      }
     }
   }, [auth.user]);
+
+  const refresh = useCallback(async () => refreshSnapshot(false), [refreshSnapshot]);
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
 
+  useEffect(() => {
+    if (!supabase || !auth.user) {
+      return;
+    }
+
+    const channel = supabase.channel(`task-shared-truth:${auth.user.id}`);
+    const realtimeTables = ["tasks", "task_claims", "submissions", "payouts"] as const;
+
+    realtimeTables.forEach((table) => {
+      channel.on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table,
+        },
+        () => {
+          void refreshSnapshot(true);
+        },
+      );
+    });
+
+    channel.subscribe();
+
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [auth.user, refreshSnapshot]);
+
   const withRefresh = useCallback(
     async <T,>(runner: () => Promise<T>) => {
       setError(null);
       const result = await runner();
-      const nextSnapshot = await fetchTaskSnapshot();
-      setSnapshot(nextSnapshot);
+      await refreshSnapshot(true);
       return result;
     },
-    [],
+    [refreshSnapshot],
   );
 
   const value = useMemo<TasksContextValue>(
