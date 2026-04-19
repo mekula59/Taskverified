@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.8";
 import bs58 from "https://esm.sh/bs58@6.0.0";
 import nacl from "https://esm.sh/tweetnacl@1.0.3";
-import { decode as decodeBase64 } from "https://deno.land/std@0.224.0/encoding/base64.ts";
+import { decodeBase64 } from "https://deno.land/std@0.224.0/encoding/base64.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL");
@@ -29,6 +29,32 @@ function jsonResponse(body: unknown, init?: ResponseInit) {
       ...(init?.headers ?? {}),
     },
   });
+}
+
+function serializeDebugError(error: unknown) {
+  if (error instanceof Error) {
+    return {
+      type: error.name,
+      message: error.message,
+    };
+  }
+
+  if (error && typeof error === "object") {
+    const maybeRecord = error as Record<string, unknown>;
+
+    return {
+      type: typeof maybeRecord.code === "string" ? "PostgrestError" : "UnknownObject",
+      message: typeof maybeRecord.message === "string" ? maybeRecord.message : "Wallet authentication failed.",
+      code: typeof maybeRecord.code === "string" ? maybeRecord.code : null,
+      details: typeof maybeRecord.details === "string" ? maybeRecord.details : null,
+      hint: typeof maybeRecord.hint === "string" ? maybeRecord.hint : null,
+    };
+  }
+
+  return {
+    type: typeof error,
+    message: "Wallet authentication failed.",
+  };
 }
 
 function toUint8Array(input: string) {
@@ -192,7 +218,20 @@ Deno.serve(async (request) => {
       );
 
       if (error) {
-        throw error;
+        const debug = serializeDebugError(error);
+
+        console.error("auth-wallet nonce upsert failed", {
+          walletAddress,
+          debug,
+        });
+
+        return jsonResponse(
+          {
+            error: "Wallet auth nonce upsert failed.",
+            debug,
+          },
+          { status: 500 },
+        );
       }
 
       return jsonResponse({

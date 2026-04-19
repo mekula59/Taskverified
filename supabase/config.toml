@@ -1,0 +1,2 @@
+[functions.auth-wallet]
+verify_jwt = false
