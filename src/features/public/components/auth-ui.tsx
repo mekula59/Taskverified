@@ -23,11 +23,18 @@ export function runAuthViewTransition(action: () => void) {
 export function deriveAuthFeedbackFromError(message: string, fallbackTitle: string) {
   const normalized = message.toLowerCase();
 
-  if (normalized.includes("rate limit") || normalized.includes("throttl")) {
+  if (
+    normalized.includes("rate limit") ||
+    normalized.includes("throttl") ||
+    normalized.includes("email sign-in is temporarily paused") ||
+    normalized.includes("email requests were sent recently") ||
+    normalized.includes("request a new one") ||
+    normalized.includes("magic link")
+  ) {
     return {
       tone: "warning" as const,
-      title: "Rate limit reached",
-      hint: "Wait about a minute, then try email again or continue with Phantom now.",
+      title: "Email temporarily paused",
+      hint: "Wait about a minute, then try email again. Your wallet sign-in state has not changed.",
     };
   }
 
