@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { formatAuthError } from "@/lib/supabase/auth";
 import { AuthDivider, AuthFeedbackBanner, AuthShell, deriveAuthFeedbackFromError, runAuthViewTransition } from "@/features/public/components/auth-ui";
 
+const EMAIL_RESEND_COOLDOWN_SECONDS = 60;
+
 export function SignUpPage() {
   const auth = useAuth();
   const navigate = useNavigate();
@@ -17,6 +19,7 @@ export function SignUpPage() {
   const [error, setError] = useState<string | null>(null);
   const [walletError, setWalletError] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState<string | null>(null);
+  const [emailCooldownRemaining, setEmailCooldownRemaining] = useState(0);
   const [isWalletSubmitting, setIsWalletSubmitting] = useState(false);
   const { wallets, wallet, connecting, select } = useWallet();
   const phantomWallet = wallets.find((item) => item.adapter.name === "Phantom");
@@ -41,8 +44,25 @@ export function SignUpPage() {
     navigate(auth.routeForRole(auth.user?.role), { replace: true });
   }, [auth, navigate]);
 
+  useEffect(() => {
+    if (emailCooldownRemaining <= 0) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setEmailCooldownRemaining((remaining) => Math.max(remaining - 1, 0));
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [emailCooldownRemaining]);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (emailCooldownRemaining > 0) {
+      return;
+    }
+
     setError(null);
     setWalletError(null);
     setEmailSent(null);
@@ -50,6 +70,7 @@ export function SignUpPage() {
     try {
       await auth.signUpWithEmail(email);
       setEmailSent(email.trim().toLowerCase());
+      setEmailCooldownRemaining(EMAIL_RESEND_COOLDOWN_SECONDS);
     } catch (nextError) {
       setError(formatAuthError(nextError, "Unable to create your account right now."));
     }
@@ -98,6 +119,12 @@ export function SignUpPage() {
   const currentError = walletError ?? error ?? auth.error;
   const errorFeedback = currentError ? deriveAuthFeedbackFromError(currentError, "Account creation unavailable") : null;
   const isWalletBusy = connecting || isWalletSubmitting || auth.isLoading;
+  const isEmailCooldownActive = emailCooldownRemaining > 0;
+  const emailButtonLabel = isEmailCooldownActive
+    ? `Resend available in ${emailCooldownRemaining}s`
+    : auth.isLoading
+      ? "Sending secure link..."
+      : "Continue with Email";
 
   return (
     <AuthShell
@@ -155,11 +182,11 @@ export function SignUpPage() {
 
               <button
                 type="submit"
-                disabled={auth.isLoading}
+                disabled={auth.isLoading || isEmailCooldownActive}
                 className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 disabled:pointer-events-none disabled:opacity-50"
               >
                 <Mail className="h-4 w-4" />
-                {auth.isLoading ? "Sending secure link..." : "Continue with Email"}
+                {emailButtonLabel}
               </button>
 
               {emailSent ? (

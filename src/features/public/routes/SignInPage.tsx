@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { formatAuthError } from "@/lib/supabase/auth";
 import { AuthDivider, AuthFeedbackBanner, AuthShell, deriveAuthFeedbackFromError, runAuthViewTransition } from "@/features/public/components/auth-ui";
 
+const EMAIL_RESEND_COOLDOWN_SECONDS = 60;
+
 export function SignInPage() {
   const auth = useAuth();
   const navigate = useNavigate();
@@ -18,6 +20,7 @@ export function SignInPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [walletError, setWalletError] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState<string | null>(null);
+  const [emailCooldownRemaining, setEmailCooldownRemaining] = useState(0);
   const [isWalletSubmitting, setIsWalletSubmitting] = useState(false);
   const { wallets, wallet, connecting, select } = useWallet();
 
@@ -44,8 +47,25 @@ export function SignInPage() {
     navigate(next ?? auth.routeForRole(auth.user?.role), { replace: true });
   }, [auth, navigate, next]);
 
+  useEffect(() => {
+    if (emailCooldownRemaining <= 0) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setEmailCooldownRemaining((remaining) => Math.max(remaining - 1, 0));
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [emailCooldownRemaining]);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (emailCooldownRemaining > 0) {
+      return;
+    }
+
     setSubmitError(null);
     setWalletError(null);
     setEmailSent(null);
@@ -53,6 +73,7 @@ export function SignInPage() {
     try {
       await auth.signInWithEmail(email);
       setEmailSent(email.trim().toLowerCase());
+      setEmailCooldownRemaining(EMAIL_RESEND_COOLDOWN_SECONDS);
     } catch (error) {
       setSubmitError(formatAuthError(error, "Unable to sign in right now."));
     }
@@ -101,6 +122,12 @@ export function SignInPage() {
   const currentError = walletError ?? submitError ?? auth.error;
   const errorFeedback = currentError ? deriveAuthFeedbackFromError(currentError, "Sign-in unavailable") : null;
   const isWalletBusy = connecting || isWalletSubmitting || auth.isLoading;
+  const isEmailCooldownActive = emailCooldownRemaining > 0;
+  const emailButtonLabel = isEmailCooldownActive
+    ? `Resend available in ${emailCooldownRemaining}s`
+    : auth.isLoading
+      ? "Sending secure link..."
+      : "Continue with Email";
 
   return (
     <AuthShell
@@ -158,11 +185,11 @@ export function SignInPage() {
 
               <button
                 type="submit"
-                disabled={auth.isLoading}
+                disabled={auth.isLoading || isEmailCooldownActive}
                 className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 disabled:pointer-events-none disabled:opacity-50"
               >
                 <Mail className="h-4 w-4" />
-                {auth.isLoading ? "Sending secure link..." : "Continue with Email"}
+                {emailButtonLabel}
               </button>
 
               {emailSent ? (
