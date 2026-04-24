@@ -23,7 +23,8 @@ export function WorkerSubmissionsPage() {
   const selectedTask = tasks.find((task) => task.id === selectedClaim?.taskId);
   const existingSubmission = selectedClaim ? getSubmissionForClaim(submissions, selectedClaim.id) : undefined;
   const payout = existingSubmission ? getPayoutForSubmission(payouts, existingSubmission.id) : undefined;
-  const isLocked = existingSubmission?.status === "approved" || existingSubmission?.status === "rejected";
+  const canSubmitProof = selectedClaim?.status === "active" && !existingSubmission;
+  const isLocked = Boolean(selectedClaim) && !canSubmitProof;
   const reputation = getWorkerReputationSummary(reputationSummaries, workerId);
 
   const initialValues = useMemo(
