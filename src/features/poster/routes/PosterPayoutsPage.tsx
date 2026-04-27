@@ -111,7 +111,11 @@ export function PosterPayoutsPage() {
         ) : null}
 
         <div className="space-y-4">
-          {posterPayouts.map((payout) => (
+          {posterPayouts.map((payout) => {
+            const canAttemptRelease = payout.status === "ready_to_release" || (payout.status === "failed" && Boolean(payout.workerWalletAddress && payout.posterWalletAddress));
+            const releaseButtonLabel = payout.status === "failed" ? "Retry release" : "Sign and release";
+
+            return (
             <div key={payout.id} className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
               <div className={cn("border-b px-5 py-5", payout.status === "ready_to_release" ? "border-cyan-200 bg-cyan-50/70" : payout.status === "released" ? "border-emerald-200 bg-emerald-50/70" : payout.status === "failed" ? "border-rose-200 bg-rose-50/70" : "border-slate-200 bg-slate-50/70")}>
                 <div className="grid gap-4 xl:grid-cols-[1.08fr_0.92fr]">
@@ -171,14 +175,14 @@ export function PosterPayoutsPage() {
                       </div>
                     </div>
 
-                    {payout.status === "ready_to_release" ? (
+                    {canAttemptRelease ? (
                       <div className="flex justify-start">
                         <Button
                           className="h-12 rounded-xl bg-slate-950 px-5 text-white hover:bg-slate-800"
                           onClick={() => handleRelease(payout.id)}
                           disabled={!isLivePosterWalletConnected || activeReleaseId === payout.id}
                         >
-                          {activeReleaseId === payout.id ? "Releasing on Solana..." : "Sign and release"}
+                          {activeReleaseId === payout.id ? "Releasing on Solana..." : releaseButtonLabel}
                           <ArrowRight className="h-4 w-4" />
                         </Button>
                       </div>
@@ -240,7 +244,8 @@ export function PosterPayoutsPage() {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
 
           {posterPayouts.length === 0 ? (
             <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 text-sm leading-6 text-slate-600">
