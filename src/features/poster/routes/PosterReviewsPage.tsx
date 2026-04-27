@@ -72,9 +72,11 @@ export function PosterReviewsPage() {
   const checklistCompletedCount = selectedSubmission?.checklistItems.filter((item) => item.completed).length ?? 0;
   const checklistTotalCount = selectedSubmission?.checklistItems.length ?? 0;
   const proofArtifactsCount = [selectedSubmission?.proofLink, selectedSubmission?.proofFileName].filter(Boolean).length;
+  const canReview = selectedSubmission?.status === "submitted";
+  const openDecisionCount = reviewItems.filter((submission) => submission.status === "submitted").length;
 
   const handleDecision = async (decision: "approved" | "rejected") => {
-    if (!selectedSubmission || !selectedTask) {
+    if (!selectedSubmission || !selectedTask || !canReview) {
       return;
     }
 
@@ -272,12 +274,20 @@ export function PosterReviewsPage() {
                       Approving this proof moves the payout toward <span className="font-medium text-slate-950">{payout.workerWalletAddress && payout.posterWalletAddress ? "ready to release" : "wallet-dependent hold"}</span>. Rejecting it preserves the evidence trail but blocks release.
                     </p>
                   ) : null}
-                  <Button className="h-12 rounded-xl bg-slate-950 px-5 text-white hover:bg-slate-800" onClick={() => handleDecision("approved")}>
-                    Approve and unlock payout
-                  </Button>
-                  <Button variant="outline" className="h-12 rounded-xl border-slate-300 bg-white" onClick={() => handleDecision("rejected")}>
-                    Reject proof
-                  </Button>
+                  {canReview ? (
+                    <>
+                      <Button className="h-12 rounded-xl bg-slate-950 px-5 text-white hover:bg-slate-800" onClick={() => handleDecision("approved")}>
+                        Approve and unlock payout
+                      </Button>
+                      <Button variant="outline" className="h-12 rounded-xl border-slate-300 bg-white" onClick={() => handleDecision("rejected")}>
+                        Reject proof
+                      </Button>
+                    </>
+                  ) : (
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
+                      <span className="font-medium text-slate-950">Review complete.</span> This submission is already {formatSubmissionStatus(selectedSubmission.status)}, so the decision is locked in backend truth.
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -359,7 +369,7 @@ export function PosterReviewsPage() {
               </div>
             </div>
 
-            {reviewError ? (
+            {canReview && reviewError ? (
               <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-800">{reviewError}</div>
             ) : null}
           </div>
@@ -451,7 +461,7 @@ export function PosterReviewsPage() {
             <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
               <div className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
                 <p className="text-sm text-white/55">Open decisions</p>
-                <p className="mt-2 text-4xl font-semibold text-white">{reviewItems.length}</p>
+                <p className="mt-2 text-4xl font-semibold text-white">{openDecisionCount}</p>
               </div>
               <div className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
                 <p className="text-sm font-semibold">Evidence controls payout readiness</p>
