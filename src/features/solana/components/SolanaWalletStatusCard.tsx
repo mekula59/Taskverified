@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { WalletReadyState } from "@solana/wallet-adapter-base";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -27,35 +27,6 @@ export function SolanaWalletStatusCard({ userId, role, displayName, className }:
   const isPhantomAvailable =
     phantomWallet?.readyState === WalletReadyState.Installed || phantomWallet?.readyState === WalletReadyState.Loadable;
 
-  useEffect(() => {
-    if (!userId) {
-      return;
-    }
-
-    if (connected && adapterWalletAddress) {
-      if (
-        localWallet?.status !== "connected" ||
-        localWallet.walletAddress !== adapterWalletAddress ||
-        localWallet.provider !== "phantom"
-      ) {
-        void connectWallet({
-          userId,
-          role,
-          displayName,
-          walletAddress: adapterWalletAddress,
-          provider: "phantom",
-          cluster: "devnet",
-        });
-      }
-
-      return;
-    }
-
-    if (!connecting && !wallet && localWallet?.status === "connected") {
-      void disconnectWallet({ userId, role });
-    }
-  }, [adapterWalletAddress, connectWallet, connected, connecting, disconnectWallet, displayName, localWallet?.provider, localWallet?.status, localWallet?.walletAddress, role, userId, wallet]);
-
   const handleConnect = async () => {
     if (!phantomWallet || !isPhantomAvailable) {
       setError("Phantom was not detected. Install or unlock Phantom to connect on Solana devnet.");
@@ -75,26 +46,74 @@ export function SolanaWalletStatusCard({ userId, role, displayName, className }:
     }
   };
 
-  const handleDisconnect = async () => {
+  const handleLinkWallet = async () => {
+    if (!userId || !adapterWalletAddress) {
+      setError("Connect Phantom before linking this wallet to TaskVerified.");
+      return;
+    }
+
     setError(null);
 
     try {
-      await disconnect();
-    } finally {
-      void disconnectWallet({ userId, role });
+      await connectWallet({
+        userId,
+        role,
+        displayName,
+        walletAddress: adapterWalletAddress,
+        provider: "phantom",
+        cluster: "devnet",
+      });
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Unable to link this wallet to TaskVerified.");
     }
   };
 
-  const isConnected = connected && Boolean(adapterWalletAddress);
-  const visibleAddress = isConnected ? adapterWalletAddress : localWallet?.walletAddress;
+  const handleUnlinkWallet = async () => {
+    if (!userId) {
+      setError("Sign in before unlinking a TaskVerified wallet.");
+      return;
+    }
+
+    setError(null);
+
+    let disconnectError: unknown = null;
+
+    try {
+      if (connected) {
+        await disconnect();
+      }
+    } catch (nextError) {
+      disconnectError = nextError;
+    }
+
+    try {
+      await disconnectWallet({ userId, role });
+      if (disconnectError) {
+        setError("TaskVerified unlinked this wallet, but Phantom did not fully disconnect. You can disconnect it from Phantom directly.");
+      }
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Unable to unlink this wallet from TaskVerified.");
+    }
+  };
+
+  const isLiveConnected = connected && Boolean(adapterWalletAddress);
+  const linkedWalletAddress = localWallet?.status === "connected" ? localWallet.walletAddress : undefined;
+  const isCurrentWalletLinked =
+    isLiveConnected && Boolean(linkedWalletAddress) && linkedWalletAddress === adapterWalletAddress && localWallet?.provider === "phantom";
+  const hasLinkedWallet = Boolean(linkedWalletAddress);
 
   return (
     <div className={className ?? "space-y-4"}>
       <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
-        {isConnected ? (
+        {isLiveConnected ? (
           <>
             Connected with Phantom on Solana devnet
-            <div className="mt-2 break-all font-medium text-foreground">{visibleAddress}</div>
+            <div className="mt-2 break-all font-medium text-foreground">{adapterWalletAddress}</div>
+            {isCurrentWalletLinked ? (
+              <div className="mt-2 text-emerald-700">This Phantom wallet is linked to TaskVerified.</div>
+            ) : (
+              <div className="mt-2 text-amber-700">Phantom is connected, but this wallet is not linked to TaskVerified yet.</div>
+            )}
           </>
         ) : (
           <>
@@ -102,18 +121,30 @@ export function SolanaWalletStatusCard({ userId, role, displayName, className }:
             <div className="mt-2">TaskVerified expects Phantom on devnet for this demo payout flow.</div>
           </>
         )}
+        {hasLinkedWallet && !isCurrentWalletLinked ? (
+          <div className="mt-3 rounded-lg border border-border/60 bg-background/80 px-3 py-2">
+            TaskVerified linked wallet
+            <div className="mt-1 break-all font-medium text-foreground">{linkedWalletAddress}</div>
+          </div>
+        ) : null}
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row">
-        {isConnected ? (
-          <Button variant="outline" onClick={handleDisconnect} disabled={disconnecting}>
-            {disconnecting ? "Disconnecting..." : `Disconnect ${formatWalletAddress(visibleAddress)}`}
-          </Button>
-        ) : (
+        {!isLiveConnected ? (
           <Button onClick={handleConnect} disabled={connecting}>
             {connecting ? "Connecting..." : "Connect Phantom"}
           </Button>
-        )}
+        ) : null}
+        {isLiveConnected && !isCurrentWalletLinked ? (
+          <Button onClick={handleLinkWallet} disabled={!userId}>
+            Link this wallet to TaskVerified
+          </Button>
+        ) : null}
+        {hasLinkedWallet ? (
+          <Button variant="outline" onClick={handleUnlinkWallet} disabled={disconnecting}>
+            {disconnecting ? "Disconnecting..." : `Unlink ${formatWalletAddress(linkedWalletAddress)}`}
+          </Button>
+        ) : null}
       </div>
 
       <div className="text-xs text-muted-foreground">
