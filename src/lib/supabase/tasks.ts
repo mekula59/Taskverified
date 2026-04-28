@@ -223,22 +223,29 @@ export async function reviewSubmissionMutation(input: SubmissionReviewInput): Pr
 }
 
 export async function preparePayoutReleaseMutation(payoutId: string): Promise<PayoutReleasePreparation> {
-  const data = await rpcCall<{
+  type ReleasePayoutRow = {
     payout_id: string;
     poster_wallet_address: string;
     worker_wallet_address: string;
     transfer_amount_lamports: number;
     transfer_amount_sol: number;
-  }>("release_payout", {
+  };
+
+  const data = await rpcCall<ReleasePayoutRow | ReleasePayoutRow[]>("release_payout", {
     p_payout_id: payoutId,
   });
+  const releasePayout = Array.isArray(data) ? data[0] : data;
+
+  if (!releasePayout) {
+    throw new Error("Payout release preparation was not returned.");
+  }
 
   return {
-    payoutId: data.payout_id,
-    posterWalletAddress: data.poster_wallet_address,
-    workerWalletAddress: data.worker_wallet_address,
-    transferAmountLamports: data.transfer_amount_lamports,
-    transferAmountSol: data.transfer_amount_sol,
+    payoutId: releasePayout.payout_id,
+    posterWalletAddress: releasePayout.poster_wallet_address,
+    workerWalletAddress: releasePayout.worker_wallet_address,
+    transferAmountLamports: releasePayout.transfer_amount_lamports,
+    transferAmountSol: releasePayout.transfer_amount_sol,
   };
 }
 
