@@ -10,12 +10,12 @@ interface SectionCardProps {
 
 export function SectionCard({ title, description, children }: SectionCardProps) {
   return (
-    <Card className="border-border/70 bg-card/85 shadow-sm">
+    <Card className="min-w-0 border-border/70 bg-card/85 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-xl">{title}</CardTitle>
-        {description ? <CardDescription>{description}</CardDescription> : null}
+        <CardTitle className="break-words text-xl leading-tight">{title}</CardTitle>
+        {description ? <CardDescription className="break-words leading-6">{description}</CardDescription> : null}
       </CardHeader>
-      <CardContent>{children}</CardContent>
+      <CardContent className="min-w-0">{children}</CardContent>
     </Card>
   );
 }
