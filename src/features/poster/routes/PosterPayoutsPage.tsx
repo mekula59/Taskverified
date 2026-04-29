@@ -10,6 +10,7 @@ import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getPayoutsForPoster, getWalletProfile } from "@/features/tasks/data/sampleData";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { cn } from "@/lib/utils";
+import type { PayoutRecord } from "@/features/shared/types/domain";
 
 function formatPayoutStatus(status: string) {
   return status.replaceAll("_", " ");
@@ -31,6 +32,42 @@ function getPayoutStatusClasses(status: string) {
   return "border-amber-200 bg-amber-50 text-amber-800";
 }
 
+function hasBothPayoutWallets(payout: PayoutRecord) {
+  return Boolean(payout.workerWalletAddress && payout.posterWalletAddress);
+}
+
+function isRecoverableFailedPayout(payout: PayoutRecord) {
+  return payout.status === "failed" && hasBothPayoutWallets(payout) && !payout.txSignature;
+}
+
+function isFinalizationAttentionPayout(payout: PayoutRecord) {
+  return payout.status === "failed" && Boolean(payout.txSignature);
+}
+
+function isHistoryPayout(payout: PayoutRecord) {
+  return payout.status === "released" || payout.status === "pending" || (payout.status === "failed" && !hasBothPayoutWallets(payout));
+}
+
+function getFailedPayoutMessage(payout: PayoutRecord) {
+  if (payout.txSignature) {
+    return "Transaction signed on Solana. Finalization needs retry before this payout can be marked released.";
+  }
+
+  if (!payout.workerWalletAddress && !payout.posterWalletAddress) {
+    return "Release failed and both wallet truths are missing. Reconnect the required wallets before retrying.";
+  }
+
+  if (!payout.workerWalletAddress) {
+    return "Release failed and the worker payout wallet is missing. Reconnect the worker wallet before retrying.";
+  }
+
+  if (!payout.posterWalletAddress) {
+    return "Release failed and the poster release wallet is missing. Reconnect the poster wallet before retrying.";
+  }
+
+  return "Release failed, but both wallets are present. Retry release when the poster Phantom wallet matches the payout wallet.";
+}
+
 export function PosterPayoutsPage() {
   const auth = useAuth();
   const { payouts, walletProfiles, preparePayoutRelease, completePayoutRelease, failPayoutRelease } = useTasks();
@@ -40,11 +77,31 @@ export function PosterPayoutsPage() {
   const posterName = auth.profile?.fullName ?? "Poster";
   const wallet = getWalletProfile(walletProfiles, posterId);
   const posterPayouts = getPayoutsForPoster(payouts, posterId);
+  const activeReleasePayouts = posterPayouts.filter((payout) => payout.status === "ready_to_release" || isRecoverableFailedPayout(payout));
+  const finalizationAttentionPayouts = posterPayouts.filter(isFinalizationAttentionPayout);
+  const historyPayouts = posterPayouts.filter(isHistoryPayout);
   const readyCount = posterPayouts.filter((payout) => payout.status === "ready_to_release").length;
   const releasedCount = posterPayouts.filter((payout) => payout.status === "released").length;
   const totalReadyUsd = posterPayouts
     .filter((payout) => payout.status === "ready_to_release")
     .reduce((sum, payout) => sum + payout.amount, 0);
+  const payoutSections = [
+    {
+      title: "Active release queue",
+      description: "Ready payouts and recoverable failed releases that can be signed again.",
+      payouts: activeReleasePayouts,
+    },
+    {
+      title: "Finalization attention",
+      description: "Transactions that have a recorded signature but still need finalization retry.",
+      payouts: finalizationAttentionPayouts,
+    },
+    {
+      title: "History",
+      description: "Released payouts, pending wallet setup, and failed records that are not currently retryable.",
+      payouts: historyPayouts,
+    },
+  ];
   const isLivePosterWalletConnected = connected && publicKey?.toBase58() === wallet?.walletAddress;
   const [releaseError, setReleaseError] = useState<string | null>(null);
   const [activeReleaseId, setActiveReleaseId] = useState<string | null>(null);
@@ -57,10 +114,11 @@ export function PosterPayoutsPage() {
 
     setReleaseError(null);
     setActiveReleaseId(payoutId);
+    let txSignature: string | null = null;
 
     try {
       const preparation = await preparePayoutRelease(payoutId);
-      const signature = await executeDevnetPayoutTransfer({
+      txSignature = await executeDevnetPayoutTransfer({
         connection,
         walletPublicKey: publicKey,
         sendTransaction,
@@ -69,7 +127,7 @@ export function PosterPayoutsPage() {
 
       await completePayoutRelease({
         payoutId,
-        txSignature: signature,
+        txSignature,
       });
     } catch (nextError) {
       const failureReason = nextError instanceof Error ? nextError.message : "Unable to release the payout.";
@@ -79,6 +137,7 @@ export function PosterPayoutsPage() {
         await failPayoutRelease({
           payoutId,
           failureReason,
+          txSignature: txSignature ?? undefined,
         });
       } catch {
         // Keep the original error visible even if backend failure recording also fails.
@@ -110,9 +169,27 @@ export function PosterPayoutsPage() {
           </div>
         ) : null}
 
-        <div className="space-y-4">
-          {posterPayouts.map((payout) => {
-            const canAttemptRelease = payout.status === "ready_to_release" || (payout.status === "failed" && Boolean(payout.workerWalletAddress && payout.posterWalletAddress));
+        <div className="space-y-6">
+          {posterPayouts.length === 0 ? (
+            <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 text-sm leading-6 text-slate-600">
+              No payouts are visible for this poster yet. Approved work that reaches payout state will appear here.
+            </div>
+          ) : (
+            payoutSections.map((group) => (
+            <div key={group.title} className="space-y-3">
+              <div className="flex flex-col gap-1">
+                <p className="text-sm font-semibold text-slate-950">{group.title}</p>
+                <p className="text-sm leading-6 text-slate-600">{group.description}</p>
+              </div>
+
+              {group.payouts.length === 0 ? (
+                <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 text-sm leading-6 text-slate-600">
+                  No payouts in this section.
+                </div>
+              ) : null}
+
+              {group.payouts.map((payout) => {
+            const canAttemptRelease = payout.status === "ready_to_release" || isRecoverableFailedPayout(payout);
             const releaseButtonLabel = payout.status === "failed" ? "Retry release" : "Sign and release";
 
             return (
@@ -144,7 +221,7 @@ export function PosterPayoutsPage() {
                             ? "The release path exists, but one or both payout wallets are still missing so the chain step cannot open."
                             : payout.status === "released"
                               ? "This payout has already crossed the line: signed, transferred, and recorded back into TaskVerified."
-                              : "The release attempt failed and stays blocked until the required wallet and payout checks pass again."}
+                              : getFailedPayoutMessage(payout)}
                       </p>
 
                       <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -205,7 +282,7 @@ export function PosterPayoutsPage() {
                     ) : null}
                     {payout.status === "failed" ? (
                       <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-800">
-                        Release failed. Review the reason below and restore release readiness before signing again.
+                        {getFailedPayoutMessage(payout)}
                       </div>
                     ) : null}
 
@@ -246,12 +323,9 @@ export function PosterPayoutsPage() {
             </div>
             );
           })}
-
-          {posterPayouts.length === 0 ? (
-            <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 text-sm leading-6 text-slate-600">
-              No payouts are visible for this poster yet. Approved work that reaches payout state will appear here.
             </div>
-          ) : null}
+          ))
+          )}
         </div>
       </SectionCard>
 
