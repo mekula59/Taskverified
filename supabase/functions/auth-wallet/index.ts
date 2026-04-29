@@ -20,6 +20,8 @@ const admin = createClient(supabaseUrl, supabaseServiceRoleKey, {
 
 const allowedAction = new Set(["nonce", "verify"]);
 
+class WalletOwnershipConflictError extends Error {}
+
 function jsonResponse(body: unknown, init?: ResponseInit) {
   return new Response(JSON.stringify(body), {
     ...init,
@@ -102,13 +104,6 @@ async function findWalletUser(walletAddress: string) {
     throw identityError;
   }
 
-  if (identity?.user_id) {
-    return {
-      userId: identity.user_id,
-      isNewUser: false,
-    };
-  }
-
   const { data: profile, error: profileError } = await admin
     .from("profiles")
     .select("user_id")
@@ -119,19 +114,31 @@ async function findWalletUser(walletAddress: string) {
     throw profileError;
   }
 
-  if (profile?.user_id) {
-    const { error: identityUpsertError } = await admin.from("wallet_auth_identities").upsert(
-      {
-        wallet_address: normalized,
-        user_id: profile.user_id,
-        provider: "phantom",
-        last_authenticated_at: new Date().toISOString(),
-      },
-      { onConflict: "wallet_address" },
-    );
+  if (identity?.user_id) {
+    if (profile?.user_id && profile.user_id !== identity.user_id) {
+      throw new WalletOwnershipConflictError("This wallet is linked to conflicting TaskVerified accounts. Contact support before using wallet sign-in.");
+    }
 
-    if (identityUpsertError) {
-      throw identityUpsertError;
+    return {
+      userId: identity.user_id,
+      isNewUser: false,
+    };
+  }
+
+  if (profile?.user_id) {
+    const { error: identityInsertError } = await admin.from("wallet_auth_identities").insert({
+      wallet_address: normalized,
+      user_id: profile.user_id,
+      provider: "phantom",
+      last_authenticated_at: new Date().toISOString(),
+    });
+
+    if (identityInsertError) {
+      if (identityInsertError.code === "23505") {
+        throw new WalletOwnershipConflictError("This wallet is already linked to another TaskVerified account.");
+      }
+
+      throw identityInsertError;
     }
 
     return {
@@ -164,6 +171,10 @@ async function findWalletUser(walletAddress: string) {
   });
 
   if (identityInsertError) {
+    if (identityInsertError.code === "23505") {
+      throw new WalletOwnershipConflictError("This wallet is already linked to another TaskVerified account.");
+    }
+
     throw identityInsertError;
   }
 
@@ -304,18 +315,23 @@ Deno.serve(async (request) => {
       throw updateUserError;
     }
 
-    const { error: identityUpsertError } = await admin.from("wallet_auth_identities").upsert(
-      {
-        wallet_address: walletAddress,
-        user_id: identity.userId,
+    const { data: updatedIdentity, error: identityUpdateError } = await admin
+      .from("wallet_auth_identities")
+      .update({
         provider: "phantom",
         last_authenticated_at: new Date().toISOString(),
-      },
-      { onConflict: "wallet_address" },
-    );
+      })
+      .eq("wallet_address", walletAddress)
+      .eq("user_id", identity.userId)
+      .select("wallet_address")
+      .maybeSingle<{ wallet_address: string }>();
 
-    if (identityUpsertError) {
-      throw identityUpsertError;
+    if (identityUpdateError) {
+      throw identityUpdateError;
+    }
+
+    if (!updatedIdentity) {
+      throw new WalletOwnershipConflictError("Wallet identity changed while signing in. Try again or contact support.");
     }
 
     const { error: challengeDeleteError } = await admin
@@ -334,6 +350,10 @@ Deno.serve(async (request) => {
       isNewUser: identity.isNewUser,
     });
   } catch (error) {
+    if (error instanceof WalletOwnershipConflictError) {
+      return jsonResponse({ error: error.message }, { status: 409 });
+    }
+
     return jsonResponse(
       {
         error: error instanceof Error ? error.message : "Wallet authentication failed.",
