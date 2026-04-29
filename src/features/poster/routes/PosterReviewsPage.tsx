@@ -252,17 +252,20 @@ export function PosterReviewsPage() {
                 <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5">
                   <div className="space-y-2">
                     <Label htmlFor="reviewerNotes" className="text-slate-900">
-                      Rejection notes
+                      {canReview ? "Rejection notes" : "Decision notes"}
                     </Label>
                     <p className="text-sm leading-6 text-slate-600">
-                      Optional when approving. Required when rejecting so the worker knows exactly what evidence failed.
+                      {canReview
+                        ? "Optional when approving. Required when rejecting so the worker knows exactly what evidence failed."
+                        : "This decision is complete. Notes are shown for context and cannot be changed from this review state."}
                     </p>
                   </div>
                   <Textarea
                     id="reviewerNotes"
                     value={reviewValues.reviewerNotes}
+                    disabled={!canReview}
                     onChange={(event) => setReviewValues({ reviewerNotes: event.target.value })}
-                    placeholder="State what is missing, incorrect, or not credible enough to approve."
+                    placeholder={canReview ? "State what is missing, incorrect, or not credible enough to approve." : "No notes were recorded for this completed decision."}
                     className="mt-4 min-h-[140px] border-slate-200 bg-white"
                   />
                   {errors.reviewerNotes ? <p className="mt-2 text-sm text-destructive">{errors.reviewerNotes}</p> : null}
@@ -420,7 +423,11 @@ export function PosterReviewsPage() {
                   </div>
 
                   <div className={cn("mt-3 text-sm leading-6", isSelected ? "text-white/70" : "text-slate-600")}>
-                    {submission.submittedAt ? `Submitted ${new Date(submission.submittedAt).toLocaleDateString()}` : "Not yet submitted"}
+                    {submission.status === "submitted"
+                      ? submission.submittedAt
+                        ? `Submitted ${new Date(submission.submittedAt).toLocaleDateString()}`
+                        : "Submitted for review"
+                      : `Decision complete: ${formatSubmissionStatus(submission.status)}`}
                   </div>
 
                   <div className="mt-4 flex flex-wrap gap-2">

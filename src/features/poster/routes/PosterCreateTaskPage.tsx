@@ -59,14 +59,14 @@ export function PosterCreateTaskPage() {
       <PageIntro
         eyebrow="Poster"
         title="Task creation should produce reviewable work."
-        description="This form creates a real backend task record so it immediately appears across poster, worker, and shared product surfaces."
+        description="Create a task with clear proof requirements, review consequences, and payout context before workers claim it."
       />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {posterTrustSignals.map((signal) => (
           <MetricCard key={signal.label} label={signal.label} value={signal.value} detail={signal.detail} icon={signal.icon} />
         ))}
       </div>
-      <SectionCard title="Create task" description="All fields below are persisted in Supabase and reused across poster, worker, and shared task views.">
+      <SectionCard title="Create task" description="These fields define what workers will see, what proof they must submit, and how review can move payout forward.">
         <form className="space-y-5" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <Label htmlFor="title">Title</Label>

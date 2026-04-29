@@ -7,6 +7,13 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getClaimForTask, getPayoutForSubmission, getPublicTasks, getSubmissionForClaim, getTrustScoreTone, getWorkerReputationSummary } from "@/features/tasks/data/sampleData";
+import type { Task } from "@/features/shared/types/domain";
+
+function getDeadlineHasPassed(deadlineAt: string) {
+  const deadline = new Date(deadlineAt);
+
+  return Number.isFinite(deadline.getTime()) && deadline < new Date();
+}
 
 export function WorkerTasksPage() {
   const auth = useAuth();
@@ -19,8 +26,45 @@ export function WorkerTasksPage() {
   const reputation = getWorkerReputationSummary(reputationSummaries, workerId);
   const [claimError, setClaimError] = useState<string | null>(null);
 
+  const getClaimDisabledReason = (task: Task) => {
+    if (!workerId) {
+      return "Worker session is still loading.";
+    }
+
+    if (getClaimForTask(claims, task.id, workerId)) {
+      return "You already claimed this task.";
+    }
+
+    if (!isClaimEligible) {
+      return "Claiming stays locked until your verification clears.";
+    }
+
+    if (task.status !== "open") {
+      return `Task is ${task.status.replaceAll("_", " ")} and no longer accepts new claims.`;
+    }
+
+    if (task.claimCount >= task.claimLimit) {
+      return "All claim slots are already filled.";
+    }
+
+    if (getDeadlineHasPassed(task.deadlineAt)) {
+      return "The task deadline has passed.";
+    }
+
+    return null;
+  };
+
   const handleClaim = async (taskId: string) => {
-    if (!isClaimEligible || !workerId) {
+    const task = tasks.find((item) => item.id === taskId);
+
+    if (!task) {
+      setClaimError("Task is unavailable.");
+      return;
+    }
+
+    const disabledReason = getClaimDisabledReason(task);
+    if (disabledReason) {
+      setClaimError(disabledReason);
       return;
     }
 
@@ -143,14 +187,7 @@ export function WorkerTasksPage() {
                 const existingClaim = getClaimForTask(claims, task.id, workerId);
                 const submission = existingClaim ? getSubmissionForClaim(submissions, existingClaim.id) : undefined;
                 const payout = submission ? getPayoutForSubmission(payouts, submission.id) : undefined;
-
-                if (!isClaimEligible) {
-                  return (
-                    <div className="rounded-xl border border-slate-200 bg-slate-50/85 px-4 py-3 text-sm text-slate-600">
-                      Claiming stays locked until your verification clears.
-                    </div>
-                  );
-                }
+                const disabledReason = getClaimDisabledReason(task);
 
                 if (existingClaim) {
                   return (
@@ -171,14 +208,29 @@ export function WorkerTasksPage() {
                   );
                 }
 
+                if (!isClaimEligible) {
+                  return (
+                    <div className="rounded-xl border border-slate-200 bg-slate-50/85 px-4 py-3 text-sm text-slate-600">
+                      {disabledReason}
+                    </div>
+                  );
+                }
+
                 return (
                   <div className="rounded-[1.35rem] border border-slate-950 bg-slate-950 p-4 text-white shadow-[0_20px_50px_-30px_rgba(15,23,42,0.7)]">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-100/70">Claim checkpoint</p>
                     <p className="mt-3 text-sm leading-6 text-white/72">Claiming means you accept the proof bar already shown above.</p>
-                    <Button className="mt-4 h-12 rounded-xl bg-white px-5 text-slate-950 hover:bg-slate-100" onClick={() => handleClaim(task.id)} disabled={task.status !== "open"}>
+                    <Button className="mt-4 h-12 rounded-xl bg-white px-5 text-slate-950 hover:bg-slate-100" onClick={() => handleClaim(task.id)} disabled={Boolean(disabledReason)}>
                       Claim task
                       <ArrowRight className="h-4 w-4" />
                     </Button>
+                    {disabledReason ? (
+                      <p className="mt-3 text-sm leading-6 text-white/68">{disabledReason}</p>
+                    ) : (
+                      <p className="mt-3 text-sm leading-6 text-white/68">
+                        {Math.max(task.claimLimit - task.claimCount, 0)} claim slot{task.claimLimit - task.claimCount === 1 ? "" : "s"} available before {new Date(task.deadlineAt).toLocaleDateString()}.
+                      </p>
+                    )}
                   </div>
                 );
               })()}

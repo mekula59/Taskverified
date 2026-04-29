@@ -290,7 +290,7 @@ export function WorkerSubmissionsPage() {
                   <p className="mt-3 text-sm leading-6 text-white/72">
                     {isSubmissionReady
                       ? "This package reads as review-ready. Once submitted, the poster will judge exactly what is written here against the requirement list."
-                      : "The package can still be submitted, but it does not yet read as fully review-ready. Tighten the missing parts above before you put it in front of the poster."}
+                      : "Resolve the missing checks above before submitting. The form will block missing narrative or checklist coverage, and direct artifacts make the review defensible."}
                   </p>
                   <Button className="mt-4 h-12 rounded-xl bg-white px-5 text-slate-950 hover:bg-slate-100" onClick={handleSubmit}>Submit for review</Button>
                 </div>
