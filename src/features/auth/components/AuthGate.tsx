@@ -1,4 +1,5 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { ShieldCheck } from "lucide-react";
 
 import { useAuth } from "@/features/auth/context/useAuth";
 import type { UserRole } from "@/features/shared/types/domain";
@@ -12,7 +13,21 @@ export function AuthGate({ role }: AuthGateProps) {
   const location = useLocation();
 
   if (auth.isLoading) {
-    return null;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-4 text-foreground">
+        <div className="flex max-w-sm flex-col items-center gap-4 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+            <ShieldCheck className="h-6 w-6" />
+          </div>
+          <div className="space-y-1.5">
+            <p className="font-heading text-base font-semibold">Opening TaskVerified</p>
+            <p className="text-sm leading-6 text-muted-foreground">
+              Checking your session before loading the workspace.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!auth.isAuthenticated) {

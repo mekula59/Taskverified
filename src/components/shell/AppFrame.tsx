@@ -129,6 +129,16 @@ export function AppFrame({ area }: AppFrameProps) {
               </NavLink>
             ))}
           </nav>
+          {auth.isAuthenticated ? (
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <Button asChild size="sm" variant="outline" className="h-10">
+                <Link to="/app/settings">Settings</Link>
+              </Button>
+              <Button size="sm" variant="ghost" className="h-10" onClick={auth.signOut}>
+                Sign out
+              </Button>
+            </div>
+          ) : null}
         </div>
       </header>
 

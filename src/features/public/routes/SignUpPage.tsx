@@ -81,7 +81,7 @@ export function SignUpPage() {
     setEmailSent(null);
 
     if (!phantomWallet || !isPhantomAvailable) {
-      setWalletError("Phantom was not detected. Install or unlock Phantom to continue.");
+      setWalletError("Phantom is not installed in this browser. Install Phantom or use email fallback to continue.");
       return;
     }
 

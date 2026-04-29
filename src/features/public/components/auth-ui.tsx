@@ -62,11 +62,45 @@ export function deriveAuthFeedbackFromError(message: string, fallbackTitle: stri
     };
   }
 
+  if (normalized.includes("not linked") || normalized.includes("linked wallet")) {
+    return {
+      tone: "warning" as const,
+      title: "Wallet connected, not linked",
+      hint: "Use the wallet linked to this TaskVerified account, or continue with email recovery.",
+    };
+  }
+
+  if (
+    normalized.includes("not detected") ||
+    normalized.includes("not installed") ||
+    normalized.includes("install phantom")
+  ) {
+    return {
+      tone: "warning" as const,
+      title: "Phantom is not installed",
+      hint: "Install Phantom in this browser, then return here. Email fallback is still available.",
+    };
+  }
+
+  if (
+    normalized.includes("locked") ||
+    normalized.includes("unlock") ||
+    normalized.includes("unavailable") ||
+    normalized.includes("cancelled") ||
+    normalized.includes("message signing")
+  ) {
+    return {
+      tone: "warning" as const,
+      title: "Phantom needs attention",
+      hint: "Unlock Phantom, keep this browser active, then approve the TaskVerified message.",
+    };
+  }
+
   if (normalized.includes("wallet") || normalized.includes("phantom")) {
     return {
       tone: "warning" as const,
       title: "Phantom needs attention",
-      hint: "Unlock the wallet, approve the exact TaskVerified message, and try again.",
+      hint: "Confirm the wallet is available in this browser, then approve the TaskVerified message.",
     };
   }
 
@@ -332,7 +366,7 @@ export function AuthShell({
   const renderBrandStage = (compact = false) => (
     <div
       className={cn(
-        "relative overflow-hidden text-white",
+        "relative max-w-full overflow-hidden text-white",
         compact ? "rounded-[1.6rem] px-4 pb-4 pt-4" : "h-full rounded-[1.9rem] px-5 py-4.5 xl:px-6 xl:py-5",
       )}
     >
@@ -348,7 +382,7 @@ export function AuthShell({
             </div>
             <div className="space-y-2.5" style={{ viewTransitionName: "taskverified-auth-brand-copy" }}>
               <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white/55">TaskVerified</p>
-              <h2 className={cn("max-w-md font-semibold leading-tight tracking-tight", compact ? "text-[1.75rem]" : "text-[1.8rem] sm:text-[1.95rem]")}>
+              <h2 className={cn("max-w-md break-words font-semibold leading-tight tracking-tight", compact ? "text-[1.75rem]" : "text-[1.8rem] sm:text-[1.95rem]")}>
                 {brandTitle}
               </h2>
               <p className={cn("max-w-md text-white/78", compact ? "text-sm leading-6" : "text-sm leading-6 sm:text-[15px]")}>
@@ -393,9 +427,9 @@ export function AuthShell({
       <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_top_left,_rgba(20,184,166,0.14),_transparent_30%),radial-gradient(circle_at_82%_12%,_rgba(34,211,238,0.1),_transparent_26%),linear-gradient(180deg,_#f7fbfb_0%,_#eef4f4_48%,_#f8fafc_100%)]" />
       <div className="absolute inset-x-0 top-0 -z-10 h-48 bg-[linear-gradient(180deg,rgba(7,19,25,0.04),transparent)]" />
 
-      <div className="mx-auto flex min-h-[calc(100vh-8.5rem)] max-w-[980px] items-start px-4 py-2 sm:px-6 sm:py-3 lg:px-8 lg:py-4">
+      <div className="mx-auto flex min-h-[calc(100vh-8.5rem)] w-full min-w-0 max-w-[980px] items-start px-4 py-2 sm:px-6 sm:py-3 lg:px-8 lg:py-4">
         <div
-          className="relative w-full overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/70 shadow-[0_30px_110px_-60px_rgba(15,23,42,0.55)] backdrop-blur"
+          className="relative w-full min-w-0 overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/70 shadow-[0_30px_110px_-60px_rgba(15,23,42,0.55)] backdrop-blur"
           style={{ viewTransitionName: "taskverified-auth-card" }}
         >
           <div className="relative lg:hidden">

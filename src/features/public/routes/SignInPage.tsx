@@ -25,6 +25,7 @@ export function SignInPage() {
   const { wallets, wallet, connecting, select } = useWallet();
 
   const next = (location.state as { from?: string } | null)?.from;
+  const isProtectedRedirect = Boolean(next);
   const phantomWallet = wallets.find((item) => item.adapter.name === "Phantom");
   const isPhantomAvailable =
     phantomWallet?.readyState === WalletReadyState.Installed || phantomWallet?.readyState === WalletReadyState.Loadable;
@@ -84,7 +85,7 @@ export function SignInPage() {
     setEmailSent(null);
 
     if (!phantomWallet || !isPhantomAvailable) {
-      setWalletError("Phantom was not detected. Install or unlock Phantom to continue.");
+      setWalletError("Phantom is not installed in this browser. Install Phantom or use email fallback to continue.");
       return;
     }
 
@@ -132,9 +133,13 @@ export function SignInPage() {
   return (
     <AuthShell
       mode="signin"
-      modeEyebrow="Returning member"
-      modeTitle="Sign in to your verified workspace"
-      modeDescription="Continue with Phantom to restore the identity tied to your proof history, payout trail, and trust record."
+      modeEyebrow={isProtectedRedirect ? "Workspace access" : "Returning member"}
+      modeTitle={isProtectedRedirect ? "Sign in to continue to your workspace" : "Sign in to your verified workspace"}
+      modeDescription={
+        isProtectedRedirect
+          ? "Continue with Phantom to restore the identity tied to the workspace you tried to open. Email remains available as a fallback."
+          : "Continue with Phantom to restore the identity tied to your proof history, payout trail, and trust record."
+      }
       phantomTitle="Continue with Phantom"
       phantomDescription="Sign one wallet message to restore the identity attached to your Solana payout address and proof record."
       phantomHint="Preferred for returning contributors, reviewers, and payout operators on Solana."
