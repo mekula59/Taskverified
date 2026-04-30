@@ -1,9 +1,25 @@
-import { Badge } from "@/components/ui/badge";
+import { CalendarDays, CheckCircle2, CircleDot, LockKeyhole, WalletCards } from "lucide-react";
+
 import { PageIntro } from "@/components/shell/PageIntro";
-import { SectionCard } from "@/components/shell/SectionCard";
+import { Badge } from "@/components/ui/badge";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { seededTasks } from "@/features/tasks/data/taskSeeds";
-import { formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
+import { formatCategoryLabel, formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
+
+function formatDeadline(deadlineAt: string) {
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+  }).format(new Date(deadlineAt));
+}
+
+function getClaimState(task: { claimCount: number; claimLimit: number }) {
+  if (task.claimCount >= task.claimLimit) {
+    return "Filled";
+  }
+
+  return `${task.claimLimit - task.claimCount} slot open`;
+}
 
 export function TaskDirectoryPage() {
   const { tasks } = useTasks();
@@ -12,50 +28,85 @@ export function TaskDirectoryPage() {
   const isShowingExamples = livePublicTasks.length === 0;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <PageIntro
         eyebrow="Public"
-        title="Public tasks expose the proof model up front."
+        title="Public tasks, shown as proof-first work objects."
         description={
           isShowingExamples
-            ? "Browse example tasks that show how TaskVerified scopes work, sets a proof bar, and makes claim state visible before anyone commits."
-            : "Browse public tasks with visible rewards, claim state, and proof requirements before you enter the worker flow."
+            ? "These example tasks show how TaskVerified presents reward, claim state, deadline, and proof requirements before a worker commits."
+            : "Browse public tasks with visible rewards, claim state, deadline, and proof requirements before entering the worker flow."
         }
       />
       {isShowingExamples ? (
-        <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50/80 px-5 py-4 text-sm leading-6 text-amber-900">
-          These are public examples, not private task data. Sign in only when you are ready to claim work, submit proof, or manage payouts.
+        <div className="flex gap-3 rounded-2xl bg-amber-50/80 px-4 py-3 text-sm leading-6 text-amber-950 ring-1 ring-amber-200/80">
+          <LockKeyhole className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />
+          <p>
+            Public examples are illustrative seeded data, not private task data. Sign in only when you are ready to claim work, submit proof, or manage payouts.
+          </p>
         </div>
       ) : null}
-      <div className="grid gap-6 xl:grid-cols-3">
+      <div className="grid gap-4 lg:grid-cols-2">
         {publicTasks.map((task) => (
-          <SectionCard key={task.id} title={task.title} description={task.description}>
-            <div className="space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
-                <span>Status</span>
-                <span className="font-medium capitalize text-foreground">{task.status}</span>
-              </div>
-              <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
-                <span>Reward</span>
-                <span className="font-medium text-foreground">{formatMoney(task.rewardAmount, task.rewardCurrency)}</span>
-              </div>
-              <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
-                <span>Claim slot</span>
-                <span>{task.claimCount >= task.claimLimit ? "Filled" : "Open"}</span>
-              </div>
-              <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
-                <span>Category</span>
-                <span className="capitalize">{task.category}</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {task.proofRequirements.map((item) => (
-                  <Badge key={item} variant="secondary" className="max-w-full whitespace-normal rounded-full break-words text-left">
-                    {item}
+          <article key={task.id} className="tv-surface overflow-hidden">
+            <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200/80 bg-white px-5 py-4">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="secondary" className="rounded-full capitalize">
+                    {formatCategoryLabel(task.category)}
                   </Badge>
+                  <Badge variant={task.status === "open" ? "success" : "outline"} className="rounded-full capitalize">
+                    {task.status}
+                  </Badge>
+                </div>
+                <h2 className="mt-3 text-xl font-semibold tracking-tight text-slate-950">{task.title}</h2>
+              </div>
+              <div className="rounded-2xl bg-slate-950 px-4 py-2 text-right text-white">
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-400">Reward</p>
+                <p className="text-lg font-semibold">{formatMoney(task.rewardAmount, task.rewardCurrency)}</p>
+              </div>
+            </div>
+
+            <div className="px-5 py-4">
+              <p className="text-sm leading-6 text-slate-600">{task.description}</p>
+
+              <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                <div className="tv-ledger-row">
+                  <span className="inline-flex items-center gap-1.5">
+                    <CircleDot className="h-3.5 w-3.5" />
+                    Claim
+                  </span>
+                  <strong>{getClaimState(task)}</strong>
+                </div>
+                <div className="tv-ledger-row">
+                  <span className="inline-flex items-center gap-1.5">
+                    <CalendarDays className="h-3.5 w-3.5" />
+                    Deadline
+                  </span>
+                  <strong>{formatDeadline(task.deadlineAt)}</strong>
+                </div>
+                <div className="tv-ledger-row">
+                  <span className="inline-flex items-center gap-1.5">
+                    <WalletCards className="h-3.5 w-3.5" />
+                    Release
+                  </span>
+                  <strong>After review</strong>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-slate-200/80 bg-slate-50/70 px-5 py-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Proof requirement</p>
+              <div className="mt-3 grid gap-2">
+                {task.proofRequirements.map((item) => (
+                  <div key={item} className="flex items-start gap-2 rounded-xl bg-white px-3 py-2 text-sm font-medium text-slate-700 ring-1 ring-slate-200/80">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span>{item}</span>
+                  </div>
                 ))}
               </div>
             </div>
-          </SectionCard>
+          </article>
         ))}
       </div>
     </div>
