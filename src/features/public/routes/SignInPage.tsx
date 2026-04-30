@@ -163,39 +163,41 @@ export function SignInPage() {
       emailFallback={
         <>
           <AuthDivider label="Email fallback" />
-          <form className="mt-4 rounded-[1.35rem] border border-slate-200 bg-slate-50/80 p-5" onSubmit={handleSubmit}>
-            <div className="space-y-5">
-              <div className="space-y-2">
+          <form className="mt-3 rounded-[1.2rem] bg-slate-50 p-3.5 ring-1 ring-slate-200" onSubmit={handleSubmit}>
+            <div className="space-y-3">
+              <div className="space-y-1.5">
                 <p className="text-sm font-semibold text-slate-900">Continue by email</p>
-                <p className="text-sm leading-6 text-slate-600">
+                <p className="text-sm leading-5 text-slate-600 lg:hidden">
                   Use a secure magic link if Phantom is unavailable or you need account recovery in this browser.
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-slate-700">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder="you@example.com"
-                  required
-                  autoComplete="email"
-                  className="h-12 border-slate-200 bg-white"
-                />
-              </div>
+              <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-slate-700">
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="you@example.com"
+                    required
+                    autoComplete="email"
+                    className="h-11 border-slate-200 bg-white shadow-sm"
+                  />
+                </div>
 
-              <button
-                type="submit"
-                disabled={auth.isLoading || isEmailCooldownActive}
-                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 disabled:pointer-events-none disabled:opacity-50"
-              >
-                <Mail className="h-4 w-4" />
-                {emailButtonLabel}
-              </button>
+                <button
+                  type="submit"
+                  disabled={auth.isLoading || isEmailCooldownActive}
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-900 shadow-sm transition-colors hover:bg-slate-100 disabled:pointer-events-none disabled:opacity-50 md:w-auto"
+                >
+                  <Mail className="h-4 w-4" />
+                  {emailButtonLabel}
+                </button>
+              </div>
 
               {emailSent ? (
                 <AuthFeedbackBanner

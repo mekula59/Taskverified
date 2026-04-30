@@ -43,7 +43,7 @@ export function AppFrame({ area }: AppFrameProps) {
         }
       />
       <header className={isPublicArea ? "sticky top-0 z-40 border-b border-slate-200/70 bg-white/75 backdrop-blur-xl" : "sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur"}>
-        <div className={isPublicArea ? "mx-auto flex min-h-[4.5rem] w-full max-w-[1280px] items-center gap-4 px-4 sm:px-6 lg:px-8" : "container flex min-h-16 items-center gap-4"}>
+        <div className={isPublicArea ? "mx-auto flex min-h-[4.25rem] w-full max-w-[1120px] items-center gap-4 px-4 sm:px-6 lg:px-8" : "container flex min-h-16 items-center gap-4"}>
           <Link to="/" className="flex items-center gap-3">
             <div className={isPublicArea ? "flex h-11 w-11 items-center justify-center rounded-2xl bg-[#04252a] text-emerald-200 shadow-[0_12px_30px_-18px_rgba(4,37,42,0.9)]" : "flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/12 text-primary"}>
               <ShieldCheck className="h-5 w-5" />
@@ -105,7 +105,7 @@ export function AppFrame({ area }: AppFrameProps) {
           </div>
         </div>
 
-        <div className={isPublicArea ? "mx-auto w-full max-w-[1280px] px-4 pb-3 sm:px-6 lg:px-8 md:hidden" : "container pb-3 md:hidden"}>
+        <div className={isPublicArea ? "mx-auto w-full max-w-[1120px] px-4 pb-3 sm:px-6 lg:px-8 md:hidden" : "container pb-3 md:hidden"}>
           <nav className="flex gap-2 overflow-x-auto">
             {publicNavigation.map((item) => (
               <NavLink
@@ -146,10 +146,10 @@ export function AppFrame({ area }: AppFrameProps) {
         className={
           isPublicArea
             ? cn(
-                "mx-auto w-full max-w-[1280px] px-4 py-8 sm:px-6 lg:px-8",
-                isAuthRoute ? "md:py-6" : "md:py-12",
+                "mx-auto w-full max-w-[1120px] px-4 py-6 sm:px-6 lg:px-8",
+                isAuthRoute ? "md:py-3" : "md:py-7",
               )
-            : "container py-10 md:py-14"
+            : "container py-7 md:py-8"
         }
       >
         <Outlet />
