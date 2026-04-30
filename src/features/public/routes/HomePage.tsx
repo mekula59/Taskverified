@@ -30,19 +30,19 @@ const operatingLoop = [
 
 export function HomePage() {
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <section className="overflow-hidden rounded-[1.75rem] bg-slate-950 text-white shadow-[0_28px_90px_-60px_rgba(15,23,42,0.9)]">
         <div className="grid lg:grid-cols-[minmax(0,1fr)_420px]">
-          <div className="px-6 py-8 md:px-9 md:py-10 lg:py-12">
+          <div className="px-6 py-7 md:px-9 md:py-8 lg:py-9">
             <div className="max-w-3xl">
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-200">Human-verified micro-work</p>
-              <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-[1.03] tracking-tight md:text-[3.45rem]">
+              <h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-[1.03] tracking-tight md:text-[3.2rem]">
                 Work is only trusted when the proof can be judged.
               </h1>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300">
+              <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
                 TaskVerified turns small tasks into accountable work packets: requirements first, proof second, review third, payout last.
               </p>
-              <div className="mt-7 flex flex-wrap gap-3">
+              <div className="mt-6 flex flex-wrap gap-3">
                 <Button asChild className="h-11 rounded-full bg-white px-5 font-semibold text-slate-950 hover:bg-emerald-50">
                   <Link to="/signup">Create account</Link>
                 </Button>
@@ -53,8 +53,8 @@ export function HomePage() {
             </div>
           </div>
 
-          <div className="border-t border-white/10 bg-white/[0.045] p-5 lg:border-l lg:border-t-0 lg:p-6">
-            <div className="rounded-[1.35rem] bg-white p-4 text-slate-950 shadow-[0_24px_70px_-52px_rgba(0,0,0,0.8)]">
+          <div className="border-t border-white/10 bg-white/[0.045] p-5 lg:border-l lg:border-t-0 lg:p-5">
+            <div className="rounded-[1.25rem] bg-white p-4 text-slate-950 shadow-[0_24px_70px_-52px_rgba(0,0,0,0.8)]">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Proof packet</p>
@@ -64,24 +64,24 @@ export function HomePage() {
                   {featuredTask ? formatMoney(featuredTask.rewardAmount, featuredTask.rewardCurrency) : "$24"}
                 </div>
               </div>
-              <div className="mt-5 space-y-3">
+              <div className="mt-4 space-y-2.5">
                 {(featuredTask?.proofRequirements ?? ["Screenshots", "Structured notes", "Device details"]).slice(0, 3).map((item) => (
-                  <div key={item} className="flex items-center gap-3 border-b border-slate-100 pb-3 last:border-b-0 last:pb-0">
+                  <div key={item} className="flex items-center gap-3 border-b border-slate-100 pb-2.5 last:border-b-0 last:pb-0">
                     <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
                     <span className="text-sm font-medium text-slate-700">{item}</span>
                   </div>
                 ))}
               </div>
-              <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs">
-                <div className="rounded-xl bg-slate-50 p-3">
+              <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
+                <div className="rounded-xl bg-slate-50 p-2.5">
                   <p className="font-semibold text-slate-950">Open</p>
                   <p className="mt-1 text-slate-500">claim</p>
                 </div>
-                <div className="rounded-xl bg-slate-50 p-3">
+                <div className="rounded-xl bg-slate-50 p-2.5">
                   <p className="font-semibold text-slate-950">Proof</p>
                   <p className="mt-1 text-slate-500">required</p>
                 </div>
-                <div className="rounded-xl bg-slate-50 p-3">
+                <div className="rounded-xl bg-slate-50 p-2.5">
                   <p className="font-semibold text-slate-950">Review</p>
                   <p className="mt-1 text-slate-500">before pay</p>
                 </div>
@@ -91,13 +91,13 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="rounded-[1.5rem] bg-white px-5 py-6 shadow-sm ring-1 ring-slate-200 md:px-7">
-        <div className="grid gap-4 md:grid-cols-4">
+      <section className="rounded-[1.5rem] bg-white px-5 py-5 shadow-sm ring-1 ring-slate-200 md:px-7">
+        <div className="grid gap-3 md:grid-cols-4">
           {operatingLoop.map((step, index) => (
             <div key={step.title} className="relative border-l border-slate-200 pl-4 first:border-l-0 first:pl-0 md:first:border-l md:first:pl-4">
               <div className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">0{index + 1}</div>
-              <h2 className="mt-3 text-lg font-semibold tracking-tight text-slate-950">{step.title}</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">{step.description}</p>
+              <h2 className="mt-2 text-base font-semibold tracking-tight text-slate-950">{step.title}</h2>
+              <p className="mt-1.5 text-sm leading-6 text-slate-600">{step.description}</p>
             </div>
           ))}
         </div>

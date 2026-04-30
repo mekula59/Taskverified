@@ -260,7 +260,7 @@ export function AuthShell({
   insights,
 }: AuthShellProps) {
   const renderForm = () => (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex rounded-full bg-slate-100 p-1">
           <button
@@ -287,15 +287,15 @@ export function AuthShell({
         <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">{modeEyebrow}</div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <h1
-          className="max-w-2xl text-3xl font-semibold leading-tight tracking-tight text-slate-950"
+          className="max-w-2xl text-[1.7rem] font-semibold leading-tight tracking-tight text-slate-950"
           style={{ viewTransitionName: "taskverified-auth-title" }}
         >
           {modeTitle}
         </h1>
         <p
-          className="max-w-2xl text-sm leading-6 text-slate-600"
+          className="max-w-2xl text-sm leading-5 text-slate-600"
           style={{ viewTransitionName: "taskverified-auth-description" }}
         >
           {modeDescription}
@@ -303,13 +303,13 @@ export function AuthShell({
       </div>
 
       <div
-        className="rounded-[1.35rem] bg-slate-950 p-4 text-white shadow-[0_24px_58px_-40px_rgba(15,23,42,0.85)]"
+        className="rounded-[1.25rem] bg-slate-950 p-3.5 text-white shadow-[0_24px_58px_-40px_rgba(15,23,42,0.85)]"
         style={{ viewTransitionName: "taskverified-auth-phantom" }}
       >
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="space-y-1.5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="space-y-1">
             <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-emerald-200">Primary access</p>
-            <h2 className="text-xl font-semibold tracking-tight">{phantomTitle}</h2>
+            <h2 className="text-lg font-semibold tracking-tight">{phantomTitle}</h2>
             <p className="max-w-lg text-sm leading-5 text-slate-300">{phantomDescription}</p>
           </div>
           <div
@@ -326,13 +326,13 @@ export function AuthShell({
           type="button"
           onClick={onPhantomContinue}
           disabled={isWalletBusy}
-          className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white px-4 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-50 disabled:pointer-events-none disabled:opacity-60"
+          className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-white px-4 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-50 disabled:pointer-events-none disabled:opacity-60"
         >
           <Wallet className="h-4 w-4" />
           <span className="whitespace-nowrap">{isWalletBusy ? phantomBusyLabel : phantomButtonLabel}</span>
           <ArrowRight className="h-4 w-4" />
         </button>
-        <p className="mt-3 text-sm leading-5 text-slate-400">{phantomHint}</p>
+        <p className="mt-2 text-xs leading-5 text-slate-400">{phantomHint}</p>
       </div>
 
       {feedback}
@@ -346,33 +346,33 @@ export function AuthShell({
   return (
     <div className="relative isolate">
       <div className="absolute inset-x-0 top-0 -z-10 h-40 bg-[linear-gradient(180deg,rgba(20,184,166,0.08),transparent)]" />
-      <div className="mx-auto w-full max-w-[780px] px-3 py-2 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[760px] px-3 py-1 sm:px-6 lg:px-8">
         <div
-          className="rounded-[1.65rem] bg-white p-5 shadow-[0_30px_86px_-62px_rgba(15,23,42,0.65)] ring-1 ring-slate-200 md:p-6"
+          className="rounded-[1.5rem] bg-white p-4 shadow-[0_30px_86px_-62px_rgba(15,23,42,0.65)] ring-1 ring-slate-200 md:p-5"
           style={{ viewTransitionName: "taskverified-auth-card" }}
         >
           {renderForm()}
         </div>
 
-        <div className="mt-4 rounded-[1.2rem] bg-white/75 p-4 shadow-sm ring-1 ring-slate-200 backdrop-blur">
-          <div className="grid gap-4 md:grid-cols-[1fr_1.2fr] md:items-center">
+        <div className="mt-3 rounded-[1.1rem] bg-white/75 p-3 shadow-sm ring-1 ring-slate-200 backdrop-blur">
+          <div className="grid gap-3 md:grid-cols-[1fr_1.25fr] md:items-center">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-500">{brandEyebrow}</p>
-              <h2 className="mt-2 text-base font-semibold leading-snug text-slate-950">{brandTitle}</h2>
-              <p className="mt-2 text-sm leading-5 text-slate-600">{brandDescription}</p>
+              <h2 className="mt-1.5 text-sm font-semibold leading-snug text-slate-950">{brandTitle}</h2>
+              <p className="mt-1 text-xs leading-5 text-slate-600">{brandDescription}</p>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="flex flex-wrap gap-2">
                 {trustPills.slice(0, 3).map((pill) => (
                   <AuthTrustPill key={pill} label={pill} />
                 ))}
               </div>
               {primaryInsight ? (
-                <div className="border-t border-slate-200 pt-3">
+                <div className="border-t border-slate-200 pt-2">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">{insightsEyebrow}</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-950">{primaryInsight.title}</p>
-                  <p className="mt-1 text-sm leading-5 text-slate-600">{primaryInsight.description}</p>
+                  <p className="mt-1 text-xs font-semibold text-slate-950">{primaryInsight.title}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-600">{primaryInsight.description}</p>
                 </div>
               ) : null}
             </div>
