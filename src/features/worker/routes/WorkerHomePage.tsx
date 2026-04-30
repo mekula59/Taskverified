@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 
 import { MetricCard } from "@/components/shell/MetricCard";
-import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
+import { ActionPanel, EmptyState, LedgerHeader, LedgerObject, LedgerRows, StatusPill, WorkspaceHero } from "@/components/shell/WorkspacePrimitives";
+import { getStatusTone } from "@/components/shell/workspaceStatus";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
@@ -28,33 +29,52 @@ export function WorkerHomePage() {
     .filter((task): task is NonNullable<typeof task> => Boolean(task));
 
   return (
-    <div className="space-y-6">
-      <PageIntro
-        eyebrow="Worker"
+    <div className="space-y-5">
+      <WorkspaceHero
+        eyebrow="Worker ledger"
         title={`Welcome, ${auth.profile?.fullName ?? "worker"}`}
-        description="Start with the work and trust states that affect what you can claim, submit, and receive."
-        actions={
+        description="Start with the work and trust states that affect what you can claim, submit, and receive. Proof comes first; metrics stay supporting."
+        action={
           <Button asChild>
             <Link to="/worker/tasks">Browse tasks</Link>
           </Button>
         }
+        aside={
+          <ActionPanel
+            eyebrow="Claim eligibility"
+            title={auth.verification?.status === "verified" ? "Verified workers can claim live tasks" : "Claiming is currently gated"}
+            description="Verification controls access to new claims. Submitted proof and payout outcomes shape the rest of the trust record."
+          >
+            <StatusPill tone={getStatusTone(auth.verification?.status)}>{auth.verification?.status ?? "unverified"}</StatusPill>
+          </ActionPanel>
+        }
       />
+
       <div className="grid gap-4 lg:grid-cols-[1.18fr_0.82fr]">
-        <SectionCard title="Current work" description="Claimed tasks with the proof bar still visible enough to guide the next action.">
-          <div className="space-y-3">
-            {activeClaimTasks.map((task) => (
-              <div key={task.id} className="rounded-xl border border-border/60 bg-background/70 p-3.5">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <div className="font-medium">{task.title}</div>
-                    <div className="mt-1 text-sm text-muted-foreground">{task.proofRequirements.join(" · ")}</div>
+        <LedgerObject>
+          <LedgerHeader
+            eyebrow={<StatusPill tone="info">Current work</StatusPill>}
+            title="Active claims and proof bars"
+            description="Claimed tasks stay attached to the requirements that will decide review."
+          />
+          <div className="space-y-3 p-5">
+            {activeClaimTasks.length > 0 ? (
+              activeClaimTasks.map((task) => (
+                <div key={task.id} className="rounded-2xl bg-slate-50/80 p-4 ring-1 ring-slate-200/80">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold tracking-tight text-slate-950">{task.title}</p>
+                      <p className="mt-1 text-sm leading-6 text-slate-600">{task.proofRequirements.join(" · ")}</p>
+                    </div>
+                    <StatusPill tone="dark">{formatMoney(task.rewardAmount, task.rewardCurrency)}</StatusPill>
                   </div>
-                  <div className="text-sm font-medium text-foreground">{formatMoney(task.rewardAmount, task.rewardCurrency)}</div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <EmptyState title="No active claim selected" description="Claimed work will appear here with its proof bar and reward once you accept a task." />
+            )}
           </div>
-        </SectionCard>
+        </LedgerObject>
         <div className="space-y-4">
           <SectionCard title="Verification impact">
             <div className="space-y-3 text-sm text-muted-foreground">
@@ -62,19 +82,18 @@ export function WorkerHomePage() {
                 Verified workers can claim live tasks. Pending or unverified states remain blocked by the workflow.
               </p>
               {reputation ? (
-                <div className="rounded-xl border border-border/60 bg-background/70 p-3.5">
+                <div className="rounded-2xl bg-slate-50/80 p-4 ring-1 ring-slate-200/80">
                   <p className="font-medium text-foreground">
                     {getTrustScoreTone(reputation.trustScore)} trust posture · {reputation.trustScore}
                   </p>
-                  <p className="mt-2">
-                    {reputation.tasksCompleted} approved completions, {reputation.approvalRate}% approval rate, {reputation.payoutsReleased} released Solana payouts.
-                  </p>
-                  <p className="mt-2">
-                    Strongest category:{" "}
-                    <span className="font-medium text-foreground">
-                      {reputation.categoryStrengths[0] ? formatCategoryLabel(reputation.categoryStrengths[0].category) : "Still forming"}
-                    </span>
-                  </p>
+                  <LedgerRows
+                    rows={[
+                      { label: "Approved", value: reputation.tasksCompleted },
+                      { label: "Approval rate", value: `${reputation.approvalRate}%` },
+                      { label: "Released", value: reputation.payoutsReleased },
+                      { label: "Strongest", value: reputation.categoryStrengths[0] ? formatCategoryLabel(reputation.categoryStrengths[0].category) : "Still forming" },
+                    ]}
+                  />
                 </div>
               ) : null}
             </div>

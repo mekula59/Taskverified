@@ -3,6 +3,7 @@ import { AlertTriangle, ArrowRight, ShieldCheck, Wallet } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { SectionCard } from "@/components/shell/SectionCard";
+import { ActionPanel, WorkspaceHero } from "@/components/shell/WorkspacePrimitives";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { formatLamportsAsSol, executeDevnetPayoutTransfer } from "@/features/solana/lib/payoutExecution";
 import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
@@ -148,18 +149,19 @@ export function PosterPayoutsPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <section className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.92))] p-6 shadow-sm sm:p-8">
-        <div className="space-y-4">
-          <div className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-            Poster
-          </div>
-          <h1 className="text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">Payout release is where approval becomes final.</h1>
-          <p className="max-w-3xl text-base leading-7 text-slate-600">
-            Accepted work only becomes complete when you sign the release with the right wallet and the transfer lands on Solana. This should feel like the final movement of value, not a routine admin step.
-          </p>
-        </div>
-      </section>
+    <div className="space-y-5">
+      <WorkspaceHero
+        eyebrow="Poster payouts"
+        title="Payout release is where approval becomes final."
+        description="Accepted work only becomes complete when you sign release with the right wallet and the transfer lands on Solana. This is the final movement of value, not a routine admin step."
+        aside={
+          <ActionPanel
+            eyebrow="Release queue"
+            title={`${readyCount} ready · ${formatMoney(totalReadyUsd, "USD")}`}
+            description={`${releasedCount} payouts have already reached released state.`}
+          />
+        }
+      />
 
       <SectionCard title="Release queue" description="Each payout below is a custody event with visible wallet, transfer, and onchain state.">
         {releaseError ? <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-800">{releaseError}</div> : null}

@@ -1,5 +1,6 @@
-import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
+import { EmptyState, LedgerHeader, LedgerObject, LedgerRows, StatusPill, WorkspaceHero } from "@/components/shell/WorkspacePrimitives";
+import { getStatusTone } from "@/components/shell/workspaceStatus";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
@@ -15,9 +16,9 @@ export function WorkerPayoutsPage() {
   const workerPayouts = getPayoutsForWorker(payouts, workerId);
 
   return (
-    <div className="space-y-8">
-      <PageIntro
-        eyebrow="Worker"
+    <div className="space-y-5">
+      <WorkspaceHero
+        eyebrow="Worker payouts"
         title="Payout visibility follows approved proof through Solana-ready release."
         description="Workers can connect a real Phantom wallet on Solana devnet here and route approved payouts to the connected destination address."
       />
@@ -25,25 +26,36 @@ export function WorkerPayoutsPage() {
         <SolanaWalletStatusCard userId={workerId} role="worker" displayName={workerName} />
       </SectionCard>
 
-      <SectionCard title="Payout records" description="Wallet-linked payout visibility tied to your approved work.">
-        <div className="space-y-3">
-          {workerPayouts.map((payout) => (
-            <div key={payout.id} className="rounded-2xl border border-border/60 bg-background/70 p-4 text-sm text-muted-foreground">
-              <p>
-                Amount: <span className="font-medium text-foreground">{formatMoney(payout.amount, "USD")} / {payout.currencyToken}</span>
-              </p>
-              <p className="mt-2">
-                Devnet transfer: <span className="font-medium text-foreground">{formatLamportsAsSol(payout.transferAmountLamports)}</span>
-              </p>
-              <p className="mt-2">
-                Status: <span className="font-medium capitalize text-foreground">{payout.status.replaceAll("_", " ")}</span>
-              </p>
-              <p className="mt-2 break-all">Worker wallet: {payout.workerWalletAddress ?? "Not connected"}</p>
-              <p className="mt-2 break-all">Poster wallet: {payout.posterWalletAddress ?? "Not connected"}</p>
-              <p className="mt-2 break-all">Tx signature: {payout.txSignature ?? "Not released yet"}</p>
-              {payout.failureReason ? <p className="mt-2">Failure reason: <span className="text-foreground">{payout.failureReason}</span></p> : null}
-            </div>
-          ))}
+      <SectionCard title="Payout records" description="Wallet-linked payout visibility tied to approved proof.">
+        <div className="space-y-4">
+          {workerPayouts.length > 0 ? (
+            workerPayouts.map((payout) => (
+              <LedgerObject key={payout.id}>
+                <LedgerHeader
+                  eyebrow={<StatusPill tone={getStatusTone(payout.status)}>{payout.status.replaceAll("_", " ")}</StatusPill>}
+                  title={`${formatMoney(payout.amount, "USD")} / ${payout.currencyToken}`}
+                  description={`Devnet transfer target ${formatLamportsAsSol(payout.transferAmountLamports)}.`}
+                />
+                <div className="space-y-4 p-5">
+                  <LedgerRows
+                    rows={[
+                      { label: "Status", value: <span className="capitalize">{payout.status.replaceAll("_", " ")}</span> },
+                      { label: "Worker wallet", value: payout.workerWalletAddress ?? "Not connected" },
+                      { label: "Poster wallet", value: payout.posterWalletAddress ?? "Not connected" },
+                      { label: "Tx signature", value: payout.txSignature ?? "Not released yet" },
+                    ]}
+                  />
+                  {payout.failureReason ? (
+                    <div className="rounded-2xl bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-900 ring-1 ring-rose-200">
+                      Failure reason: <span className="font-medium">{payout.failureReason}</span>
+                    </div>
+                  ) : null}
+                </div>
+              </LedgerObject>
+            ))
+          ) : (
+            <EmptyState title="No worker payouts yet" description="Approved work that reaches payout state will appear here with wallet and release truth attached." />
+          )}
         </div>
         {wallet?.status !== "connected" ? (
           <p className="mt-4 text-sm text-muted-foreground">Connect Phantom to set the live payout destination for future approved work.</p>

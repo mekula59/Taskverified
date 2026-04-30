@@ -15,12 +15,12 @@ export function AuthGate({ role }: AuthGateProps) {
   if (auth.isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-4 text-foreground">
-        <div className="flex max-w-sm flex-col items-center gap-4 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+        <div className="tv-surface flex max-w-sm flex-col items-center gap-4 px-6 py-7 text-center">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
             <ShieldCheck className="h-6 w-6" />
           </div>
           <div className="space-y-1.5">
-            <p className="font-heading text-base font-semibold">Opening TaskVerified</p>
+            <p className="text-base font-semibold tracking-tight">Opening TaskVerified</p>
             <p className="text-sm leading-6 text-muted-foreground">
               Checking your session before loading the workspace.
             </p>

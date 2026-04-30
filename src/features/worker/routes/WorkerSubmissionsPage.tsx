@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { BadgeCheck, ShieldCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { ActionPanel, WorkspaceHero } from "@/components/shell/WorkspacePrimitives";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -98,29 +99,19 @@ export function WorkerSubmissionsPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <section className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.92))] p-6 shadow-sm sm:p-8">
-        <div className="grid gap-6 xl:grid-cols-[1.02fr_0.98fr] xl:items-start">
-          <div className="space-y-4">
-            <div className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Worker
-            </div>
-            <h1 className="text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">Proof is how work becomes trust.</h1>
-            <p className="max-w-2xl text-base leading-7 text-slate-600">
-              Submit evidence against the exact requirements, then track review and payout state all the way to Solana. This is the screen where work becomes legible.
-            </p>
-          </div>
-          <div className="rounded-[1.75rem] border border-slate-200 bg-slate-950 p-5 text-white">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-emerald-200" />
-                <p className="text-sm font-semibold">Submission discipline</p>
-              </div>
-              <p className="text-sm leading-6 text-white/72">Map the package to the requirement list, then submit one proof set that a reviewer can actually clear or reject.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div className="space-y-5">
+      <WorkspaceHero
+        eyebrow="Worker proof"
+        title="Proof is how work becomes trust."
+        description="Submit evidence against the exact requirements, then track review and payout state all the way to Solana. This is where work becomes legible."
+        aside={
+          <ActionPanel
+            eyebrow="Submission discipline"
+            title="One proof package, one review standard"
+            description="Map the package to the requirement list, then submit evidence a reviewer can clear or reject."
+          />
+        }
+      />
 
       <div className="grid gap-6 lg:grid-cols-[1.12fr_0.88fr]">
         <div className="rounded-[1.8rem] border border-slate-200 bg-white p-6 shadow-sm">

@@ -4,6 +4,8 @@ import { ArrowRight, BadgeCheck, ShieldCheck, Wallet } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ActionPanel, EmptyState, LedgerHeader, LedgerObject, LedgerRows, ProofList, StatusPill, WorkspaceHero } from "@/components/shell/WorkspacePrimitives";
+import { getStatusTone } from "@/components/shell/workspaceStatus";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getClaimForTask, getPayoutForSubmission, getPublicTasks, getSubmissionForClaim, getTrustScoreTone, getWorkerReputationSummary } from "@/features/tasks/data/sampleData";
@@ -84,102 +86,58 @@ export function WorkerTasksPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <section className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.92))] p-6 shadow-sm sm:p-8">
-        <div className="grid gap-6 xl:grid-cols-[1.04fr_0.96fr] xl:items-start">
-          <div className="space-y-4">
-            <Badge variant="secondary" className="rounded-full px-3 py-1">
-              Worker
-            </Badge>
-            <div className="space-y-3">
-              <h1 className="text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">Claim work that already shows you how trust will be judged.</h1>
-              <p className="max-w-2xl text-base leading-7 text-slate-600">
-                Each task spells out proof requirements, current availability, and payout implications before you commit. The point is not more listings. The point is cleaner judgment.
-              </p>
-            </div>
+    <div className="space-y-5">
+      <WorkspaceHero
+        eyebrow="Worker claim"
+        title="Claim work that already shows how trust will be judged."
+        description="Each task spells out proof requirements, availability, and payout implications before you commit. The point is cleaner judgment, not more listings."
+        aside={
+          <ActionPanel
+            eyebrow="Claim discipline"
+            title="Proof before commitment"
+            description="Claim only after the proof bar, poster context, and payout path are legible."
+          >
             {reputation ? (
-              <div className="rounded-[1.35rem] border border-slate-200 bg-white/85 px-4 py-3">
-                <p className="text-sm leading-6 text-slate-600">
-                  Your trust standing is <span className="font-semibold text-slate-950">{getTrustScoreTone(reputation.trustScore).toLowerCase()}</span> at{" "}
-                  <span className="font-semibold text-slate-950">{reputation.trustScore}</span>, with {reputation.approvalRate}% approval and {reputation.payoutsReleased} released Solana payouts.
-                </p>
-              </div>
+              <LedgerRows
+                rows={[
+                  { label: "Trust", value: `${getTrustScoreTone(reputation.trustScore)} ${reputation.trustScore}` },
+                  { label: "Approval", value: `${reputation.approvalRate}%` },
+                  { label: "Released", value: reputation.payoutsReleased },
+                ]}
+              />
             ) : null}
-          </div>
-
-          <div className="rounded-[1.75rem] border border-slate-200 bg-slate-950 p-5 text-white">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-100/70">Claim discipline</p>
-            <div className="mt-4 grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
-              <div className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
-                <ShieldCheck className="h-5 w-5 text-emerald-200" />
-                <p className="mt-4 text-sm font-semibold">Proof visible up front</p>
-                <p className="mt-2 text-sm leading-6 text-white/68">You know the review bar before claiming.</p>
-              </div>
-              <div className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
-                <BadgeCheck className="h-5 w-5 text-emerald-200" />
-                <p className="mt-4 text-sm font-semibold">Poster identity attached</p>
-                <p className="mt-2 text-sm leading-6 text-white/68">Trust begins with who posted the work and how they review.</p>
-              </div>
-              <div className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
-                <Wallet className="h-5 w-5 text-emerald-200" />
-                <p className="mt-4 text-sm font-semibold">Payout state is explicit</p>
-                <p className="mt-2 text-sm leading-6 text-white/68">Approved work carries a visible path toward Solana release.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+          </ActionPanel>
+        }
+      />
 
       {claimError ? <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">{claimError}</div> : null}
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className="grid gap-4 xl:grid-cols-2">
         {publicTasks.map((task) => (
-          <div key={task.id} className="overflow-hidden rounded-[1.8rem] border border-slate-200 bg-white shadow-sm">
-            <div className="border-b border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.92))] px-6 py-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="space-y-3">
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary" className="rounded-full">
-                      Posted by {task.posterName}
-                    </Badge>
-                    <Badge variant="secondary" className="rounded-full capitalize">
-                      {task.status}
-                    </Badge>
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{task.title}</h2>
-                    <p className="mt-2 text-sm leading-7 text-slate-600">{task.description}</p>
-                  </div>
+          <LedgerObject key={task.id}>
+            <LedgerHeader
+              eyebrow={
+                <div className="flex flex-wrap gap-2">
+                  <StatusPill tone="neutral">Posted by {task.posterName}</StatusPill>
+                  <StatusPill tone={getStatusTone(task.status)} className="capitalize">{task.status}</StatusPill>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-slate-500">Reward</p>
-                  <p className="mt-1 text-2xl font-semibold text-slate-950">{formatMoney(task.rewardAmount, task.rewardCurrency)}</p>
-                </div>
-              </div>
-            </div>
+              }
+              title={task.title}
+              description={task.description}
+              meta={<StatusPill tone="dark">{formatMoney(task.rewardAmount, task.rewardCurrency)}</StatusPill>}
+            />
 
-            <div className="space-y-5 px-6 py-5">
+            <div className="space-y-4 p-5">
               <div className="grid gap-4 lg:grid-cols-[1.02fr_0.98fr]">
-                <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50/85 p-4">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Proof bar before claim</p>
-                  <div className="mt-4 space-y-3">
-                    {task.proofRequirements.map((item) => (
-                      <div key={item} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
-                        <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <ProofList title="Proof bar before claim" items={task.proofRequirements} />
 
                 <div className="space-y-4">
-                  <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50/85 p-4">
-                    <div className="flex items-center justify-between text-sm text-slate-500">
-                      <span>
-                        {task.claimCount >= task.claimLimit ? "Currently unavailable" : "Currently available"}
-                      </span>
-                      <span className="capitalize">{task.status}</span>
-                    </div>
-                  </div>
+                  <LedgerRows
+                    rows={[
+                      { label: task.claimCount >= task.claimLimit ? "Availability" : "Availability", value: task.claimCount >= task.claimLimit ? "Filled" : "Open" },
+                      { label: "Status", value: <span className="capitalize">{task.status}</span> },
+                      { label: "Deadline", value: new Date(task.deadlineAt).toLocaleDateString() },
+                    ]}
+                  />
                 </div>
               </div>
 
@@ -191,7 +149,7 @@ export function WorkerTasksPage() {
 
                 if (existingClaim) {
                   return (
-                    <div className="flex flex-col gap-3 rounded-[1.35rem] border border-slate-200 bg-slate-50/85 px-4 py-4">
+                    <div className="flex flex-col gap-3 rounded-2xl bg-slate-50/85 px-4 py-4 ring-1 ring-slate-200/80">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Current state</p>
                       <p className="text-sm text-slate-600">
                         You already hold this task. Current status: <span className="font-medium capitalize text-slate-950">{existingClaim.status}</span>
@@ -210,14 +168,12 @@ export function WorkerTasksPage() {
 
                 if (!isClaimEligible) {
                   return (
-                    <div className="rounded-xl border border-slate-200 bg-slate-50/85 px-4 py-3 text-sm text-slate-600">
-                      {disabledReason}
-                    </div>
+                    <EmptyState title="Claim locked" description={disabledReason ?? "This task is not available for claim right now."} icon="locked" />
                   );
                 }
 
                 return (
-                  <div className="rounded-[1.35rem] border border-slate-950 bg-slate-950 p-4 text-white shadow-[0_20px_50px_-30px_rgba(15,23,42,0.7)]">
+                  <div className="rounded-2xl bg-slate-950 p-4 text-white shadow-ledger-sm">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-100/70">Claim checkpoint</p>
                     <p className="mt-3 text-sm leading-6 text-white/72">Claiming means you accept the proof bar already shown above.</p>
                     <Button className="mt-4 h-12 rounded-xl bg-white px-5 text-slate-950 hover:bg-slate-100" onClick={() => handleClaim(task.id)} disabled={Boolean(disabledReason)}>
@@ -235,7 +191,7 @@ export function WorkerTasksPage() {
                 );
               })()}
             </div>
-          </div>
+          </LedgerObject>
         ))}
       </div>
     </div>

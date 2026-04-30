@@ -129,10 +129,10 @@ export function AuthFeedbackBanner({
   return (
     <div
       className={cn(
-        "rounded-2xl border px-4 py-4 shadow-sm",
-        tone === "success" && "border-emerald-200 bg-emerald-50/90 text-emerald-950",
-        tone === "warning" && "border-amber-200 bg-amber-50/90 text-amber-950",
-        tone === "error" && "border-rose-200 bg-rose-50/90 text-rose-950",
+        "rounded-2xl px-4 py-3 ring-1",
+        tone === "success" && "bg-emerald-50/90 text-emerald-950 ring-emerald-200",
+        tone === "warning" && "bg-amber-50/90 text-amber-950 ring-amber-200",
+        tone === "error" && "bg-rose-50/90 text-rose-950 ring-rose-200",
         className,
       )}
       role={tone === "success" ? "status" : "alert"}
@@ -140,7 +140,7 @@ export function AuthFeedbackBanner({
       <div className="flex items-start gap-3">
         <div
           className={cn(
-            "mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
+            "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
             tone === "success" && "bg-emerald-100 text-emerald-700",
             tone === "warning" && "bg-amber-100 text-amber-700",
             tone === "error" && "bg-rose-100 text-rose-700",
@@ -148,10 +148,10 @@ export function AuthFeedbackBanner({
         >
           <Icon className="h-4 w-4" />
         </div>
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           <p className="text-sm font-semibold">{title}</p>
-          <p className="text-sm leading-6">{message}</p>
-          {hint ? <p className="text-sm leading-6 opacity-80">{hint}</p> : null}
+          <p className="text-sm leading-5">{message}</p>
+          {hint ? <p className="text-xs leading-5 opacity-80">{hint}</p> : null}
         </div>
       </div>
     </div>
@@ -160,7 +160,7 @@ export function AuthFeedbackBanner({
 
 export function AuthDivider({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-400">
+    <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
       <div className="h-px flex-1 bg-slate-200" />
       <span>{label}</span>
       <div className="h-px flex-1 bg-slate-200" />
@@ -178,10 +178,10 @@ export function AuthTrustPill({
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em]",
+        "inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ring-1",
         isActive
-          ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-          : "border-slate-200 bg-slate-50 text-slate-500",
+          ? "bg-emerald-50 text-emerald-800 ring-emerald-200"
+          : "bg-slate-50 text-slate-500 ring-slate-200",
       )}
     >
       {isActive ? <CheckCircle2 className="mr-2 h-3.5 w-3.5" /> : <AlertTriangle className="mr-2 h-3.5 w-3.5" />}
@@ -262,12 +262,12 @@ export function AuthShell({
   const renderForm = () => (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex rounded-full bg-slate-100 p-1">
+        <div className="inline-flex rounded-full bg-slate-100 p-1 ring-1 ring-slate-200/80">
           <button
             type="button"
             onClick={mode === "signin" ? undefined : onSwitchMode}
             className={cn(
-              "rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors",
+              "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
               mode === "signin" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-800",
             )}
           >
@@ -277,7 +277,7 @@ export function AuthShell({
             type="button"
             onClick={mode === "signup" ? undefined : onSwitchMode}
             className={cn(
-              "rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors",
+              "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
               mode === "signup" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-800",
             )}
           >
@@ -289,13 +289,13 @@ export function AuthShell({
 
       <div className="space-y-1.5">
         <h1
-          className="max-w-2xl text-[1.7rem] font-semibold leading-tight tracking-tight text-slate-950"
+          className="max-w-xl text-[1.65rem] font-semibold leading-tight tracking-tight text-slate-950 md:text-[1.85rem]"
           style={{ viewTransitionName: "taskverified-auth-title" }}
         >
           {modeTitle}
         </h1>
         <p
-          className="max-w-2xl text-sm leading-5 text-slate-600"
+          className="max-w-xl text-sm leading-5 text-slate-600"
           style={{ viewTransitionName: "taskverified-auth-description" }}
         >
           {modeDescription}
@@ -303,14 +303,14 @@ export function AuthShell({
       </div>
 
       <div
-        className="rounded-[1.25rem] bg-slate-950 p-3.5 text-white shadow-[0_24px_58px_-40px_rgba(15,23,42,0.85)]"
+        className="rounded-2xl bg-slate-950 p-3 text-white shadow-ledger-sm"
         style={{ viewTransitionName: "taskverified-auth-phantom" }}
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="space-y-1">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-emerald-200">Primary access</p>
-            <h2 className="text-lg font-semibold tracking-tight">{phantomTitle}</h2>
-            <p className="max-w-lg text-sm leading-5 text-slate-300">{phantomDescription}</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-emerald-200">Primary access</p>
+            <h2 className="text-base font-semibold tracking-tight">{phantomTitle}</h2>
+            <p className="max-w-lg text-xs leading-5 text-slate-300">{phantomDescription}</p>
           </div>
           <div
             className={cn(
@@ -326,7 +326,7 @@ export function AuthShell({
           type="button"
           onClick={onPhantomContinue}
           disabled={isWalletBusy}
-          className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-white px-4 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-50 disabled:pointer-events-none disabled:opacity-60"
+          className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-white px-4 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-50 disabled:pointer-events-none disabled:opacity-60"
         >
           <Wallet className="h-4 w-4" />
           <span className="whitespace-nowrap">{isWalletBusy ? phantomBusyLabel : phantomButtonLabel}</span>
@@ -342,40 +342,56 @@ export function AuthShell({
   );
 
   const primaryInsight = insights[0];
+  const secondaryInsight = insights[1];
 
   return (
     <div className="relative isolate">
-      <div className="absolute inset-x-0 top-0 -z-10 h-40 bg-[linear-gradient(180deg,rgba(20,184,166,0.08),transparent)]" />
-      <div className="mx-auto w-full max-w-[760px] px-3 py-1 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[980px] px-3 py-1 sm:px-6 lg:px-8">
         <div
-          className="rounded-[1.5rem] bg-white p-4 shadow-[0_30px_86px_-62px_rgba(15,23,42,0.65)] ring-1 ring-slate-200 md:p-5"
+          className="overflow-hidden rounded-[1.5rem] bg-white shadow-ledger ring-1 ring-slate-200"
           style={{ viewTransitionName: "taskverified-auth-card" }}
         >
-          {renderForm()}
-        </div>
+          <div className="grid lg:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="p-4 sm:p-5 lg:p-6">{renderForm()}</div>
 
-        <div className="mt-3 rounded-[1.1rem] bg-white/75 p-3 shadow-sm ring-1 ring-slate-200 backdrop-blur">
-          <div className="grid gap-3 md:grid-cols-[1fr_1.25fr] md:items-center">
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-500">{brandEyebrow}</p>
-              <h2 className="mt-1.5 text-sm font-semibold leading-snug text-slate-950">{brandTitle}</h2>
-              <p className="mt-1 text-xs leading-5 text-slate-600">{brandDescription}</p>
-            </div>
+            <aside className="border-t border-slate-200/80 bg-slate-50/80 p-4 lg:border-l lg:border-t-0 lg:p-5">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">{brandEyebrow}</p>
+              <h2 className="mt-2 text-base font-semibold leading-snug tracking-tight text-slate-950">{brandTitle}</h2>
+              <p className="mt-2 text-xs leading-5 text-slate-600">{brandDescription}</p>
 
-            <div className="space-y-2">
-              <div className="flex flex-wrap gap-2">
+              <div className="mt-4 flex flex-wrap gap-2">
                 {trustPills.slice(0, 3).map((pill) => (
                   <AuthTrustPill key={pill} label={pill} />
                 ))}
               </div>
+
               {primaryInsight ? (
-                <div className="border-t border-slate-200 pt-2">
+                <div className="mt-4 rounded-2xl bg-white p-3 ring-1 ring-slate-200/80">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">{insightsEyebrow}</p>
                   <p className="mt-1 text-xs font-semibold text-slate-950">{primaryInsight.title}</p>
                   <p className="mt-1 text-xs leading-5 text-slate-600">{primaryInsight.description}</p>
                 </div>
               ) : null}
-            </div>
+
+              {secondaryInsight ? (
+                <div className="mt-2 rounded-2xl bg-white/70 p-3 ring-1 ring-slate-200/70">
+                  <p className="text-xs font-semibold text-slate-950">{secondaryInsight.title}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-600">{secondaryInsight.description}</p>
+                </div>
+              ) : null}
+
+              <div className="mt-4 border-t border-slate-200 pt-4">
+                <p className="text-xs font-semibold text-slate-950">{oppositeTitle}</p>
+                <p className="mt-1 text-xs leading-5 text-slate-600">{oppositeDescription}</p>
+                <button
+                  type="button"
+                  onClick={onSwitchMode}
+                  className="mt-3 inline-flex h-9 items-center justify-center rounded-full border border-slate-300 bg-white px-4 text-xs font-semibold text-slate-900 transition-colors hover:bg-slate-100"
+                >
+                  {oppositeButtonLabel}
+                </button>
+              </div>
+            </aside>
           </div>
         </div>
       </div>

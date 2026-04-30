@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 
 import { MetricCard } from "@/components/shell/MetricCard";
-import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
+import { ActionPanel, EmptyState, LedgerHeader, LedgerObject, StatusPill, WorkspaceHero } from "@/components/shell/WorkspacePrimitives";
+import { getStatusTone } from "@/components/shell/workspaceStatus";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
@@ -16,35 +17,52 @@ export function PosterHomePage() {
   const posterTasks = auth.user ? getTasksForPoster(tasks, auth.user.id) : [];
 
   return (
-    <div className="space-y-6">
-      <PageIntro
-        eyebrow="Poster"
+    <div className="space-y-5">
+      <WorkspaceHero
+        eyebrow="Poster ledger"
         title={`${auth.profile?.fullName ?? "Poster"} dashboard`}
-        description="Start with posted work, review pressure, and the wallet state that affects payout release."
-        actions={
+        description="Start with posted work, review pressure, and the wallet state that affects payout release. Create the bar, judge the proof, release deliberately."
+        action={
           <Button asChild>
             <Link to="/poster/tasks/new">Create task</Link>
           </Button>
         }
+        aside={
+          <ActionPanel
+            eyebrow="Release authority"
+            title="Poster identity owns review and release"
+            description="Workers need to know who set the proof bar and who can move an approved payout to release."
+          />
+        }
       />
       <div className="grid gap-4 lg:grid-cols-[1.18fr_0.82fr]">
-        <SectionCard title="Live tasks" description="Posted work with claim state and proof consequence close to the surface.">
-          <div className="space-y-3">
-            {posterTasks.map((task) => (
-              <div key={task.id} className="rounded-xl border border-border/60 bg-background/70 p-3.5">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <div className="font-medium">{task.title}</div>
-                    <div className="mt-1 text-sm text-muted-foreground">
-                      <span className="capitalize">{task.status}</span> · {task.claimCount >= task.claimLimit ? "claim slot filled" : "claim slot open"}
+        <LedgerObject>
+          <LedgerHeader
+            eyebrow={<StatusPill tone="info">Live tasks</StatusPill>}
+            title="Posted work and claim state"
+            description="Tasks stay tied to reward, claim capacity, and the proof consequence workers accepted."
+          />
+          <div className="space-y-3 p-5">
+            {posterTasks.length > 0 ? (
+              posterTasks.map((task) => (
+                <div key={task.id} className="rounded-2xl bg-slate-50/80 p-4 ring-1 ring-slate-200/80">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold tracking-tight text-slate-950">{task.title}</p>
+                      <p className="mt-1 text-sm text-slate-600">
+                        <StatusPill tone={getStatusTone(task.status)} className="mr-2 capitalize">{task.status}</StatusPill>
+                        {task.claimCount >= task.claimLimit ? "claim slot filled" : "claim slot open"}
+                      </p>
                     </div>
+                    <StatusPill tone="dark">{formatMoney(task.rewardAmount, task.rewardCurrency)}</StatusPill>
                   </div>
-                  <div className="text-sm font-medium text-foreground">{formatMoney(task.rewardAmount, task.rewardCurrency)}</div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <EmptyState title="No poster tasks yet" description="Created tasks will appear here with their claim and proof state once posted." />
+            )}
           </div>
-        </SectionCard>
+        </LedgerObject>
         <div className="space-y-4">
           <SectionCard title="Verification posture">
             <p className="text-sm leading-6 text-muted-foreground">

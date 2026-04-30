@@ -104,15 +104,15 @@ export function SolanaWalletStatusCard({ userId, role, displayName, className }:
 
   return (
     <div className={className ?? "space-y-4"}>
-      <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
+      <div className="rounded-2xl bg-slate-50/80 px-4 py-3 text-sm leading-6 text-slate-600 ring-1 ring-slate-200/80">
         {isLiveConnected ? (
           <>
             Connected with Phantom on Solana devnet
-            <div className="mt-2 break-all font-medium text-foreground">{adapterWalletAddress}</div>
+            <div className="mt-2 break-all font-semibold text-slate-950">{adapterWalletAddress}</div>
             {isCurrentWalletLinked ? (
-              <div className="mt-2 text-emerald-700">This Phantom wallet is linked to TaskVerified.</div>
+              <div className="mt-2 rounded-xl bg-emerald-50 px-3 py-2 text-emerald-800 ring-1 ring-emerald-200">This Phantom wallet is linked to TaskVerified.</div>
             ) : (
-              <div className="mt-2 text-amber-700">Phantom is connected, but this wallet is not linked to TaskVerified yet.</div>
+              <div className="mt-2 rounded-xl bg-amber-50 px-3 py-2 text-amber-800 ring-1 ring-amber-200">Phantom is connected, but this wallet is not linked to TaskVerified yet.</div>
             )}
           </>
         ) : (
@@ -122,9 +122,9 @@ export function SolanaWalletStatusCard({ userId, role, displayName, className }:
           </>
         )}
         {hasLinkedWallet && !isCurrentWalletLinked ? (
-          <div className="mt-3 rounded-lg border border-border/60 bg-background/80 px-3 py-2">
+          <div className="mt-3 rounded-xl bg-white px-3 py-2 ring-1 ring-slate-200/80">
             TaskVerified linked wallet
-            <div className="mt-1 break-all font-medium text-foreground">{linkedWalletAddress}</div>
+            <div className="mt-1 break-all font-semibold text-slate-950">{linkedWalletAddress}</div>
           </div>
         ) : null}
       </div>
@@ -147,12 +147,12 @@ export function SolanaWalletStatusCard({ userId, role, displayName, className }:
         ) : null}
       </div>
 
-      <div className="text-xs text-muted-foreground">
-        Provider: <span className="font-medium text-foreground">{wallet?.adapter.name ?? "Phantom"}</span> · Network:{" "}
-        <span className="font-medium text-foreground">Solana devnet</span>
+      <div className="text-xs text-slate-500">
+        Provider: <span className="font-semibold text-slate-950">{wallet?.adapter.name ?? "Phantom"}</span> · Network:{" "}
+        <span className="font-semibold text-slate-950">Solana devnet</span>
       </div>
 
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {error ? <p className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-800 ring-1 ring-rose-200">{error}</p> : null}
     </div>
   );
 }

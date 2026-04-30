@@ -4,6 +4,7 @@ import { AlertTriangle, ArrowRight, BadgeCheck, ExternalLink, ShieldCheck, Walle
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { SectionCard } from "@/components/shell/SectionCard";
+import { ActionPanel, WorkspaceHero } from "@/components/shell/WorkspacePrimitives";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
@@ -104,18 +105,19 @@ export function PosterReviewsPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <section className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.92))] p-6 shadow-sm sm:p-8">
-        <div className="space-y-4">
-          <div className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-            Poster
-          </div>
-          <h1 className="text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">Review is the trust decision.</h1>
-          <p className="max-w-3xl text-base leading-7 text-slate-600">
-            This is the point where submitted work either becomes credible, payable progress or stops at the evidence layer. Approval changes payout readiness. Rejection records that the proof did not clear.
-          </p>
-        </div>
-      </section>
+    <div className="space-y-5">
+      <WorkspaceHero
+        eyebrow="Poster review"
+        title="Review is the trust decision."
+        description="Submitted work either becomes credible, payable progress or stops at the evidence layer. Approval changes payout readiness; rejection records that proof did not clear."
+        aside={
+          <ActionPanel
+            eyebrow="Open decisions"
+            title={String(openDecisionCount)}
+            description="Only submitted items count as open decisions. Completed reviews stay visible but locked."
+          />
+        }
+      />
 
       <SectionCard
         title={selectedTask ? `Decision workspace for ${selectedTask.title}` : "Select a submission"}

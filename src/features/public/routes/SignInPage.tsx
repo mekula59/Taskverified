@@ -134,15 +134,15 @@ export function SignInPage() {
     <AuthShell
       mode="signin"
       modeEyebrow={isProtectedRedirect ? "Workspace access" : "Returning member"}
-      modeTitle={isProtectedRedirect ? "Sign in to continue to your workspace" : "Sign in to your verified workspace"}
+      modeTitle={isProtectedRedirect ? "Sign in to continue to your workspace" : "Enter your TaskVerified workspace"}
       modeDescription={
         isProtectedRedirect
-          ? "Continue with Phantom to restore the identity tied to the workspace you tried to open. Email remains available as a fallback."
-          : "Continue with Phantom to restore the identity tied to your proof history, payout trail, and trust record."
+          ? "Continue with Phantom to restore the workspace identity you tried to open. Email remains available as fallback."
+          : "Use Phantom first to restore the identity tied to proof history, payout trail, and trust record."
       }
       phantomTitle="Continue with Phantom"
-      phantomDescription="Sign one wallet message to restore the identity attached to your Solana payout address and proof record."
-      phantomHint="Preferred for returning contributors, reviewers, and payout operators on Solana."
+      phantomDescription="Sign one wallet message to restore the identity attached to your payout address and proof record."
+      phantomHint="No transaction is sent. TaskVerified only verifies wallet control."
       phantomReadyLabel="Phantom detected"
       phantomUnavailableLabel="Install Phantom"
       phantomButtonLabel="Continue with Phantom"
@@ -163,7 +163,7 @@ export function SignInPage() {
       emailFallback={
         <>
           <AuthDivider label="Email fallback" />
-          <form className="mt-2.5 rounded-[1.1rem] bg-slate-50 p-3 ring-1 ring-slate-200" onSubmit={handleSubmit}>
+          <form className="mt-2.5 rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-200" onSubmit={handleSubmit}>
             <div className="space-y-2.5">
               <div className="space-y-1.5">
                 <p className="text-sm font-semibold text-slate-900">Continue by email</p>
@@ -192,7 +192,7 @@ export function SignInPage() {
                 <button
                   type="submit"
                   disabled={auth.isLoading || isEmailCooldownActive}
-                  className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-900 shadow-sm transition-colors hover:bg-slate-100 disabled:pointer-events-none disabled:opacity-50 md:w-auto"
+                  className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 disabled:pointer-events-none disabled:opacity-50 md:w-auto"
                 >
                   <Mail className="h-4 w-4" />
                   {emailButtonLabel}
@@ -217,7 +217,7 @@ export function SignInPage() {
       onSwitchMode={() => runAuthViewTransition(() => navigate("/signup"))}
       brandEyebrow="Solana-native access"
       brandTitle="Sign in to the workspace your wallet already trusts."
-      brandDescription="Restore the identity tied to your proof history, review decisions, and Solana payout trail with the cleanest path first."
+      brandDescription="Restore the identity tied to your proof history, review decisions, and payout trail with the cleanest path first."
       trustPills={["Wallet-signed session", "Proof-linked reputation", "Devnet payout rail"]}
       features={[
         {
@@ -240,7 +240,7 @@ export function SignInPage() {
       insights={[
         {
           title: "Primary access through Phantom",
-          description: "Signing a wallet message is the fastest route back to the identity that already controls your Solana-facing activity.",
+          description: "Signing a wallet message is the fastest route back to the identity that controls your payout-facing activity.",
         },
         {
           title: "Email only when you need a fallback",

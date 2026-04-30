@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { Loader2, ShieldAlert, ShieldCheck } from "lucide-react";
 
 import { useAuth } from "@/features/auth/context/useAuth";
 import { completeEmailAuthCallback, formatAuthError } from "@/lib/supabase/auth";
@@ -50,17 +51,35 @@ export function AuthCallbackPage() {
   }, [auth, navigate]);
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-10rem)] max-w-xl items-center justify-center px-4 py-16 text-center sm:px-6">
-      <div className="space-y-4 rounded-[2rem] border border-border/60 bg-background px-8 py-10 shadow-[0_24px_80px_-40px_rgba(15,23,42,0.35)]">
-        <div className="inline-flex items-center rounded-full border border-border/70 bg-muted/60 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-          TaskVerified Auth
+    <div className="mx-auto flex min-h-[calc(100vh-8rem)] max-w-[620px] items-center justify-center px-4 py-10 text-center sm:px-6">
+      <div className="tv-surface w-full overflow-hidden">
+        <div className="border-b border-slate-200/80 bg-slate-50/80 px-5 py-4">
+          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+            {error ? <ShieldAlert className="h-5 w-5" /> : <ShieldCheck className="h-5 w-5" />}
+          </div>
+          <p className="mt-3 text-xs font-semibold uppercase tracking-[0.22em] text-primary">TaskVerified auth</p>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+            {error ? "Email sign-in needs attention" : "Finishing secure sign-in"}
+          </h1>
         </div>
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">Finishing secure sign-in</h1>
-        <p className="text-sm leading-6 text-muted-foreground">
-          We’re verifying your email session and routing you into the right TaskVerified workspace.
-        </p>
-        {!error ? <p className="text-sm text-muted-foreground">If the link is valid, this should complete in a moment.</p> : null}
-        {error ? <p className="text-sm text-destructive">{error}</p> : null}
+
+        <div className="px-6 py-5">
+          <p className="text-sm leading-6 text-slate-600">
+            {error
+              ? "The email link could not complete a TaskVerified session in this browser."
+              : "We are verifying your email session and routing you into the right TaskVerified workspace."}
+          </p>
+          {!error ? (
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Checking session
+            </div>
+          ) : (
+            <div className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-950 ring-1 ring-rose-200">
+              {error}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -130,11 +130,11 @@ export function SignUpPage() {
     <AuthShell
       mode="signup"
       modeEyebrow="Create account"
-      modeTitle="Create your verified identity"
-      modeDescription="Start with Phantom so proof, reputation, and Solana payout custody resolve to the same account from day one."
+      modeTitle="Create your TaskVerified identity"
+      modeDescription="Start with Phantom so proof, reputation, and payout custody resolve to the same account from day one."
       phantomTitle="Continue with Phantom"
-      phantomDescription="Sign one message to create or restore the TaskVerified identity your future Solana payouts will settle to."
-      phantomHint="Best for contributors and teams who want account creation, reputation, and payout custody to begin in one place."
+      phantomDescription="Sign one message to create or restore the identity your future payouts will settle to."
+      phantomHint="No transaction is sent. TaskVerified only verifies wallet control."
       phantomReadyLabel="Phantom detected"
       phantomUnavailableLabel="Install Phantom"
       phantomButtonLabel="Continue with Phantom"
@@ -155,7 +155,7 @@ export function SignUpPage() {
       emailFallback={
         <>
           <AuthDivider label="Email fallback" />
-          <form className="mt-2.5 rounded-[1.1rem] bg-slate-50 p-3 ring-1 ring-slate-200" onSubmit={handleSubmit}>
+          <form className="mt-2.5 rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-200" onSubmit={handleSubmit}>
             <div className="space-y-2.5">
               <div className="space-y-1.5">
                 <p className="text-sm font-semibold text-slate-900">Create an account by email</p>
@@ -184,7 +184,7 @@ export function SignUpPage() {
                 <button
                   type="submit"
                   disabled={auth.isLoading || isEmailCooldownActive}
-                  className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-900 shadow-sm transition-colors hover:bg-slate-100 disabled:pointer-events-none disabled:opacity-50 md:w-auto"
+                  className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 disabled:pointer-events-none disabled:opacity-50 md:w-auto"
                 >
                   <Mail className="h-4 w-4" />
                   {emailButtonLabel}
@@ -209,7 +209,7 @@ export function SignUpPage() {
       onSwitchMode={() => runAuthViewTransition(() => navigate("/signin"))}
       brandEyebrow="Solana Frontier build"
       brandTitle="Create the identity that will carry your trust record."
-      brandDescription="Start with a Phantom-signed identity so proof, reputation, and Solana payouts resolve to the same account from day one."
+      brandDescription="Start with a Phantom-signed identity so proof, reputation, and payouts resolve to the same account from day one."
       trustPills={["Wallet-first onboarding", "Reputation held in one place", "Email fallback available"]}
       features={[
         {

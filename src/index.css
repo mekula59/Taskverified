@@ -120,7 +120,7 @@
   }
 
   .tv-ledger-row strong {
-    @apply text-right font-semibold text-slate-950;
+    @apply min-w-0 break-words text-right font-semibold text-slate-950;
   }
 }
 

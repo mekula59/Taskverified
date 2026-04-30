@@ -1,6 +1,6 @@
-import { Badge } from "@/components/ui/badge";
 import { PageIntro } from "@/components/shell/PageIntro";
-import { SectionCard } from "@/components/shell/SectionCard";
+import { EmptyState, LedgerHeader, LedgerObject, LedgerRows, ProofList, StatusPill } from "@/components/shell/WorkspacePrimitives";
+import { getStatusTone } from "@/components/shell/workspaceStatus";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getPayoutsForPoster, getTasksForPoster } from "@/features/tasks/data/sampleData";
@@ -12,45 +12,44 @@ export function PosterTasksPage() {
   const posterPayouts = auth.user ? getPayoutsForPoster(payouts, auth.user.id) : [];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <PageIntro
         eyebrow="Poster"
         title="Posted tasks"
         description="Track the tasks you created, the proof bar workers must clear, and the payout state each task can create."
       />
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className="grid gap-4 xl:grid-cols-2">
         {posterTasks.map((task) => (
-          <SectionCard key={task.id} title={task.title} description={task.description}>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>Reward</span>
-                <span className="font-medium text-foreground">{formatMoney(task.rewardAmount, task.rewardCurrency)}</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {task.proofRequirements.map((item) => (
-                  <Badge key={item} variant="secondary" className="rounded-full">
-                    {item}
-                  </Badge>
-                ))}
-              </div>
-              <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
-                Status: <span className="font-medium capitalize text-foreground">{task.status}</span>
-              </div>
-              <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
-                Deadline: <span className="font-medium text-foreground">{new Date(task.deadlineAt).toLocaleDateString()}</span>
-              </div>
-              {(() => {
-                const payout = posterPayouts.find((item) => item.taskId === task.id);
-                return payout ? (
-                  <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 text-sm text-muted-foreground">
-                    Solana payout: <span className="font-medium capitalize text-foreground">{payout.status.replaceAll("_", " ")}</span>
-                  </div>
-                ) : null;
-              })()}
+          <LedgerObject key={task.id}>
+            <LedgerHeader
+              eyebrow={<StatusPill tone={getStatusTone(task.status)} className="capitalize">{task.status}</StatusPill>}
+              title={task.title}
+              description={task.description}
+              meta={<StatusPill tone="dark">{formatMoney(task.rewardAmount, task.rewardCurrency)}</StatusPill>}
+            />
+            <div className="space-y-4 p-5">
+              <ProofList items={task.proofRequirements} />
+              <LedgerRows
+                rows={[
+                  { label: "Status", value: <span className="capitalize">{task.status}</span> },
+                  { label: "Deadline", value: new Date(task.deadlineAt).toLocaleDateString() },
+                  { label: "Claim slot", value: task.claimCount >= task.claimLimit ? "Filled" : "Open" },
+                  {
+                    label: "Payout",
+                    value: (() => {
+                      const payout = posterPayouts.find((item) => item.taskId === task.id);
+                      return payout ? <span className="capitalize">{payout.status.replaceAll("_", " ")}</span> : "Not created";
+                    })(),
+                  },
+                ]}
+              />
             </div>
-          </SectionCard>
+          </LedgerObject>
         ))}
       </div>
+      {posterTasks.length === 0 ? (
+        <EmptyState title="No posted tasks yet" description="Created tasks will appear here with proof requirements, claim state, and payout consequence." />
+      ) : null}
     </div>
   );
 }

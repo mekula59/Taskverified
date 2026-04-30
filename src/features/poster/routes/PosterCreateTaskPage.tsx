@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { PageIntro } from "@/components/shell/PageIntro";
 import { MetricCard } from "@/components/shell/MetricCard";
 import { SectionCard } from "@/components/shell/SectionCard";
+import { ActionPanel } from "@/components/shell/WorkspacePrimitives";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { defaultTaskFormValues, toTaskCreateInput, validateTaskForm } from "@/features/tasks/lib/taskForm";
@@ -61,11 +62,11 @@ export function PosterCreateTaskPage() {
         title="Task creation should produce reviewable work."
         description="Create a task with clear proof requirements, review consequences, and payout context before workers claim it."
       />
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {posterTrustSignals.map((signal) => (
-          <MetricCard key={signal.label} label={signal.label} value={signal.value} detail={signal.detail} icon={signal.icon} />
-        ))}
-      </div>
+      <ActionPanel
+        eyebrow="Definition checkpoint"
+        title="The task is the review contract."
+        description="Workers should see reward, deadline, category, and proof requirements before they claim. Keep the standard explicit enough to approve or reject later."
+      />
       <SectionCard title="Create task" description="These fields define what workers will see, what proof they must submit, and how review can move payout forward.">
         <form className="space-y-5" onSubmit={handleSubmit}>
           <div className="space-y-2">
@@ -182,6 +183,11 @@ export function PosterCreateTaskPage() {
           {submitError ? <p className="text-sm text-destructive">{submitError}</p> : null}
         </form>
       </SectionCard>
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {posterTrustSignals.map((signal) => (
+          <MetricCard key={signal.label} label={signal.label} value={signal.value} detail={signal.detail} icon={signal.icon} />
+        ))}
+      </div>
     </div>
   );
 }
