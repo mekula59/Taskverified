@@ -32,29 +32,30 @@ export function AppFrame({ area }: AppFrameProps) {
       : area === "shared"
         ? "Shared"
         : auth.profile?.fullName ?? `${area} area`;
+  const shellClass = isPublicArea ? "tv-shell" : "tv-workspace-shell";
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
       <div
         className={
           isPublicArea
-            ? "absolute inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(circle_at_top_left,_rgba(20,184,166,0.18),_transparent_28%),radial-gradient(circle_at_80%_0%,_rgba(34,211,238,0.14),_transparent_26%),linear-gradient(180deg,rgba(247,251,250,0.96),rgba(248,250,252,0.98))]"
-            : "absolute inset-x-0 top-0 -z-10 h-[28rem] bg-[radial-gradient(circle_at_top,_rgba(14,116,144,0.18),_transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,250,252,0.98))]"
+            ? "absolute inset-x-0 top-0 -z-10 h-[24rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(241,245,249,0.82)_55%,rgba(241,245,249,0))]"
+            : "absolute inset-x-0 top-0 -z-10 h-[20rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(241,245,249,0.78)_60%,rgba(241,245,249,0))]"
         }
       />
-      <header className={isPublicArea ? "sticky top-0 z-40 border-b border-slate-200/70 bg-white/75 backdrop-blur-xl" : "sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur"}>
-        <div className={isPublicArea ? "mx-auto flex min-h-[4.25rem] w-full max-w-[1120px] items-center gap-4 px-4 sm:px-6 lg:px-8" : "container flex min-h-16 items-center gap-4"}>
+      <header className="sticky top-0 z-40 border-b border-slate-200/75 bg-white/86 backdrop-blur-xl">
+        <div className={cn(shellClass, "flex min-h-[3.8rem] items-center gap-3")}>
           <Link to="/" className="flex items-center gap-3">
-            <div className={isPublicArea ? "flex h-11 w-11 items-center justify-center rounded-2xl bg-[#04252a] text-emerald-200 shadow-[0_12px_30px_-18px_rgba(4,37,42,0.9)]" : "flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/12 text-primary"}>
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-emerald-100 shadow-[0_12px_30px_-22px_rgba(15,23,42,0.72)]">
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
-              <div className="font-heading text-base font-semibold">TaskVerified</div>
-              <div className="text-xs text-muted-foreground">{isPublicArea ? "Hire real people. Review proof. Pay on Solana." : "Human-verified micro-work"}</div>
+              <div className="text-[0.95rem] font-semibold leading-5 tracking-tight">TaskVerified</div>
+              <div className="text-xs leading-4 text-muted-foreground">{isPublicArea ? "Hire real people. Review proof. Pay on Solana." : "Human-verified micro-work"}</div>
             </div>
           </Link>
 
-          <nav className="ml-auto hidden items-center gap-2 md:flex">
+          <nav className="ml-auto hidden items-center gap-1.5 md:flex">
             {publicNavigation.map((item) => (
               <NavLink
                 key={item.to}
@@ -62,14 +63,10 @@ export function AppFrame({ area }: AppFrameProps) {
                 end={item.end}
                 className={({ isActive }) =>
                   cn(
-                    isPublicArea ? "rounded-full px-3 py-2 text-sm transition-colors" : "rounded-full px-3 py-2 text-sm transition-colors",
-                    isPublicArea
-                      ? isActive
-                        ? "bg-slate-900 text-white"
-                        : "text-slate-600 hover:bg-white hover:text-slate-950"
-                      : isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground",
+                    "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
+                    isActive
+                      ? "bg-slate-950 text-white shadow-[0_10px_28px_-22px_rgba(15,23,42,0.8)]"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-950",
                   )
                 }
               >
@@ -80,7 +77,7 @@ export function AppFrame({ area }: AppFrameProps) {
 
           <div className="hidden items-center gap-3 md:flex">
             {!isPublicArea ? (
-              <Badge variant="secondary" className="rounded-full px-3 py-1">
+              <Badge variant="secondary" className="rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.14em]">
                 {areaLabel}
               </Badge>
             ) : null}
@@ -105,8 +102,8 @@ export function AppFrame({ area }: AppFrameProps) {
           </div>
         </div>
 
-        <div className={isPublicArea ? "mx-auto w-full max-w-[1120px] px-4 pb-3 sm:px-6 lg:px-8 md:hidden" : "container pb-3 md:hidden"}>
-          <nav className="flex gap-2 overflow-x-auto">
+        <div className={cn(shellClass, "pb-3 md:hidden")}>
+          <nav className="flex gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {publicNavigation.map((item) => (
               <NavLink
                 key={item.to}
@@ -114,14 +111,10 @@ export function AppFrame({ area }: AppFrameProps) {
                 end={item.end}
                 className={({ isActive }) =>
                   cn(
-                    "whitespace-nowrap rounded-full px-3 py-2 text-sm transition-colors",
-                    isPublicArea
-                      ? isActive
-                        ? "bg-slate-900 text-white"
-                        : "bg-white text-slate-700"
-                      : isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-secondary-foreground",
+                    "whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
+                    isActive
+                      ? "bg-slate-950 text-white"
+                      : "bg-white/88 text-slate-700 ring-1 ring-slate-200",
                   )
                 }
               >
@@ -143,14 +136,7 @@ export function AppFrame({ area }: AppFrameProps) {
       </header>
 
       <main
-        className={
-          isPublicArea
-            ? cn(
-                "mx-auto w-full max-w-[1120px] px-4 py-6 sm:px-6 lg:px-8",
-                isAuthRoute ? "md:py-3" : "md:py-7",
-              )
-            : "container py-7 md:py-8"
-        }
+        className={cn(shellClass, isPublicArea && isAuthRoute ? "tv-auth-rhythm" : "tv-page-rhythm")}
       >
         <Outlet />
       </main>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,39 +6,39 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 213 50% 12%;
+    --background: 210 24% 97%;
+    --foreground: 217 45% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 213 50% 12%;
+    --card-foreground: 217 45% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 213 50% 12%;
+    --popover-foreground: 217 45% 11%;
 
-    --primary: 172 66% 30%;
+    --primary: 184 58% 17%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 18% 95%;
-    --secondary-foreground: 213 50% 12%;
+    --secondary: 210 22% 94%;
+    --secondary-foreground: 217 45% 13%;
 
-    --muted: 210 18% 95%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 210 20% 94%;
+    --muted-foreground: 216 18% 42%;
 
-    --accent: 38 92% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 158 44% 92%;
+    --accent-foreground: 166 70% 17%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 20% 90%;
-    --input: 214 20% 90%;
-    --ring: 172 66% 30%;
+    --border: 214 22% 88%;
+    --input: 214 22% 88%;
+    --ring: 184 58% 17%;
 
-    --radius: 0.625rem;
+    --radius: 0.75rem;
 
-    --success: 152 60% 40%;
+    --success: 158 64% 32%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
+    --warning: 38 84% 48%;
     --warning-foreground: 0 0% 100%;
 
     --sidebar-background: 0 0% 98%;
@@ -81,10 +81,42 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading tracking-tight;
+    letter-spacing: 0;
+  }
+}
+
+@layer components {
+  .tv-shell {
+    @apply mx-auto w-full max-w-shell px-4 sm:px-5 lg:px-6;
+  }
+
+  .tv-workspace-shell {
+    @apply mx-auto w-full max-w-workspace px-4 sm:px-5 lg:px-6;
+  }
+
+  .tv-page-rhythm {
+    @apply py-5 md:py-6;
+  }
+
+  .tv-auth-rhythm {
+    @apply py-2 md:py-3;
+  }
+
+  .tv-surface {
+    @apply rounded-2xl bg-white/90 shadow-ledger-sm ring-1 ring-slate-200/80;
+  }
+
+  .tv-surface-muted {
+    @apply rounded-2xl bg-slate-50/80 ring-1 ring-slate-200/75;
+  }
+
+  .tv-ledger-row {
+    @apply border-b border-slate-200/70 last:border-b-0;
   }
 }
 

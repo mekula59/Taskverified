@@ -8,15 +8,27 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "1rem",
+      padding: {
+        DEFAULT: "1rem",
+        sm: "1.25rem",
+        lg: "1.5rem",
+      },
       screens: {
-        "2xl": "1200px",
+        "2xl": "1180px",
       },
     },
     extend: {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
-        heading: ["Space Grotesk", "system-ui", "sans-serif"],
+        heading: ["Inter", "system-ui", "sans-serif"],
+      },
+      maxWidth: {
+        shell: "1120px",
+        workspace: "1180px",
+      },
+      boxShadow: {
+        ledger: "0 18px 60px -48px rgba(15, 23, 42, 0.42)",
+        "ledger-sm": "0 12px 36px -30px rgba(15, 23, 42, 0.34)",
       },
       colors: {
         border: "hsl(var(--border))",
