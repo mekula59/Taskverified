@@ -121,13 +121,19 @@ export function LedgerHeader({
   );
 }
 
-export function LedgerRows({ rows }: { rows: Array<{ label: ReactNode; value: ReactNode }> }) {
+export function LedgerRows({
+  rows,
+  className,
+}: {
+  rows: Array<{ label: ReactNode; value: ReactNode; valueClassName?: string }>;
+  className?: string;
+}) {
   return (
-    <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+    <div className={cn("grid gap-2", className)}>
       {rows.map((row, index) => (
         <div key={index} className="tv-ledger-row">
           <span>{row.label}</span>
-          <strong>{row.value}</strong>
+          <strong className={row.valueClassName}>{row.value}</strong>
         </div>
       ))}
     </div>

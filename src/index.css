@@ -116,11 +116,11 @@
   }
 
   .tv-ledger-row {
-    @apply flex items-start justify-between gap-3 border-b border-slate-200/70 py-1.5 text-sm text-slate-600 last:border-b-0;
+    @apply flex min-w-0 flex-col gap-1 border-b border-slate-200/70 py-2 text-sm text-slate-600 last:border-b-0 sm:flex-row sm:items-start sm:justify-between sm:gap-4;
   }
 
   .tv-ledger-row strong {
-    @apply min-w-0 break-words text-right font-semibold text-slate-950;
+    @apply min-w-0 max-w-full whitespace-normal break-words text-left font-semibold text-slate-950 sm:text-right;
   }
 }
 

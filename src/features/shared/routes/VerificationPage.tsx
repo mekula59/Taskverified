@@ -37,7 +37,7 @@ export function VerificationPage() {
         <div className="grid gap-6 xl:grid-cols-[1.02fr_0.98fr] xl:items-start">
           <div className="space-y-5">
             <Badge variant="secondary" className="rounded-full px-3 py-1">
-              Shared
+              Verification
             </Badge>
             <div className="space-y-3">
               <h1 className="text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">Verification should read like access consequence, not profile metadata.</h1>

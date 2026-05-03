@@ -40,9 +40,9 @@ export function WorkerPayoutsPage() {
                   <LedgerRows
                     rows={[
                       { label: "Status", value: <span className="capitalize">{payout.status.replaceAll("_", " ")}</span> },
-                      { label: "Worker wallet", value: payout.workerWalletAddress ?? "Not connected" },
-                      { label: "Poster wallet", value: payout.posterWalletAddress ?? "Not connected" },
-                      { label: "Tx signature", value: payout.txSignature ?? "Not released yet" },
+                      { label: "Worker wallet", value: payout.workerWalletAddress ?? "Not connected", valueClassName: "font-mono text-xs leading-5 break-all" },
+                      { label: "Poster wallet", value: payout.posterWalletAddress ?? "Not connected", valueClassName: "font-mono text-xs leading-5 break-all" },
+                      { label: "Tx signature", value: payout.txSignature ?? "Not released yet", valueClassName: "font-mono text-xs leading-5 break-all" },
                     ]}
                   />
                   {payout.failureReason ? (

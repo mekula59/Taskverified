@@ -1,41 +1,73 @@
+import { useEffect } from "react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { PageIntro } from "@/components/shell/PageIntro";
 import { SectionCard } from "@/components/shell/SectionCard";
-
-const settingsGroups = [
-  {
-    title: "Identity and payouts",
-    items: ["Verification status", "Payout destination", "Tax and compliance placeholders"],
-  },
-  {
-    title: "Notifications",
-    items: ["Claim alerts", "Review reminders", "Payout status updates"],
-  },
-  {
-    title: "Policy visibility",
-    items: ["Worker proof rules", "Poster review expectations", "Appeal and hold notices"],
-  },
-];
+import { LedgerRows } from "@/components/shell/WorkspacePrimitives";
+import { useAuth } from "@/features/auth/context/useAuth";
+import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
+import { useTasks } from "@/features/tasks/context/useTasks";
+import { getWalletProfile } from "@/features/tasks/data/sampleData";
 
 export function SettingsPage() {
+  const auth = useAuth();
+  const { walletProfiles, refresh } = useTasks();
+  const role = auth.profile?.role ?? auth.user?.role;
+  const displayName = auth.profile?.fullName ?? auth.user?.email ?? "TaskVerified user";
+  const linkedWallet = auth.user?.id ? getWalletProfile(walletProfiles, auth.user.id) : undefined;
+  const linkedWalletAddress = linkedWallet?.status === "connected" ? linkedWallet.walletAddress : undefined;
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <PageIntro
-        eyebrow="Shared"
-        title="Settings should reinforce trust operations."
-        description="This shell keeps configuration scoped to verification, payout readiness, and policy visibility instead of adding generic account clutter."
+        eyebrow="Account"
+        title="Settings should show identity and wallet truth."
+        description="This page keeps account controls tied to the profile, role, verification state, and Phantom wallet used by TaskVerified."
       />
-      <div className="grid gap-6 lg:grid-cols-3">
-        {settingsGroups.map((group) => (
-          <SectionCard key={group.title} title={group.title}>
-            <ul className="space-y-3 text-sm text-muted-foreground">
-              {group.items.map((item) => (
-                <li key={item} className="rounded-xl border border-border/60 bg-background/70 px-4 py-3">
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </SectionCard>
-        ))}
+
+      <div className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
+        <SectionCard title="Signed-in identity" description="The account currently controlling this browser session.">
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="secondary" className="rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.14em]">
+                {role ?? "No role"}
+              </Badge>
+              <Badge variant={auth.verification?.status === "verified" ? "success" : "outline"} className="rounded-full capitalize">
+                {auth.verification?.status ?? "unverified"}
+              </Badge>
+            </div>
+            <LedgerRows
+              rows={[
+                { label: "Name", value: displayName },
+                { label: "Email", value: auth.user?.email ?? "No email on session" },
+                { label: "Role", value: role ? <span className="capitalize">{role}</span> : "Role not selected" },
+                {
+                  label: "Linked TaskVerified wallet",
+                  value: linkedWalletAddress ?? "No linked wallet",
+                  valueClassName: linkedWalletAddress ? "font-mono text-xs leading-5 break-all" : undefined,
+                },
+              ]}
+            />
+            <Button variant="outline" onClick={auth.signOut}>
+              Sign out
+            </Button>
+          </div>
+        </SectionCard>
+
+        <SectionCard title="Phantom wallet link" description="Connect, link, or unlink the wallet TaskVerified should trust for this identity.">
+          {auth.user?.id && role ? (
+            <SolanaWalletStatusCard userId={auth.user.id} role={role} displayName={displayName} />
+          ) : (
+            <div className="rounded-2xl bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900 ring-1 ring-amber-200">
+              Choose a worker or poster role before linking a TaskVerified wallet.
+            </div>
+          )}
+        </SectionCard>
       </div>
     </div>
   );

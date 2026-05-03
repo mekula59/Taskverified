@@ -17,12 +17,13 @@ export function AppFrame({ area }: AppFrameProps) {
   const navigation = navigationByArea[area];
   const isPublicArea = area === "public";
   const isAuthRoute = isPublicArea && (location.pathname === "/auth" || location.pathname === "/signin" || location.pathname === "/signup");
+  const isSettingsRoute = location.pathname === "/app/settings";
   const publicNavigation = isPublicArea
     ? navigation
         .filter((item) =>
           item.to === "/" ||
           item.to === "/tasks" ||
-          (!isAuthRoute && (item.to === "/signin" || item.to === "/signup")),
+          (!auth.isAuthenticated && !isAuthRoute && (item.to === "/signin" || item.to === "/signup")),
         )
         .map((item) => (item.to === "/signup" ? { ...item, label: "Get started" } : item))
     : navigation;
@@ -30,7 +31,7 @@ export function AppFrame({ area }: AppFrameProps) {
     isPublicArea
       ? "Public"
       : area === "shared"
-        ? "Shared"
+        ? auth.profile?.fullName ?? "Shared"
         : auth.profile?.fullName ?? `${area} area`;
   const shellClass = isPublicArea ? "tv-shell" : "tv-workspace-shell";
 
@@ -83,9 +84,11 @@ export function AppFrame({ area }: AppFrameProps) {
             ) : null}
             {auth.isAuthenticated ? (
               <>
-                <Button asChild size="sm" variant="outline">
-                  <Link to="/app/settings">Settings</Link>
-                </Button>
+                {!isSettingsRoute ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link to="/app/settings">Settings</Link>
+                  </Button>
+                ) : null}
                 <Button size="sm" variant="ghost" onClick={auth.signOut}>
                   Sign out
                 </Button>
@@ -123,10 +126,12 @@ export function AppFrame({ area }: AppFrameProps) {
             ))}
           </nav>
           {auth.isAuthenticated ? (
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              <Button asChild size="sm" variant="outline" className="h-10">
-                <Link to="/app/settings">Settings</Link>
-              </Button>
+            <div className={cn("mt-3 grid gap-2", isSettingsRoute ? "grid-cols-1" : "grid-cols-2")}>
+              {!isSettingsRoute ? (
+                <Button asChild size="sm" variant="outline" className="h-10">
+                  <Link to="/app/settings">Settings</Link>
+                </Button>
+              ) : null}
               <Button size="sm" variant="ghost" className="h-10" onClick={auth.signOut}>
                 Sign out
               </Button>

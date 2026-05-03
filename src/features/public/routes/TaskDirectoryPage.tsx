@@ -1,6 +1,7 @@
 import { CalendarDays, CheckCircle2, CircleDot, LockKeyhole, WalletCards } from "lucide-react";
 
 import { PageIntro } from "@/components/shell/PageIntro";
+import { LedgerRows } from "@/components/shell/WorkspacePrimitives";
 import { Badge } from "@/components/ui/badge";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { seededTasks } from "@/features/tasks/data/taskSeeds";
@@ -70,29 +71,38 @@ export function TaskDirectoryPage() {
             <div className="px-5 py-4">
               <p className="text-sm leading-6 text-slate-600">{task.description}</p>
 
-              <div className="mt-4 grid gap-2 sm:grid-cols-3">
-                <div className="tv-ledger-row">
-                  <span className="inline-flex items-center gap-1.5">
-                    <CircleDot className="h-3.5 w-3.5" />
-                    Claim
-                  </span>
-                  <strong>{getClaimState(task)}</strong>
-                </div>
-                <div className="tv-ledger-row">
-                  <span className="inline-flex items-center gap-1.5">
-                    <CalendarDays className="h-3.5 w-3.5" />
-                    Deadline
-                  </span>
-                  <strong>{formatDeadline(task.deadlineAt)}</strong>
-                </div>
-                <div className="tv-ledger-row">
-                  <span className="inline-flex items-center gap-1.5">
-                    <WalletCards className="h-3.5 w-3.5" />
-                    Release
-                  </span>
-                  <strong>After review</strong>
-                </div>
-              </div>
+              <LedgerRows
+                className="mt-4"
+                rows={[
+                  {
+                    label: (
+                      <span className="inline-flex items-center gap-1.5">
+                        <CircleDot className="h-3.5 w-3.5" />
+                        Claim
+                      </span>
+                    ),
+                    value: getClaimState(task),
+                  },
+                  {
+                    label: (
+                      <span className="inline-flex items-center gap-1.5">
+                        <CalendarDays className="h-3.5 w-3.5" />
+                        Deadline
+                      </span>
+                    ),
+                    value: formatDeadline(task.deadlineAt),
+                  },
+                  {
+                    label: (
+                      <span className="inline-flex items-center gap-1.5">
+                        <WalletCards className="h-3.5 w-3.5" />
+                        Release
+                      </span>
+                    ),
+                    value: "After review",
+                  },
+                ]}
+              />
             </div>
 
             <div className="border-t border-slate-200/80 bg-slate-50/70 px-5 py-4">
