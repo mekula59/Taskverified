@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { ArrowRight, BadgeCheck, ShieldCheck, Wallet } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, BadgeCheck, RefreshCw, ShieldCheck, Wallet } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,13 +20,17 @@ function getDeadlineHasPassed(deadlineAt: string) {
 export function WorkerTasksPage() {
   const auth = useAuth();
   const navigate = useNavigate();
-  const { tasks, claims, submissions, payouts, reputationSummaries, claimTask } = useTasks();
+  const { tasks, claims, submissions, payouts, reputationSummaries, isLoading, error, refresh, claimTask } = useTasks();
   const isClaimEligible = auth.verification?.status === "verified";
   const publicTasks = getPublicTasks(tasks);
   const workerId = auth.user?.id ?? "";
   const workerName = auth.profile?.fullName ?? "Worker";
   const reputation = getWorkerReputationSummary(reputationSummaries, workerId);
   const [claimError, setClaimError] = useState<string | null>(null);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
 
   const getClaimDisabledReason = (task: Task) => {
     if (!workerId) {
@@ -111,6 +115,20 @@ export function WorkerTasksPage() {
       />
 
       {claimError ? <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">{claimError}</div> : null}
+      {isLoading ? (
+        <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-ledger-sm sm:flex-row sm:items-center sm:justify-between">
+          <span>Refreshing the latest open tasks from TaskVerified.</span>
+          <RefreshCw className="h-4 w-4 animate-spin text-slate-400" aria-hidden="true" />
+        </div>
+      ) : null}
+      {error ? (
+        <div className="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 sm:flex-row sm:items-center sm:justify-between">
+          <span>{error}</span>
+          <Button variant="outline" size="sm" onClick={() => void refresh()}>
+            Refresh tasks
+          </Button>
+        </div>
+      ) : null}
       <div className="grid gap-4 xl:grid-cols-2">
         {publicTasks.map((task) => (
           <LedgerObject key={task.id}>

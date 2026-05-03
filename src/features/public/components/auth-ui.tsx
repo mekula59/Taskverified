@@ -253,49 +253,23 @@ export function AuthShell({
   oppositeButtonLabel,
   onSwitchMode,
   brandEyebrow,
-  brandTitle,
-  brandDescription,
   trustPills,
   insightsEyebrow,
   insights,
 }: AuthShellProps) {
   const renderForm = () => (
-    <div className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex rounded-full bg-slate-100 p-1 ring-1 ring-slate-200/80">
-          <button
-            type="button"
-            onClick={mode === "signin" ? undefined : onSwitchMode}
-            className={cn(
-              "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
-              mode === "signin" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-800",
-            )}
-          >
-            Sign in
-          </button>
-          <button
-            type="button"
-            onClick={mode === "signup" ? undefined : onSwitchMode}
-            className={cn(
-              "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
-              mode === "signup" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-800",
-            )}
-          >
-            Create account
-          </button>
-        </div>
-        <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">{modeEyebrow}</div>
-      </div>
+    <div className="min-w-0 space-y-3">
+      <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">{modeEyebrow}</div>
 
       <div className="space-y-1.5">
         <h1
-          className="max-w-xl text-[1.65rem] font-semibold leading-tight tracking-tight text-slate-950 md:text-[1.85rem]"
+          className="max-w-[18rem] break-words text-[1.45rem] font-semibold leading-tight tracking-tight text-slate-950 sm:max-w-xl md:text-[1.75rem]"
           style={{ viewTransitionName: "taskverified-auth-title" }}
         >
           {modeTitle}
         </h1>
         <p
-          className="max-w-xl text-sm leading-5 text-slate-600"
+          className="max-w-[18.5rem] text-sm leading-5 text-slate-600 sm:max-w-xl"
           style={{ viewTransitionName: "taskverified-auth-description" }}
         >
           {modeDescription}
@@ -303,7 +277,7 @@ export function AuthShell({
       </div>
 
       <div
-        className="rounded-2xl bg-slate-950 p-3 text-white shadow-ledger-sm"
+        className="min-w-0 rounded-2xl bg-slate-950 p-3 text-white shadow-ledger-sm"
         style={{ viewTransitionName: "taskverified-auth-phantom" }}
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -329,7 +303,7 @@ export function AuthShell({
           className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-white px-4 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-50 disabled:pointer-events-none disabled:opacity-60"
         >
           <Wallet className="h-4 w-4" />
-          <span className="whitespace-nowrap">{isWalletBusy ? phantomBusyLabel : phantomButtonLabel}</span>
+          <span className="min-w-0 truncate">{isWalletBusy ? phantomBusyLabel : phantomButtonLabel}</span>
           <ArrowRight className="h-4 w-4" />
         </button>
         <p className="mt-2 text-xs leading-5 text-slate-400">{phantomHint}</p>
@@ -337,61 +311,131 @@ export function AuthShell({
 
       {feedback}
 
-      <div style={{ viewTransitionName: "taskverified-auth-email" }}>{emailFallback}</div>
+      <div className="min-w-0" style={{ viewTransitionName: "taskverified-auth-email" }}>
+        {emailFallback}
+      </div>
     </div>
   );
 
   const primaryInsight = insights[0];
-  const secondaryInsight = insights[1];
+  const trustSteps = ["Proof", "Review", "Payout"];
+  const compactTrustPills = trustPills.slice(0, 2);
+
+  const renderSwitchPrompt = (variant: "desktop" | "mobile") => (
+    <div
+      className={cn(
+        "flex flex-col",
+        variant === "desktop"
+          ? "h-full justify-between rounded-[1.25rem] bg-slate-950 p-6 text-white shadow-ledger-sm"
+          : "mt-4 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200",
+      )}
+    >
+      <div>
+        <p
+          className={cn(
+            "text-[10px] font-semibold uppercase tracking-[0.24em]",
+            variant === "desktop" ? "text-emerald-200" : "text-primary",
+          )}
+        >
+          {brandEyebrow}
+        </p>
+        <h2
+          className={cn(
+            "mt-3 font-semibold tracking-tight",
+            variant === "desktop" ? "text-xl leading-tight text-white" : "text-base leading-snug text-slate-950",
+          )}
+        >
+          {oppositeTitle}
+        </h2>
+        <p
+          className={cn(
+            "mt-2 text-sm leading-6",
+            variant === "desktop" ? "text-slate-300" : "text-slate-600",
+          )}
+        >
+          {oppositeDescription}
+        </p>
+      </div>
+
+      {variant === "desktop" ? (
+        <div className="mt-6 space-y-4">
+          <div className="grid grid-cols-3 gap-2">
+            {trustSteps.map((step) => (
+              <div key={step} className="rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">{step}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {compactTrustPills.map((pill) => (
+              <span
+                key={pill}
+                className="inline-flex rounded-full border border-emerald-200/20 bg-emerald-200/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-emerald-100"
+              >
+                {pill}
+              </span>
+            ))}
+          </div>
+
+          {primaryInsight ? (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">{insightsEyebrow}</p>
+              <p className="mt-1 text-xs font-semibold text-white">{primaryInsight.title}</p>
+              <p className="mt-1 text-xs leading-5 text-slate-400">{primaryInsight.description}</p>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      <button
+        type="button"
+        onClick={onSwitchMode}
+        className={cn(
+          "mt-4 inline-flex h-10 items-center justify-center rounded-full px-4 text-sm font-semibold transition-colors",
+          variant === "desktop"
+            ? "bg-white text-slate-950 hover:bg-emerald-50"
+            : "border border-slate-300 bg-white text-slate-900 hover:bg-slate-100",
+        )}
+      >
+        {oppositeButtonLabel}
+      </button>
+    </div>
+  );
 
   return (
     <div className="relative isolate">
-      <div className="mx-auto w-full max-w-[980px] px-3 py-1 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[920px] px-3 py-1 sm:px-6 lg:px-8">
         <div
-          className="overflow-hidden rounded-[1.5rem] bg-white shadow-ledger ring-1 ring-slate-200"
+          className="mx-auto w-full max-w-[calc(100vw-2rem)] overflow-hidden rounded-[1.5rem] bg-white p-4 shadow-ledger ring-1 ring-slate-200 lg:hidden"
           style={{ viewTransitionName: "taskverified-auth-card" }}
         >
-          <div className="grid lg:grid-cols-[minmax(0,1fr)_320px]">
-            <div className="p-4 sm:p-5 lg:p-6">{renderForm()}</div>
+          {renderForm()}
+          {renderSwitchPrompt("mobile")}
+        </div>
 
-            <aside className="border-t border-slate-200/80 bg-slate-50/80 p-4 lg:border-l lg:border-t-0 lg:p-5">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">{brandEyebrow}</p>
-              <h2 className="mt-2 text-base font-semibold leading-snug tracking-tight text-slate-950">{brandTitle}</h2>
-              <p className="mt-2 text-xs leading-5 text-slate-600">{brandDescription}</p>
+        <div
+          className="relative hidden min-h-[520px] overflow-hidden rounded-[1.6rem] bg-white shadow-ledger ring-1 ring-slate-200 lg:block"
+          style={{ viewTransitionName: "taskverified-auth-card" }}
+        >
+          <div
+            className={cn(
+              "absolute top-0 h-full w-1/2 p-6 transition-all duration-500 ease-out",
+              mode === "signin" ? "left-0" : "left-1/2",
+            )}
+          >
+            <div className="flex h-full items-center">
+              <div className="w-full">{renderForm()}</div>
+            </div>
+          </div>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                {trustPills.slice(0, 3).map((pill) => (
-                  <AuthTrustPill key={pill} label={pill} />
-                ))}
-              </div>
-
-              {primaryInsight ? (
-                <div className="mt-4 rounded-2xl bg-white p-3 ring-1 ring-slate-200/80">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">{insightsEyebrow}</p>
-                  <p className="mt-1 text-xs font-semibold text-slate-950">{primaryInsight.title}</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-600">{primaryInsight.description}</p>
-                </div>
-              ) : null}
-
-              {secondaryInsight ? (
-                <div className="mt-2 rounded-2xl bg-white/70 p-3 ring-1 ring-slate-200/70">
-                  <p className="text-xs font-semibold text-slate-950">{secondaryInsight.title}</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-600">{secondaryInsight.description}</p>
-                </div>
-              ) : null}
-
-              <div className="mt-4 border-t border-slate-200 pt-4">
-                <p className="text-xs font-semibold text-slate-950">{oppositeTitle}</p>
-                <p className="mt-1 text-xs leading-5 text-slate-600">{oppositeDescription}</p>
-                <button
-                  type="button"
-                  onClick={onSwitchMode}
-                  className="mt-3 inline-flex h-9 items-center justify-center rounded-full border border-slate-300 bg-white px-4 text-xs font-semibold text-slate-900 transition-colors hover:bg-slate-100"
-                >
-                  {oppositeButtonLabel}
-                </button>
-              </div>
-            </aside>
+          <div
+            className={cn(
+              "absolute left-0 top-0 z-10 h-full w-1/2 p-4 transition-transform duration-500 ease-out",
+              mode === "signin" ? "translate-x-full" : "translate-x-0",
+            )}
+          >
+            {renderSwitchPrompt("desktop")}
           </div>
         </div>
       </div>

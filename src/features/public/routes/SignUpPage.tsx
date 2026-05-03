@@ -203,8 +203,8 @@ export function SignUpPage() {
           </form>
         </>
       }
-      oppositeTitle="Already have an account?"
-      oppositeDescription="Sign in to keep your proof history, payout identity, and reputation record in one place."
+      oppositeTitle="Already verified?"
+      oppositeDescription="Return to your existing workspace."
       oppositeButtonLabel="Sign in"
       onSwitchMode={() => runAuthViewTransition(() => navigate("/signin"))}
       brandEyebrow="Solana Frontier build"

@@ -212,7 +212,7 @@ export function SignInPage() {
         </>
       }
       oppositeTitle="New to TaskVerified?"
-      oppositeDescription="Create a verified identity, choose your role, and start building trust on Solana."
+      oppositeDescription="Create the identity that carries proof, review, and payout state."
       oppositeButtonLabel="Create account"
       onSwitchMode={() => runAuthViewTransition(() => navigate("/signup"))}
       brandEyebrow="Solana-native access"
