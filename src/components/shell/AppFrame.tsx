@@ -36,7 +36,7 @@ export function AppFrame({ area }: AppFrameProps) {
   const shellClass = isPublicArea ? "tv-shell" : "tv-workspace-shell";
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
+    <div className="min-h-screen w-full min-w-0 overflow-x-hidden bg-background text-foreground">
       <div
         className={
           isPublicArea
@@ -45,12 +45,12 @@ export function AppFrame({ area }: AppFrameProps) {
         }
       />
       <header className="sticky top-0 z-40 border-b border-slate-200/75 bg-white/86 backdrop-blur-xl">
-        <div className={cn(shellClass, "flex min-h-[3.8rem] items-center gap-3")}>
-          <Link to="/" className="flex items-center gap-3">
+        <div className={cn(shellClass, "flex min-h-[3.8rem] min-w-0 items-center gap-3")}>
+          <Link to="/" className="flex min-w-0 items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-emerald-100 shadow-[0_12px_30px_-22px_rgba(15,23,42,0.72)]">
               <ShieldCheck className="h-5 w-5" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="text-[0.95rem] font-semibold leading-5 tracking-tight">TaskVerified</div>
               <div className="text-xs leading-4 text-muted-foreground">{isPublicArea ? "Hire real people. Review proof. Pay on Solana." : "Human-verified micro-work"}</div>
             </div>
@@ -105,8 +105,8 @@ export function AppFrame({ area }: AppFrameProps) {
           </div>
         </div>
 
-        <div className={cn(shellClass, "pb-3 md:hidden")}>
-          <nav className="flex gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className={cn(shellClass, "min-w-0 overflow-hidden pb-3 md:hidden")}>
+          <nav className="-mx-4 flex max-w-[100vw] gap-2 overflow-x-auto px-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {publicNavigation.map((item) => (
               <NavLink
                 key={item.to}

@@ -27,7 +27,7 @@ export function WorkerPayoutsPage() {
       </SectionCard>
 
       <SectionCard title="Payout records" description="Wallet-linked payout visibility tied to approved proof.">
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           {workerPayouts.length > 0 ? (
             workerPayouts.map((payout) => (
               <LedgerObject key={payout.id}>
@@ -36,13 +36,13 @@ export function WorkerPayoutsPage() {
                   title={`${formatMoney(payout.amount, "USD")} / ${payout.currencyToken}`}
                   description={`Devnet transfer target ${formatLamportsAsSol(payout.transferAmountLamports)}.`}
                 />
-                <div className="space-y-4 p-5">
+                <div className="min-w-0 space-y-4 p-5">
                   <LedgerRows
                     rows={[
                       { label: "Status", value: <span className="capitalize">{payout.status.replaceAll("_", " ")}</span> },
-                      { label: "Worker wallet", value: payout.workerWalletAddress ?? "Not connected", valueClassName: "font-mono text-xs leading-5 break-all" },
-                      { label: "Poster wallet", value: payout.posterWalletAddress ?? "Not connected", valueClassName: "font-mono text-xs leading-5 break-all" },
-                      { label: "Tx signature", value: payout.txSignature ?? "Not released yet", valueClassName: "font-mono text-xs leading-5 break-all" },
+                      { label: "Worker wallet", value: payout.workerWalletAddress ?? "Not connected", valueClassName: "tv-long-token font-mono text-xs leading-5" },
+                      { label: "Poster wallet", value: payout.posterWalletAddress ?? "Not connected", valueClassName: "tv-long-token font-mono text-xs leading-5" },
+                      { label: "Tx signature", value: payout.txSignature ?? "Not released yet", valueClassName: "tv-long-token font-mono text-xs leading-5" },
                     ]}
                   />
                   {payout.failureReason ? (

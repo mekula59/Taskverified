@@ -103,12 +103,12 @@ export function SolanaWalletStatusCard({ userId, role, displayName, className }:
   const hasLinkedWallet = Boolean(linkedWalletAddress);
 
   return (
-    <div className={className ?? "space-y-4"}>
-      <div className="rounded-2xl bg-slate-50/80 px-4 py-3 text-sm leading-6 text-slate-600 ring-1 ring-slate-200/80">
+    <div className={className ?? "min-w-0 space-y-4"}>
+      <div className="min-w-0 rounded-2xl bg-slate-50/80 px-4 py-3 text-sm leading-6 text-slate-600 ring-1 ring-slate-200/80">
         {isLiveConnected ? (
           <>
             Connected with Phantom on Solana devnet
-            <div className="mt-2 break-all font-semibold text-slate-950">{adapterWalletAddress}</div>
+            <div className="tv-long-token mt-2 max-w-full font-mono text-xs font-semibold leading-5 text-slate-950">{adapterWalletAddress}</div>
             {isCurrentWalletLinked ? (
               <div className="mt-2 rounded-xl bg-emerald-50 px-3 py-2 text-emerald-800 ring-1 ring-emerald-200">This Phantom wallet is linked to TaskVerified.</div>
             ) : (
@@ -124,12 +124,12 @@ export function SolanaWalletStatusCard({ userId, role, displayName, className }:
         {hasLinkedWallet && !isCurrentWalletLinked ? (
           <div className="mt-3 rounded-xl bg-white px-3 py-2 ring-1 ring-slate-200/80">
             TaskVerified linked wallet
-            <div className="mt-1 break-all font-semibold text-slate-950">{linkedWalletAddress}</div>
+            <div className="tv-long-token mt-1 max-w-full font-mono text-xs font-semibold leading-5 text-slate-950">{linkedWalletAddress}</div>
           </div>
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap">
         {!isLiveConnected ? (
           <Button onClick={handleConnect} disabled={connecting}>
             {connecting ? "Connecting..." : "Connect Phantom"}

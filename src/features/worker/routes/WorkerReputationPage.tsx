@@ -39,25 +39,25 @@ export function WorkerReputationPage() {
             }
           />
 
-          <div className="grid gap-4 sm:grid-cols-3">
-                <div className="rounded-[1.5rem] border border-slate-200 bg-white/90 p-5">
+          <div className="grid min-w-0 gap-4 sm:grid-cols-3">
+                <div className="min-w-0 rounded-[1.5rem] border border-slate-200 bg-white/90 p-5">
                   <ShieldCheck className="h-5 w-5 text-emerald-700" />
                   <p className="mt-4 text-sm font-semibold text-slate-950">Verification establishes claim eligibility</p>
                   <p className="mt-2 text-sm leading-6 text-slate-600">Current status: <span className="font-medium capitalize text-slate-950">{summary.verificationStatus}</span>.</p>
                 </div>
-                <div className="rounded-[1.5rem] border border-slate-200 bg-white/90 p-5">
+                <div className="min-w-0 rounded-[1.5rem] border border-slate-200 bg-white/90 p-5">
                   <BadgeCheck className="h-5 w-5 text-emerald-700" />
                   <p className="mt-4 text-sm font-semibold text-slate-950">Reviewed proof clears or weakens trust</p>
                   <p className="mt-2 text-sm leading-6 text-slate-600">{summary.approvalRate}% approval rate across <span className="font-medium text-slate-950">{summary.tasksCompleted}</span> completed tasks.</p>
                 </div>
-                <div className="rounded-[1.5rem] border border-slate-200 bg-white/90 p-5">
+                <div className="min-w-0 rounded-[1.5rem] border border-slate-200 bg-white/90 p-5">
                   <Wallet className="h-5 w-5 text-emerald-700" />
                   <p className="mt-4 text-sm font-semibold text-slate-950">Released payout confirms clean closure</p>
                   <p className="mt-2 text-sm leading-6 text-slate-600"><span className="font-medium text-slate-950">{summary.payoutsReleased}</span> payouts have reached released state.</p>
                 </div>
           </div>
 
-          <div className="grid gap-4 xl:grid-cols-[1.02fr_0.98fr]">
+          <div className="grid min-w-0 gap-4 xl:grid-cols-[1.02fr_0.98fr]">
             <LedgerObject>
               <LedgerHeader title="Why your trust reads this way" description="Only explainable task outcomes are counted. No social mechanics, no vanity signals." />
               <div className="space-y-3 p-5">
@@ -69,7 +69,7 @@ export function WorkerReputationPage() {
               </div>
             </LedgerObject>
 
-            <div className="space-y-6">
+            <div className="min-w-0 space-y-6">
               <LedgerObject>
                 <LedgerHeader title="Category evidence" description="Strength only appears where reviewed work has actually accumulated." />
                 <div className="space-y-3 p-5">
@@ -91,8 +91,8 @@ export function WorkerReputationPage() {
                 <LedgerHeader title="Recent trust events" description="Latest outcome changes recorded against this worker." />
                 <div className="space-y-3 p-5">
                   {events.map((event) => (
-                    <div key={event.id} className="rounded-[1.35rem] border border-slate-200 bg-slate-50/85 p-4 text-sm leading-6 text-slate-600">
-                      <div className="flex items-center justify-between gap-4">
+                    <div key={event.id} className="min-w-0 rounded-[1.35rem] border border-slate-200 bg-slate-50/85 p-4 text-sm leading-6 text-slate-600">
+                      <div className="flex min-w-0 items-center justify-between gap-4">
                         <p className="font-semibold text-slate-950">{event.detail}</p>
                         <p className={event.scoreDelta >= 0 ? "font-semibold text-emerald-700" : "font-semibold text-rose-700"}>
                           {event.scoreDelta >= 0 ? `+${event.scoreDelta}` : event.scoreDelta}

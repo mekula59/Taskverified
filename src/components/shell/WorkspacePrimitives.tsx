@@ -50,16 +50,16 @@ export function WorkspaceHero({
 }) {
   return (
     <section className="tv-surface overflow-hidden">
-      <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <div className="p-5 sm:p-6">
+      <div className="grid min-w-0 gap-0 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="min-w-0 p-5 sm:p-6">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">{eyebrow}</p>
-          <h1 className="mt-2 max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-slate-950 md:text-[2.35rem]">
+          <h1 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight tracking-tight text-slate-950 sm:text-3xl md:text-[2.35rem]">
             {title}
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 md:text-base">{description}</p>
           {action ? <div className="mt-5">{action}</div> : null}
         </div>
-        {aside ? <div className="border-t border-slate-200/80 bg-slate-50/80 p-4 lg:border-l lg:border-t-0">{aside}</div> : null}
+        {aside ? <div className="min-w-0 max-w-full border-t border-slate-200/80 bg-slate-50/80 p-4 lg:border-l lg:border-t-0">{aside}</div> : null}
       </div>
     </section>
   );
@@ -79,7 +79,7 @@ export function ActionPanel({
   tone?: "dark" | "light";
 }) {
   return (
-    <div className={cn("rounded-2xl p-4", tone === "dark" ? "bg-slate-950 text-white shadow-ledger-sm" : "bg-slate-50 text-slate-950 ring-1 ring-slate-200")}>
+    <div className={cn("min-w-0 max-w-full rounded-2xl p-4", tone === "dark" ? "bg-slate-950 text-white shadow-ledger-sm" : "bg-slate-50 text-slate-950 ring-1 ring-slate-200")}>
       <p className={cn("text-[11px] font-semibold uppercase tracking-[0.2em]", tone === "dark" ? "text-emerald-100/75" : "text-slate-500")}>{eyebrow}</p>
       <h2 className="mt-2 text-lg font-semibold tracking-tight">{title}</h2>
       {description ? <p className={cn("mt-2 text-sm leading-6", tone === "dark" ? "text-white/70" : "text-slate-600")}>{description}</p> : null}
@@ -110,7 +110,7 @@ export function LedgerHeader({
   meta?: ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200/80 bg-white px-5 py-4">
+    <div className="flex min-w-0 flex-wrap items-start justify-between gap-3 border-b border-slate-200/80 bg-white px-5 py-4">
       <div className="min-w-0">
         {eyebrow ? <div className="mb-2">{eyebrow}</div> : null}
         <h2 className="text-xl font-semibold tracking-tight text-slate-950">{title}</h2>
@@ -150,7 +150,7 @@ export function ProofList({
   dark?: boolean;
 }) {
   return (
-    <div className={cn("rounded-2xl p-4", dark ? "bg-slate-950 text-white" : "bg-slate-50/80 ring-1 ring-slate-200/80")}>
+    <div className={cn("min-w-0 max-w-full rounded-2xl p-4", dark ? "bg-slate-950 text-white" : "bg-slate-50/80 ring-1 ring-slate-200/80")}>
       <p className={cn("text-[11px] font-semibold uppercase tracking-[0.18em]", dark ? "text-emerald-100/75" : "text-slate-500")}>{title}</p>
       <div className="mt-3 grid gap-2">
         {items.map((item) => (

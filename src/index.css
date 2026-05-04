@@ -79,9 +79,17 @@
     @apply border-border;
   }
 
+  html,
+  #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -92,11 +100,11 @@
 
 @layer components {
   .tv-shell {
-    @apply mx-auto w-full max-w-shell px-4 sm:px-5 lg:px-6;
+    @apply mx-auto w-full max-w-shell min-w-0 max-w-full px-4 sm:px-5 lg:px-6;
   }
 
   .tv-workspace-shell {
-    @apply mx-auto w-full max-w-workspace px-4 sm:px-5 lg:px-6;
+    @apply mx-auto w-full max-w-workspace min-w-0 max-w-full px-4 sm:px-5 lg:px-6;
   }
 
   .tv-page-rhythm {
@@ -108,11 +116,11 @@
   }
 
   .tv-surface {
-    @apply rounded-2xl bg-white/90 shadow-ledger-sm ring-1 ring-slate-200/80;
+    @apply min-w-0 max-w-full rounded-2xl bg-white/90 shadow-ledger-sm ring-1 ring-slate-200/80;
   }
 
   .tv-surface-muted {
-    @apply rounded-2xl bg-slate-50/80 ring-1 ring-slate-200/75;
+    @apply min-w-0 max-w-full rounded-2xl bg-slate-50/80 ring-1 ring-slate-200/75;
   }
 
   .tv-ledger-row {
@@ -121,6 +129,11 @@
 
   .tv-ledger-row strong {
     @apply min-w-0 max-w-full whitespace-normal break-words text-left font-semibold text-slate-950 sm:text-right;
+  }
+
+  .tv-long-token {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 }
 
