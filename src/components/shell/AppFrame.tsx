@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { ShieldCheck } from "lucide-react";
 
@@ -14,6 +15,7 @@ interface AppFrameProps {
 export function AppFrame({ area }: AppFrameProps) {
   const auth = useAuth();
   const location = useLocation();
+  const mobileNavRef = useRef<HTMLElement | null>(null);
   const navigation = navigationByArea[area];
   const isPublicArea = area === "public";
   const isAuthRoute = isPublicArea && (location.pathname === "/auth" || location.pathname === "/signin" || location.pathname === "/signup");
@@ -34,6 +36,11 @@ export function AppFrame({ area }: AppFrameProps) {
         ? auth.profile?.fullName ?? "Shared"
         : auth.profile?.fullName ?? `${area} area`;
   const shellClass = isPublicArea ? "tv-shell" : "tv-workspace-shell";
+
+  useEffect(() => {
+    const activeItem = mobileNavRef.current?.querySelector<HTMLElement>('[aria-current="page"]');
+    activeItem?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen w-full min-w-0 overflow-x-hidden bg-background text-foreground">
@@ -106,7 +113,10 @@ export function AppFrame({ area }: AppFrameProps) {
         </div>
 
         <div className={cn(shellClass, "min-w-0 overflow-hidden pb-3 md:hidden")}>
-          <nav className="-mx-4 flex max-w-[100vw] gap-2 overflow-x-auto px-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <nav
+            ref={mobileNavRef}
+            className="-mx-3 flex max-w-[100vw] gap-1.5 overflow-x-auto px-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
             {publicNavigation.map((item) => (
               <NavLink
                 key={item.to}
@@ -114,7 +124,7 @@ export function AppFrame({ area }: AppFrameProps) {
                 end={item.end}
                 className={({ isActive }) =>
                   cn(
-                    "whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
+                    "whitespace-nowrap rounded-full px-2.5 py-1.5 text-sm font-medium transition-colors",
                     isActive
                       ? "bg-slate-950 text-white"
                       : "bg-white/88 text-slate-700 ring-1 ring-slate-200",
