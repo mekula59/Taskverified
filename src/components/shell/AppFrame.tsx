@@ -16,25 +16,35 @@ export function AppFrame({ area }: AppFrameProps) {
   const auth = useAuth();
   const location = useLocation();
   const mobileNavRef = useRef<HTMLElement | null>(null);
-  const navigation = navigationByArea[area];
   const isPublicArea = area === "public";
   const isAuthRoute = isPublicArea && (location.pathname === "/auth" || location.pathname === "/signin" || location.pathname === "/signup");
-  const isSettingsRoute = location.pathname === "/app/settings";
+  const userRole = auth.user?.role;
+  const roleArea = userRole === "poster" || userRole === "worker" ? userRole : null;
+  const workspaceRoute = auth.routeForRole(userRole);
+  const roleNavigation = roleArea ? navigationByArea[roleArea] : navigationByArea.shared;
+  const baseNavigation = area === "shared" && auth.isAuthenticated ? roleNavigation : navigationByArea[area];
   const publicNavigation = isPublicArea
-    ? navigation
-        .filter((item) =>
-          item.to === "/" ||
-          item.to === "/tasks" ||
-          (!auth.isAuthenticated && !isAuthRoute && (item.to === "/signin" || item.to === "/signup")),
-        )
-        .map((item) => (item.to === "/signup" ? { ...item, label: "Get started" } : item))
-    : navigation;
+    ? auth.isAuthenticated
+      ? [
+          { label: "Home", to: "/", end: true },
+          { label: "Tasks", to: "/tasks" },
+          { label: "Workspace", to: workspaceRoute },
+          { label: "Settings", to: "/app/settings", end: true },
+        ]
+      : [
+          { label: "Home", to: "/", end: true },
+          { label: "Tasks", to: "/tasks" },
+          { label: "Sign in", to: "/signin" },
+          { label: "Get started", to: "/signup" },
+        ]
+    : [
+        ...baseNavigation,
+        { label: "Settings", to: "/app/settings", end: true },
+      ];
   const areaLabel =
     isPublicArea
       ? "Public"
-      : area === "shared"
-        ? auth.profile?.fullName ?? "Shared"
-        : auth.profile?.fullName ?? `${area} area`;
+      : auth.profile?.fullName ?? (roleArea ? `${roleArea} area` : "Shared");
   const shellClass = isPublicArea ? "tv-shell" : "tv-workspace-shell";
 
   useEffect(() => {
@@ -68,7 +78,7 @@ export function AppFrame({ area }: AppFrameProps) {
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.end}
+                end={item.end ?? true}
                 className={({ isActive }) =>
                   cn(
                     "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
@@ -90,16 +100,9 @@ export function AppFrame({ area }: AppFrameProps) {
               </Badge>
             ) : null}
             {auth.isAuthenticated ? (
-              <>
-                {!isSettingsRoute ? (
-                  <Button asChild size="sm" variant="outline">
-                    <Link to="/app/settings">Settings</Link>
-                  </Button>
-                ) : null}
-                <Button size="sm" variant="ghost" onClick={auth.signOut}>
-                  Sign out
-                </Button>
-              </>
+              <Button size="sm" variant="ghost" onClick={auth.signOut}>
+                Sign out
+              </Button>
             ) : (
               <>
                 {isPublicArea ? null : (
@@ -121,7 +124,7 @@ export function AppFrame({ area }: AppFrameProps) {
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.end}
+                end={item.end ?? true}
                 className={({ isActive }) =>
                   cn(
                     "whitespace-nowrap rounded-full px-2.5 py-1.5 text-sm font-medium transition-colors",
@@ -136,11 +139,11 @@ export function AppFrame({ area }: AppFrameProps) {
             ))}
           </nav>
           {auth.isAuthenticated ? (
-            <div className={cn("mt-3 grid gap-2", isSettingsRoute ? "grid-cols-1" : "grid-cols-2")}>
-              {!isSettingsRoute ? (
-                <Button asChild size="sm" variant="outline" className="h-10">
-                  <Link to="/app/settings">Settings</Link>
-                </Button>
+            <div className={cn("mt-3 grid gap-2", isPublicArea ? "grid-cols-1" : "grid-cols-[minmax(0,1fr)_auto]")}>
+              {!isPublicArea ? (
+                <Badge variant="secondary" className="min-w-0 justify-center rounded-full px-3 py-2 text-[11px] uppercase tracking-[0.14em]">
+                  <span className="truncate">{areaLabel}</span>
+                </Badge>
               ) : null}
               <Button size="sm" variant="ghost" className="h-10" onClick={auth.signOut}>
                 Sign out
