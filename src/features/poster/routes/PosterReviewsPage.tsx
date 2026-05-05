@@ -203,7 +203,7 @@ export function PosterReviewsPage() {
                         </div>
                         <h3 className="text-xl font-semibold tracking-tight">This review controls whether release can move forward.</h3>
                         <p className="text-sm leading-7 text-white/70">
-                          Approval unlocks the next payout state. Rejection stops the release path and records that this proof did not meet the standard.
+                          Approval unlocks the next payout state and creates a release obligation. Rejection stops the release path and records that this proof did not meet the standard.
                         </p>
                       </div>
                       <div className={cn("inline-flex items-center self-start rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]", getPayoutStatusClasses(payout.status))}>
@@ -276,7 +276,7 @@ export function PosterReviewsPage() {
                 <div className="flex flex-col gap-3 rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
                   {payout ? (
                     <p className="text-sm leading-6 text-slate-600">
-                      Approving this proof moves the payout toward <span className="font-medium text-slate-950">{payout.workerWalletAddress && payout.posterWalletAddress ? "ready to release" : "wallet-dependent hold"}</span>. Rejecting it preserves the evidence trail but blocks release.
+                      <span className="font-medium text-slate-950">Approving this proof creates a release obligation.</span> It moves the payout toward <span className="font-medium text-slate-950">{payout.workerWalletAddress && payout.posterWalletAddress ? "ready to release" : "wallet-dependent hold"}</span>. Rejecting it preserves the evidence trail but blocks release.
                     </p>
                   ) : null}
                   {canReview ? (

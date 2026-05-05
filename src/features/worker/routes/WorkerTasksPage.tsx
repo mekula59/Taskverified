@@ -9,12 +9,78 @@ import { getStatusTone } from "@/components/shell/workspaceStatus";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getClaimForTask, getPayoutForSubmission, getPublicTasks, getSubmissionForClaim, getTrustScoreTone, getWorkerReputationSummary } from "@/features/tasks/data/sampleData";
-import type { Task } from "@/features/shared/types/domain";
+import type { PayoutRecord, Task, TaskSubmission } from "@/features/shared/types/domain";
 
 function getDeadlineHasPassed(deadlineAt: string) {
   const deadline = new Date(deadlineAt);
 
   return Number.isFinite(deadline.getTime()) && deadline < new Date();
+}
+
+function getWorkerPayoutState(submission?: TaskSubmission, payout?: PayoutRecord) {
+  if (!submission) {
+    return {
+      label: "Not created",
+      detail: "Payout state opens only after proof is submitted and reviewed.",
+      needsDisputeNote: false,
+    };
+  }
+
+  if (submission.status === "submitted") {
+    return {
+      label: "Pending review",
+      detail: "Proof is waiting for the poster decision before payout can move.",
+      needsDisputeNote: false,
+    };
+  }
+
+  if (submission.status === "rejected") {
+    return {
+      label: "Rejected",
+      detail: "Rejected proof does not move into payout release.",
+      needsDisputeNote: true,
+    };
+  }
+
+  if (!payout) {
+    return {
+      label: "Approved, payout record pending",
+      detail: "Approved proof is waiting for payout state to appear.",
+      needsDisputeNote: true,
+    };
+  }
+
+  if (payout.status === "ready_to_release") {
+    return {
+      label: "Approved, awaiting poster release",
+      detail: "Approved proof is waiting for poster release.",
+      needsDisputeNote: true,
+    };
+  }
+
+  if (payout.status === "released") {
+    return {
+      label: "Released",
+      detail: payout.txSignature ? "Released on Solana devnet with a recorded transaction signature." : "Released on Solana devnet.",
+      needsDisputeNote: false,
+    };
+  }
+
+  if (payout.status === "failed") {
+    return {
+      label: payout.txSignature ? "Failed, finalization recovery needed" : "Failed, recoverable",
+      detail: payout.txSignature
+        ? "A transaction signature exists, but TaskVerified still needs release finalization."
+        : "Release failed before a final transaction signature was recorded.",
+      needsDisputeNote: false,
+    };
+  }
+
+  return {
+    label: "Pending review",
+    detail: "Payout is not ready until proof clears review.",
+    needsDisputeNote: false,
+  };
 }
 
 export function WorkerTasksPage() {
@@ -166,15 +232,24 @@ export function WorkerTasksPage() {
                 const disabledReason = getClaimDisabledReason(task);
 
                 if (existingClaim) {
+                  const payoutState = getWorkerPayoutState(submission, payout);
+
                   return (
                     <div className="flex flex-col gap-3 rounded-2xl bg-slate-50/85 px-4 py-4 ring-1 ring-slate-200/80">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Current state</p>
                       <p className="text-sm text-slate-600">
                         You already hold this task. Current status: <span className="font-medium capitalize text-slate-950">{existingClaim.status}</span>
                       </p>
-                      {payout ? (
-                        <p className="text-sm text-slate-600">
-                          Solana payout: <span className="font-medium capitalize text-slate-950">{payout.status.replaceAll("_", " ")}</span>
+                      <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-600">
+                        <p>
+                          Payout state: <span className="font-medium text-slate-950">{payoutState.label}</span>
+                        </p>
+                        <p>{payoutState.detail}</p>
+                        {payout?.txSignature ? <p className="break-all font-mono text-xs text-slate-500">Tx: {payout.txSignature}</p> : null}
+                      </div>
+                      {payoutState.needsDisputeNote ? (
+                        <p className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
+                          Dispute support is not live in this demo. Keep proof and payout history visible.
                         </p>
                       ) : null}
                       <Button variant="outline" onClick={() => navigate(`/worker/submissions?taskId=${task.id}`)}>

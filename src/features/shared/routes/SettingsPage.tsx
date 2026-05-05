@@ -69,6 +69,22 @@ export function SettingsPage() {
           )}
         </SectionCard>
       </div>
+
+      <SectionCard title="Trust model for this demo" description="What TaskVerified currently does and does not guarantee.">
+        <LedgerRows
+          rows={[
+            { label: "Current role", value: role ? <span className="capitalize">{role}</span> : "Role not selected" },
+            {
+              label: "Linked wallet",
+              value: linkedWalletAddress ?? "No linked wallet",
+              valueClassName: linkedWalletAddress ? "font-mono text-xs leading-5 break-all" : undefined,
+            },
+            { label: "Release model", value: "Poster-released Solana devnet payout after approved proof" },
+            { label: "Escrow status", value: "Not live yet" },
+            { label: "Support/dispute status", value: "Manual/demo only" },
+          ]}
+        />
+      </SectionCard>
     </div>
   );
 }

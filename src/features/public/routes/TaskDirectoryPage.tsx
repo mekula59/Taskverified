@@ -96,13 +96,16 @@ export function TaskDirectoryPage() {
                     label: (
                       <span className="inline-flex items-center gap-1.5">
                         <WalletCards className="h-3.5 w-3.5" />
-                        Release
+                        Release model
                       </span>
                     ),
-                    value: "After review",
+                    value: "Poster-controlled after approval",
                   },
                 ]}
               />
+              <p className="mt-3 rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm leading-6 text-slate-600">
+                Payout release is controlled by the poster after approval in this demo. Escrow is not live yet.
+              </p>
             </div>
 
             <div className="border-t border-slate-200/80 bg-slate-50/70 px-5 py-4">

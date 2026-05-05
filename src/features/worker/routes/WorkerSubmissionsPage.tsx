@@ -11,7 +11,92 @@ import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { createSubmissionFormValues, toSubmissionInput, validateSubmissionForm } from "@/features/tasks/lib/submissionForm";
 import { getClaimsForWorker, getPayoutForSubmission, getSubmissionForClaim, getSubmissionTrustStatus, getWorkerReputationSummary } from "@/features/tasks/data/sampleData";
-import type { SubmissionFormValues } from "@/features/shared/types/domain";
+import type { PayoutRecord, SubmissionFormValues, TaskSubmission } from "@/features/shared/types/domain";
+
+function getSubmissionPayoutState(submission?: TaskSubmission, payout?: PayoutRecord) {
+  if (!submission) {
+    return null;
+  }
+
+  if (submission.status === "submitted") {
+    return {
+      tone: "amber",
+      label: "Pending review",
+      detail: "Proof is submitted and waiting for the poster decision.",
+      needsDisputeNote: false,
+    };
+  }
+
+  if (submission.status === "rejected") {
+    return {
+      tone: "rose",
+      label: "Rejected",
+      detail: "Rejected proof does not move into payout release.",
+      needsDisputeNote: true,
+    };
+  }
+
+  if (!payout) {
+    return {
+      tone: "amber",
+      label: "Approved, payout record pending",
+      detail: "Approved proof is waiting for payout state to appear.",
+      needsDisputeNote: true,
+    };
+  }
+
+  if (payout.status === "ready_to_release") {
+    return {
+      tone: "cyan",
+      label: "Approved, awaiting poster release",
+      detail: "Approved proof is waiting for poster release.",
+      needsDisputeNote: true,
+    };
+  }
+
+  if (payout.status === "released") {
+    return {
+      tone: "emerald",
+      label: "Released",
+      detail: payout.txSignature ? "Released on Solana devnet with a recorded transaction signature." : "Released on Solana devnet.",
+      needsDisputeNote: false,
+    };
+  }
+
+  if (payout.status === "failed") {
+    return {
+      tone: "rose",
+      label: payout.txSignature ? "Failed, finalization recovery needed" : "Failed, recoverable",
+      detail: payout.txSignature
+        ? "A transaction signature exists, but TaskVerified still needs release finalization."
+        : "Release failed before a final transaction signature was recorded.",
+      needsDisputeNote: false,
+    };
+  }
+
+  return {
+    tone: "amber",
+    label: "Pending review",
+    detail: "Payout is not ready until proof clears review.",
+    needsDisputeNote: false,
+  };
+}
+
+function getPayoutStateClasses(tone: string) {
+  if (tone === "emerald") {
+    return "border-emerald-200 bg-emerald-50/85 text-emerald-900";
+  }
+
+  if (tone === "cyan") {
+    return "border-cyan-200 bg-cyan-50/85 text-cyan-900";
+  }
+
+  if (tone === "rose") {
+    return "border-rose-200 bg-rose-50/85 text-rose-900";
+  }
+
+  return "border-amber-200 bg-amber-50/85 text-amber-900";
+}
 
 export function WorkerSubmissionsPage() {
   const auth = useAuth();
@@ -27,6 +112,7 @@ export function WorkerSubmissionsPage() {
   const canSubmitProof = selectedClaim?.status === "active" && !existingSubmission;
   const isLocked = Boolean(selectedClaim) && !canSubmitProof;
   const reputation = getWorkerReputationSummary(reputationSummaries, workerId);
+  const submissionPayoutState = getSubmissionPayoutState(existingSubmission, payout);
 
   const initialValues = useMemo(
     () => createSubmissionFormValues(selectedTask?.proofRequirements ?? [], existingSubmission),
@@ -181,26 +267,20 @@ export function WorkerSubmissionsPage() {
                   </div>
                 </div>
               ) : null}
-              {existingSubmission?.status === "approved" ? (
-                <div className="space-y-2 rounded-xl border border-emerald-200 bg-emerald-50/85 px-4 py-3 text-sm text-emerald-900">
+              {submissionPayoutState ? (
+                <div className={`space-y-2 rounded-xl border px-4 py-3 text-sm ${getPayoutStateClasses(submissionPayoutState.tone)}`}>
                   <p>
-                    Proof approved{existingSubmission.reviewedAt ? ` on ${new Date(existingSubmission.reviewedAt).toLocaleDateString()}` : ""}.
+                    Proof state: <span className="font-medium">{submissionPayoutState.label}</span>
+                    {existingSubmission?.reviewedAt ? ` · reviewed ${new Date(existingSubmission.reviewedAt).toLocaleDateString()}` : ""}
                   </p>
-                  {payout ? (
-                    <>
-                      <p>
-                        Payout state: <span className="font-medium capitalize text-emerald-950">{payout.status.replaceAll("_", " ")}</span>
-                      </p>
-                    </>
+                  <p>{submissionPayoutState.detail}</p>
+                  {payout?.txSignature ? <p className="break-all font-mono text-xs">Tx: {payout.txSignature}</p> : null}
+                  {existingSubmission?.reviewerNotes ? <p>Reviewer notes: <span className="font-medium">{existingSubmission.reviewerNotes}</span></p> : null}
+                  {submissionPayoutState.needsDisputeNote ? (
+                    <p className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
+                      Dispute support is not live in this demo. Keep proof and payout history visible.
+                    </p>
                   ) : null}
-                </div>
-              ) : null}
-              {existingSubmission?.status === "rejected" ? (
-                <div className="space-y-2 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-muted-foreground">
-                  <p>
-                    Proof rejected{existingSubmission.reviewedAt ? ` on ${new Date(existingSubmission.reviewedAt).toLocaleDateString()}` : ""}.
-                  </p>
-                  {existingSubmission.reviewerNotes ? <p>Reviewer notes: <span className="text-foreground">{existingSubmission.reviewerNotes}</span></p> : null}
                 </div>
               ) : null}
 

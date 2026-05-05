@@ -6,6 +6,25 @@ import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getPayoutsForWorker, getWalletProfile } from "@/features/tasks/data/sampleData";
+import type { PayoutRecord } from "@/features/shared/types/domain";
+
+function getWorkerPayoutMessage(payout: PayoutRecord) {
+  if (payout.status === "ready_to_release") {
+    return "Approved proof is waiting for poster release.";
+  }
+
+  if (payout.status === "released") {
+    return "Released on Solana devnet and recorded in TaskVerified.";
+  }
+
+  if (payout.status === "failed") {
+    return payout.txSignature
+      ? "A transaction signature exists, but release finalization needs recovery."
+      : "Release failed before a final transaction signature was recorded.";
+  }
+
+  return "Payout is not ready until proof clears review and both wallet records are present.";
+}
 
 export function WorkerPayoutsPage() {
   const auth = useAuth();
@@ -20,7 +39,7 @@ export function WorkerPayoutsPage() {
       <WorkspaceHero
         eyebrow="Worker payouts"
         title="Payout visibility follows approved proof through Solana-ready release."
-        description="Workers can connect a real Phantom wallet on Solana devnet here and route approved payouts to the connected destination address."
+        description="Workers can connect a real Phantom wallet on Solana devnet here and see whether approved proof is still waiting on poster-controlled release."
       />
       <SectionCard title="Worker wallet" description="Real Phantom-first connection for demo payouts on Solana devnet.">
         <SolanaWalletStatusCard userId={workerId} role="worker" displayName={workerName} />
@@ -37,6 +56,14 @@ export function WorkerPayoutsPage() {
                   description={`Devnet transfer target ${formatLamportsAsSol(payout.transferAmountLamports)}.`}
                 />
                 <div className="min-w-0 space-y-4 p-5">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50/85 px-4 py-3 text-sm leading-6 text-slate-600">
+                    <span className="font-medium text-slate-950">Release model:</span> {getWorkerPayoutMessage(payout)}
+                  </div>
+                  {payout.status === "ready_to_release" ? (
+                    <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
+                      Dispute support is not live in this demo. Keep proof and payout history visible.
+                    </div>
+                  ) : null}
                   <LedgerRows
                     rows={[
                       { label: "Status", value: <span className="capitalize">{payout.status.replaceAll("_", " ")}</span> },

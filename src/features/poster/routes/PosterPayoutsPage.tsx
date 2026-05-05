@@ -153,7 +153,7 @@ export function PosterPayoutsPage() {
       <WorkspaceHero
         eyebrow="Poster payouts"
         title="Payout release is where approval becomes final."
-        description="Accepted work only becomes complete when you sign release with the right wallet and the transfer lands on Solana. This is the final movement of value, not a routine admin step."
+        description="Accepted work only becomes complete when you sign release with the right wallet and the transfer lands on Solana devnet. Release is poster-controlled in this build; escrow is not live yet."
         aside={
           <ActionPanel
             eyebrow="Release queue"
@@ -164,6 +164,9 @@ export function PosterPayoutsPage() {
       />
 
       <SectionCard title="Release queue" description="Each payout below is a custody event with visible wallet, transfer, and onchain state.">
+        <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50/85 px-4 py-3 text-sm leading-6 text-slate-600">
+          <span className="font-medium text-slate-950">Release model:</span> Release is poster-controlled in this devnet build. Escrow is not live yet.
+        </div>
         {releaseError ? <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-800">{releaseError}</div> : null}
         {!isLivePosterWalletConnected ? (
           <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
@@ -218,7 +221,7 @@ export function PosterPayoutsPage() {
                       </div>
                       <p className="mt-3 text-sm leading-7 text-white/72">
                         {payout.status === "ready_to_release"
-                          ? "Proof is approved, wallet custody is aligned, and this release is waiting on the final poster signature."
+                          ? "Proof is approved, wallet custody is aligned, and this release is waiting on the final poster signature. Approval creates a release obligation."
                           : payout.status === "pending"
                             ? "The release path exists, but one or both payout wallets are still missing so the chain step cannot open."
                             : payout.status === "released"
@@ -269,7 +272,7 @@ export function PosterPayoutsPage() {
 
                     {payout.status === "ready_to_release" ? (
                       <div className="rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm leading-6 text-cyan-900">
-                        Ready for signature. This is the final release moment between approved work and onchain completion.
+                        Ready for signature. Approved proof is waiting for poster release; dispute support is not live in this demo.
                       </div>
                     ) : null}
                     {payout.status === "pending" ? (
@@ -372,7 +375,7 @@ export function PosterPayoutsPage() {
             </div>
             <div className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
               <p className="text-sm font-semibold">Loop standard</p>
-              <p className="mt-2 text-sm leading-6 text-white/68">Credible release means approved proof, both wallets present, the correct poster wallet connected, and a visible signature written back into the product.</p>
+              <p className="mt-2 text-sm leading-6 text-white/68">Credible release means approved proof, both wallets present, the correct poster wallet connected, and a visible signature written back into the product. It is not escrow yet.</p>
             </div>
           </div>
         </div>
