@@ -4,6 +4,8 @@ TaskVerified is a proof-first micro-work product for small operational jobs that
 
 The core idea is simple: posters define tightly scoped work with explicit proof requirements, workers submit evidence instead of vague completion claims, posters review against that evidence, and approved work moves into a visible payout release flow on Solana.
 
+One-line pitch: TaskVerified turns micro-work into a proof, review, and poster-released Solana devnet payout loop.
+
 ## Why This Matters
 
 Most lightweight task products are weak at the exact point where trust matters:
@@ -35,6 +37,8 @@ It matters here because the product is about small units of work, and small unit
 
 In TaskVerified, Solana shows up where it is actually useful: payout destination, poster release signature, and visible completion state.
 
+This build does not claim escrow is live. Payout release is poster-controlled on Solana devnet after approved proof, and the UI makes that release model visible.
+
 ## What Is Real Today
 
 The current repo contains a working product loop across these areas:
@@ -55,24 +59,31 @@ The app is organized into four product areas:
 - `poster`
 - `shared`
 
-## What Is Directional
+## Current Limitations
 
-These are product directions, not claims of fully finished production scope:
-- stronger trust policy and review tooling
-- richer submission artifact handling
-- cleaner payout recovery and release operations
-- deeper poster and worker reputation interpretation
-- more polished Frontier demo hierarchy across the key decision moments
+These are explicit limitations, not hidden production claims:
+- Escrow is not live yet.
+- Payout release is poster-controlled in the current devnet build.
+- Dispute support is represented as a manual/demo limitation, not a full arbitration system.
+- Submission artifacts use proof narrative, links, checklist coverage, and file placeholders; durable file storage is not the main claim of this build.
+- Reputation is outcome-linked for the demo loop, but it is not a finished anti-fraud scoring system.
+- Devnet payout records are used to demonstrate release mechanics and trust-state updates.
 
 ## Demo-Ready Surfaces
 
 If you are reviewing the current product, the most important routes are:
+- `/`
 - `/tasks`
+- `/signin`
+- `/signup`
 - `/worker/tasks`
 - `/worker/submissions`
 - `/worker/payouts`
+- `/worker/reputation`
+- `/poster/tasks/new`
 - `/poster/reviews`
 - `/poster/payouts`
+- `/app/settings`
 
 These are the surfaces that show whether the loop reads as credible end to end.
 
@@ -81,6 +92,8 @@ These are the surfaces that show whether the loop reads as credible end to end.
 - Install dependencies: `npm install`
 - Start the app: `npm run dev`
 - Run tests: `npm test`
+- Run lint: `npm run lint`
+- Run production build: `npm run build`
 
 ## Submission Framing
 
@@ -90,3 +103,5 @@ TaskVerified should be judged on whether it makes a trust-sensitive work loop fe
 - the review decision has consequence
 - payout follows the decision
 - Solana is used as infrastructure, not decoration
+
+See [`docs/frontier-submission-pack.md`](docs/frontier-submission-pack.md) for the Frontier pitch, demo script, known limitations, evidence checklist, and setup notes.
