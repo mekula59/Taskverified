@@ -4,7 +4,7 @@ TaskVerified is a proof-first micro-work product for small operational jobs that
 
 The core idea is simple: posters define tightly scoped work with explicit proof requirements, workers submit evidence instead of vague completion claims, posters review against that evidence, and approved work moves into a visible payout release flow on Solana.
 
-One-line pitch: TaskVerified turns micro-work into a proof, review, and poster-released Solana devnet payout loop.
+One-line pitch: TaskVerified turns micro-work into a proof, review, and poster-released payout loop backed by Solana.
 
 ## Why This Matters
 
@@ -37,7 +37,7 @@ It matters here because the product is about small units of work, and small unit
 
 In TaskVerified, Solana shows up where it is actually useful: payout destination, poster release signature, and visible completion state.
 
-This build does not claim escrow is live. Payout release is poster-controlled on Solana devnet after approved proof, and the UI makes that release model visible.
+The current release model is explicit: payout release is poster-controlled after approved proof, with escrow planned for a later release model.
 
 ## What Is Real Today
 
@@ -49,7 +49,7 @@ The current repo contains a working product loop across these areas:
 - worker task claiming
 - worker proof submission
 - poster review decisions
-- poster payout release flow on Solana devnet
+- poster payout release flow backed by Solana
 - worker and poster payout visibility
 - trust / reputation state updates tied to product behavior
 
@@ -59,15 +59,15 @@ The app is organized into four product areas:
 - `poster`
 - `shared`
 
-## Current Limitations
+## Current Product Boundaries
 
 These are explicit limitations, not hidden production claims:
-- Escrow is not live yet.
-- Payout release is poster-controlled in the current devnet build.
-- Dispute support is represented as a manual/demo limitation, not a full arbitration system.
+- Escrow is planned for the next release model.
+- Payout release is poster-controlled in the current build.
+- Proof history and payout records keep the review trail visible while dispute handling is being formalized.
 - Submission artifacts use proof narrative, links, checklist coverage, and file placeholders; durable file storage is not the main claim of this build.
-- Reputation is outcome-linked for the demo loop, but it is not a finished anti-fraud scoring system.
-- Devnet payout records are used to demonstrate release mechanics and trust-state updates.
+- Reputation is outcome-linked for the verified loop, but it is not a finished anti-fraud scoring system.
+- Devnet payout records are used where technical transaction evidence matters.
 
 ## Demo-Ready Surfaces
 

@@ -104,7 +104,7 @@ export function TaskDirectoryPage() {
                 ]}
               />
               <p className="mt-3 rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm leading-6 text-slate-600">
-                Payout release is controlled by the poster after approval in this demo. Escrow is not live yet.
+                Payouts are released by the poster after approved proof in this build. Escrow is planned for the next release model.
               </p>
             </div>
 

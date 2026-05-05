@@ -58,7 +58,7 @@ function getSubmissionPayoutState(submission?: TaskSubmission, payout?: PayoutRe
     return {
       tone: "emerald",
       label: "Released",
-      detail: payout.txSignature ? "Released on Solana devnet with a recorded transaction signature." : "Released on Solana devnet.",
+      detail: payout.txSignature ? "Released through the Solana-backed release flow with a recorded transaction signature." : "Released through the Solana-backed release flow.",
       needsDisputeNote: false,
     };
   }
@@ -278,7 +278,7 @@ export function WorkerSubmissionsPage() {
                   {existingSubmission?.reviewerNotes ? <p>Reviewer notes: <span className="font-medium">{existingSubmission.reviewerNotes}</span></p> : null}
                   {submissionPayoutState.needsDisputeNote ? (
                     <p className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
-                      Dispute support is not live in this demo. Keep proof and payout history visible.
+                      Proof history and payout records keep the review trail visible while dispute handling is being formalized.
                     </p>
                   ) : null}
                 </div>

@@ -255,11 +255,11 @@ export function AuthShell({
   brandEyebrow,
 }: AuthShellProps) {
   const renderForm = () => (
-    <div className="mx-auto w-full max-w-[21rem] min-w-0 space-y-3 text-left">
+    <div className="mx-auto w-full max-w-[22.5rem] min-w-0 space-y-2.5 text-left">
       <div className="space-y-1.5 text-center">
         <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">{modeEyebrow}</div>
         <h1
-          className="break-words text-[1.45rem] font-semibold leading-tight tracking-tight text-slate-950"
+          className="break-words text-[1.4rem] font-semibold leading-tight tracking-tight text-slate-950"
           style={{ viewTransitionName: "taskverified-auth-title" }}
         >
           {modeTitle}
@@ -273,7 +273,7 @@ export function AuthShell({
       </div>
 
       <div
-        className="min-w-0 rounded-[1.1rem] bg-slate-950 p-3 text-white shadow-ledger-sm"
+        className="min-w-0 rounded-[1rem] bg-slate-950 p-3 text-white shadow-ledger-sm"
         style={{ viewTransitionName: "taskverified-auth-phantom" }}
       >
         <div className="space-y-2">
@@ -368,7 +368,7 @@ export function AuthShell({
 
   return (
     <div className="relative isolate">
-      <div className="mx-auto flex min-h-[calc(100vh-7.5rem)] w-full items-center px-3 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-[calc(100vh-7.25rem)] w-full items-center px-3 py-3 sm:px-6 lg:px-8">
         <div
           className="mx-auto w-full max-w-[calc(100vw-2rem)] overflow-hidden rounded-[1.25rem] bg-white p-5 shadow-ledger ring-1 ring-slate-200 lg:hidden"
           style={{ viewTransitionName: "taskverified-auth-card" }}
@@ -378,12 +378,12 @@ export function AuthShell({
         </div>
 
         <div
-          className="relative mx-auto hidden h-[570px] w-full max-w-[860px] overflow-hidden rounded-[1.4rem] bg-white shadow-ledger ring-1 ring-slate-200 lg:block"
+          className="relative mx-auto hidden h-[545px] w-full max-w-[920px] overflow-hidden rounded-[1.35rem] bg-white shadow-ledger ring-1 ring-slate-200 lg:block"
           style={{ viewTransitionName: "taskverified-auth-card" }}
         >
           <div
             className={cn(
-              "absolute top-0 h-full w-1/2 px-8 py-8 transition-all duration-500 ease-in-out",
+              "absolute top-0 h-full w-1/2 px-9 py-6 transition-all duration-500 ease-in-out",
               mode === "signin" ? "left-0" : "left-1/2",
             )}
           >

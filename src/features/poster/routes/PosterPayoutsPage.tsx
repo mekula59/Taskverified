@@ -153,7 +153,7 @@ export function PosterPayoutsPage() {
       <WorkspaceHero
         eyebrow="Poster payouts"
         title="Payout release is where approval becomes final."
-        description="Accepted work only becomes complete when you sign release with the right wallet and the transfer lands on Solana devnet. Release is poster-controlled in this build; escrow is not live yet."
+        description="Accepted work only becomes complete when you sign release with the right wallet and the transfer is recorded. Release is poster-controlled in this build; escrow is planned for the next release model."
         aside={
           <ActionPanel
             eyebrow="Release queue"
@@ -165,12 +165,12 @@ export function PosterPayoutsPage() {
 
       <SectionCard title="Release queue" description="Each payout below is a custody event with visible wallet, transfer, and onchain state.">
         <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50/85 px-4 py-3 text-sm leading-6 text-slate-600">
-          <span className="font-medium text-slate-950">Release model:</span> Release is poster-controlled in this devnet build. Escrow is not live yet.
+          <span className="font-medium text-slate-950">Release model:</span> Payouts are released by the poster after approved proof in this build. Escrow is planned for the next release model.
         </div>
         {releaseError ? <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-800">{releaseError}</div> : null}
         {!isLivePosterWalletConnected ? (
           <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
-            Release stays blocked until the connected Phantom wallet matches the poster payout wallet on Solana devnet.
+            Release stays blocked until the connected Phantom wallet matches the poster payout wallet.
           </div>
         ) : null}
 
@@ -272,7 +272,7 @@ export function PosterPayoutsPage() {
 
                     {payout.status === "ready_to_release" ? (
                       <div className="rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm leading-6 text-cyan-900">
-                        Ready for signature. Approved proof is waiting for poster release; dispute support is not live in this demo.
+                        Ready for signature. Approved proof is waiting for poster release; proof history and payout records keep the review trail visible while dispute handling is being formalized.
                       </div>
                     ) : null}
                     {payout.status === "pending" ? (
@@ -315,7 +315,7 @@ export function PosterPayoutsPage() {
                     <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
                       <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Worker wallet</p>
                       <p className="mt-2 break-all text-sm font-semibold text-slate-950">{payout.workerWalletAddress ?? "Not connected"}</p>
-                      <p className="mt-2 text-xs leading-5 text-slate-500">This is the destination that receives the demo payout if release clears.</p>
+                      <p className="mt-2 text-xs leading-5 text-slate-500">This is the destination that receives the payout if release clears.</p>
                     </div>
                     <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
                       <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Poster wallet</p>
@@ -335,7 +335,7 @@ export function PosterPayoutsPage() {
       </SectionCard>
 
       <div className="grid gap-6 xl:grid-cols-[0.88fr_1.12fr]">
-        <SectionCard title="Release wallet" description="The release only opens when the connected Phantom wallet matches the poster payout wallet on Solana devnet.">
+        <SectionCard title="Release wallet" description="The release only opens when the connected Phantom wallet matches the poster payout wallet.">
           <div className="space-y-4">
             <div className={cn("rounded-[1.5rem] border p-4", isLivePosterWalletConnected ? "border-emerald-200 bg-emerald-50/80" : "border-amber-200 bg-amber-50/80")}>
               <div className="flex items-start gap-3">
@@ -375,7 +375,7 @@ export function PosterPayoutsPage() {
             </div>
             <div className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
               <p className="text-sm font-semibold">Loop standard</p>
-              <p className="mt-2 text-sm leading-6 text-white/68">Credible release means approved proof, both wallets present, the correct poster wallet connected, and a visible signature written back into the product. It is not escrow yet.</p>
+              <p className="mt-2 text-sm leading-6 text-white/68">Credible release means approved proof, both wallets present, the correct poster wallet connected, and a visible signature written back into the product. Escrow is planned for the next release model.</p>
             </div>
           </div>
         </div>

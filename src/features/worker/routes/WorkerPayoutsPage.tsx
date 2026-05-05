@@ -14,7 +14,7 @@ function getWorkerPayoutMessage(payout: PayoutRecord) {
   }
 
   if (payout.status === "released") {
-    return "Released on Solana devnet and recorded in TaskVerified.";
+    return "Released through the Solana-backed release flow and recorded in TaskVerified.";
   }
 
   if (payout.status === "failed") {
@@ -39,9 +39,9 @@ export function WorkerPayoutsPage() {
       <WorkspaceHero
         eyebrow="Worker payouts"
         title="Payout visibility follows approved proof through Solana-ready release."
-        description="Workers can connect a real Phantom wallet on Solana devnet here and see whether approved proof is still waiting on poster-controlled release."
+        description="Workers can connect Phantom here and see whether approved proof is still waiting on poster-controlled release."
       />
-      <SectionCard title="Worker wallet" description="Real Phantom-first connection for demo payouts on Solana devnet.">
+      <SectionCard title="Worker wallet" description="Phantom-first connection for the current payout flow.">
         <SolanaWalletStatusCard userId={workerId} role="worker" displayName={workerName} />
       </SectionCard>
 
@@ -61,7 +61,7 @@ export function WorkerPayoutsPage() {
                   </div>
                   {payout.status === "ready_to_release" ? (
                     <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
-                      Dispute support is not live in this demo. Keep proof and payout history visible.
+                      Proof history and payout records keep the review trail visible while dispute handling is being formalized.
                     </div>
                   ) : null}
                   <LedgerRows

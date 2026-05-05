@@ -61,7 +61,7 @@ function getWorkerPayoutState(submission?: TaskSubmission, payout?: PayoutRecord
   if (payout.status === "released") {
     return {
       label: "Released",
-      detail: payout.txSignature ? "Released on Solana devnet with a recorded transaction signature." : "Released on Solana devnet.",
+      detail: payout.txSignature ? "Released through the Solana-backed release flow with a recorded transaction signature." : "Released through the Solana-backed release flow.",
       needsDisputeNote: false,
     };
   }
@@ -249,7 +249,7 @@ export function WorkerTasksPage() {
                       </div>
                       {payoutState.needsDisputeNote ? (
                         <p className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
-                          Dispute support is not live in this demo. Keep proof and payout history visible.
+                          Proof history and payout records keep the review trail visible while dispute handling is being formalized.
                         </p>
                       ) : null}
                       <Button variant="outline" onClick={() => navigate(`/worker/submissions?taskId=${task.id}`)}>
