@@ -172,7 +172,7 @@ export function SignInPage() {
                 </p>
               </div>
 
-              <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+              <div className="grid gap-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="email" className="text-slate-700">
                     Email
@@ -192,7 +192,7 @@ export function SignInPage() {
                 <button
                   type="submit"
                   disabled={auth.isLoading || isEmailCooldownActive}
-                  className="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 disabled:pointer-events-none disabled:opacity-50 md:w-auto"
+                  className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 disabled:pointer-events-none disabled:opacity-50"
                 >
                   <Mail className="h-4 w-4" />
                   {emailButtonLabel}
