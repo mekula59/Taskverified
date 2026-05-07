@@ -34,7 +34,15 @@ export function deriveAuthFeedbackFromError(message: string, fallbackTitle: stri
     return {
       tone: "warning" as const,
       title: "Email temporarily paused",
-      hint: "Wait about a minute, then try email again. Your wallet sign-in state has not changed.",
+      hint: "Wait a few minutes before requesting another email link. Your wallet sign-in state has not changed.",
+    };
+  }
+
+  if (normalized.includes("email access is not fully enabled") || normalized.includes("email access is not available")) {
+    return {
+      tone: "warning" as const,
+      title: "Email access unavailable",
+      hint: "Use Phantom or try the email linked to your TaskVerified account.",
     };
   }
 

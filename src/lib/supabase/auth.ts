@@ -6,8 +6,13 @@ export function formatAuthError(error: unknown, fallback: string) {
   const message = error instanceof Error ? error.message : String(error ?? "");
   const normalized = message.toLowerCase();
 
-  if (normalized.includes("email rate limit exceeded") || normalized.includes("rate limit")) {
-    return "Too many attempts. Wait a moment, then try again.";
+  if (
+    normalized.includes("email rate limit exceeded") ||
+    normalized.includes("rate limit") ||
+    normalized.includes("too many requests") ||
+    normalized.includes("too many attempts")
+  ) {
+    return "Too many email requests. Please wait a few minutes before requesting another link.";
   }
 
   if (normalized.includes("for security purposes")) {
@@ -61,14 +66,14 @@ export function formatAuthError(error: unknown, fallback: string) {
 }
 
 function getAuthRedirectUrl() {
+  if (typeof window !== "undefined") {
+    return new URL("/auth/callback", window.location.origin).toString();
+  }
+
   const configuredSiteUrl = import.meta.env.VITE_SITE_URL?.trim();
 
   if (configuredSiteUrl) {
     return new URL("/auth/callback", configuredSiteUrl).toString();
-  }
-
-  if (typeof window !== "undefined") {
-    return new URL("/auth/callback", window.location.origin).toString();
   }
 
   return "http://localhost:5173/auth/callback";
@@ -181,7 +186,9 @@ export async function completeEmailAuthCallback(url?: string) {
   const code = callbackUrl.searchParams.get("code");
   const tokenHash = callbackUrl.searchParams.get("token_hash");
   const rawType = callbackUrl.searchParams.get("type");
-  const accessToken = callbackUrl.searchParams.get("access_token") ?? callbackUrl.hash.match(/access_token=([^&]+)/)?.[1];
+  const hashParams = new URLSearchParams(callbackUrl.hash.replace(/^#/, ""));
+  const accessToken = callbackUrl.searchParams.get("access_token") ?? hashParams.get("access_token");
+  const refreshToken = callbackUrl.searchParams.get("refresh_token") ?? hashParams.get("refresh_token");
 
   const {
     data: { session },
@@ -214,6 +221,17 @@ export async function completeEmailAuthCallback(url?: string) {
   }
 
   if (accessToken) {
+    if (refreshToken) {
+      const { error } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+
+      if (error) {
+        throw error;
+      }
+    }
+
     return;
   }
 

@@ -101,7 +101,7 @@ Required environment variables:
 - `VITE_SUPABASE_ANON_KEY`
 - `VITE_SITE_URL`
 
-For production, set `VITE_SITE_URL` to the public domain so email links resolve to `/auth/callback` on the deployed app.
+For production, set `VITE_SITE_URL` to the primary public domain. Browser-initiated magic links use the current app origin for `/auth/callback`, so every deployed domain that can request email links must also be present in the Supabase redirect allowlist.
 
 ## Deployment Readiness
 
@@ -117,6 +117,7 @@ Before a public or Frontier walkthrough, confirm these Supabase dashboard settin
   - `https://trusty-tasks.vercel.app/auth/callback`
 - Site URL set to the production domain.
 - Production SMTP configured or scheduled before wider public use.
+- Magic links opened in the same browser and device where the request started. If a user opens the link somewhere else, request a new link from that browser.
 
 ## Submission Framing
 

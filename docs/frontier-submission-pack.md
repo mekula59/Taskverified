@@ -116,10 +116,12 @@ Supabase auth checklist:
   - `https://trusty-tasks.vercel.app/auth/callback`
 - Site URL set to the production domain.
 - Production SMTP recommended before wider public use.
+- Magic links opened in the same browser and device where they were requested. If a reviewer opens the email on another device or browser, request a new link there.
 
 Deployment note:
 
 - `vercel.json` rewrites client-side routes to `/index.html` so direct URLs such as `/signup`, `/auth/callback`, `/worker`, and `/poster` load the React app.
+- Browser-initiated email links redirect back to the current app origin. Keep all live domains in the Supabase redirect allowlist, and use the custom domain as the primary domain once it is ready.
 
 Local commands:
 

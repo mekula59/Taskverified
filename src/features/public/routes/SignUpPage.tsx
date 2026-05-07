@@ -10,7 +10,17 @@ import { Label } from "@/components/ui/label";
 import { formatAuthError } from "@/lib/supabase/auth";
 import { AuthDivider, AuthFeedbackBanner, AuthShell, deriveAuthFeedbackFromError, runAuthViewTransition } from "@/features/public/components/auth-ui";
 
-const EMAIL_RESEND_COOLDOWN_SECONDS = 60;
+const EMAIL_RESEND_COOLDOWN_SECONDS = 180;
+
+function isRateLimitMessage(message: string) {
+  const normalized = message.toLowerCase();
+  return (
+    normalized.includes("rate limit") ||
+    normalized.includes("too many email requests") ||
+    normalized.includes("too many requests") ||
+    normalized.includes("too many attempts")
+  );
+}
 
 export function SignUpPage() {
   const auth = useAuth();
@@ -72,7 +82,11 @@ export function SignUpPage() {
       setEmailSent(email.trim().toLowerCase());
       setEmailCooldownRemaining(EMAIL_RESEND_COOLDOWN_SECONDS);
     } catch (nextError) {
-      setError(formatAuthError(nextError, "Unable to create your account right now."));
+      const message = formatAuthError(nextError, "Unable to create your account right now.");
+      setError(message);
+      if (isRateLimitMessage(message)) {
+        setEmailCooldownRemaining(EMAIL_RESEND_COOLDOWN_SECONDS);
+      }
     }
   };
 
@@ -196,7 +210,7 @@ export function SignUpPage() {
                   tone="success"
                   title="Check your inbox"
                   message={`A secure TaskVerified link was sent to ${emailSent}.`}
-                  hint="Open the newest email in this browser to create your account and continue onboarding."
+                  hint="Open the link in this same browser to finish creating your account. If you opened it on another device or browser, request a new link there."
                 />
               ) : null}
             </div>
