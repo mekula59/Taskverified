@@ -99,8 +99,27 @@ Prerequisites:
 - Node.js compatible with the project dependencies.
 - npm.
 - Supabase environment configured for the TaskVerified project.
+- Vercel environment variables set:
+  - `VITE_SUPABASE_URL`
+  - `VITE_SUPABASE_ANON_KEY`
+  - `VITE_SITE_URL`
 - Phantom wallet installed for the live wallet walkthrough.
 - Solana devnet wallet funds available for release testing.
+
+Supabase auth checklist:
+
+- Email provider enabled.
+- New user signups enabled if email signup is supported.
+- Redirect URLs include:
+  - `https://www.taskverified.xyz/auth/callback`
+  - `https://taskverified.xyz/auth/callback`
+  - `https://trusty-tasks.vercel.app/auth/callback`
+- Site URL set to the production domain.
+- Production SMTP recommended before wider public use.
+
+Deployment note:
+
+- `vercel.json` rewrites client-side routes to `/index.html` so direct URLs such as `/signup`, `/auth/callback`, `/worker`, and `/poster` load the React app.
 
 Local commands:
 

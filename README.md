@@ -95,6 +95,29 @@ These are the surfaces that show whether the loop reads as credible end to end.
 - Run lint: `npm run lint`
 - Run production build: `npm run build`
 
+Required environment variables:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `VITE_SITE_URL`
+
+For production, set `VITE_SITE_URL` to the public domain so email links resolve to `/auth/callback` on the deployed app.
+
+## Deployment Readiness
+
+Vercel serves TaskVerified as a client-side React app. The root `vercel.json` rewrites direct client-side routes to `/index.html` so routes such as `/signup`, `/auth/callback`, `/worker`, and `/poster` load the app instead of a Vercel 404.
+
+Before a public or Frontier walkthrough, confirm these Supabase dashboard settings:
+
+- Email provider enabled.
+- New user signups enabled if email signup is supported.
+- Redirect URLs include:
+  - `https://www.taskverified.xyz/auth/callback`
+  - `https://taskverified.xyz/auth/callback`
+  - `https://trusty-tasks.vercel.app/auth/callback`
+- Site URL set to the production domain.
+- Production SMTP configured or scheduled before wider public use.
+
 ## Submission Framing
 
 TaskVerified should be judged on whether it makes a trust-sensitive work loop feel operationally real:

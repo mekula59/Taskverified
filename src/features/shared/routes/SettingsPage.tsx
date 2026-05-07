@@ -26,8 +26,8 @@ export function SettingsPage() {
     <div className="space-y-5">
       <PageIntro
         eyebrow="Account"
-        title="Settings should show identity and wallet truth."
-        description="This page keeps account controls tied to the profile, role, verification state, and Phantom wallet used by TaskVerified."
+        title="Settings show identity and wallet truth."
+        description="This page keeps account controls tied to role, verification, wallet, and payout readiness."
       />
 
       <div className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">

@@ -40,7 +40,7 @@ export function VerificationPage() {
               Verification
             </Badge>
             <div className="space-y-3">
-              <h1 className="text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">Verification should read like access consequence, not profile metadata.</h1>
+              <h1 className="text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">Verification defines access and readiness.</h1>
               <p className="max-w-2xl text-base leading-7 text-slate-600">{copy.detail}</p>
             </div>
             <div className="rounded-[1.75rem] border border-slate-200 bg-slate-950 p-6 text-white shadow-[0_20px_55px_-34px_rgba(15,23,42,0.72)]">

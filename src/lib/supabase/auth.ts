@@ -7,11 +7,28 @@ export function formatAuthError(error: unknown, fallback: string) {
   const normalized = message.toLowerCase();
 
   if (normalized.includes("email rate limit exceeded") || normalized.includes("rate limit")) {
-    return "Too many email requests were sent recently. Wait a minute, then try again or continue with Phantom.";
+    return "Too many attempts. Wait a moment, then try again.";
   }
 
   if (normalized.includes("for security purposes")) {
     return "Email sign-in is temporarily paused for security throttling. Wait a minute, then try again or continue with Phantom.";
+  }
+
+  if (
+    normalized.includes("signups not allowed") ||
+    normalized.includes("signup disabled") ||
+    normalized.includes("signups are disabled") ||
+    (normalized.includes("signup") && normalized.includes("otp"))
+  ) {
+    return "Email access is not fully enabled for this project yet. Use Phantom or try the email linked to your TaskVerified account.";
+  }
+
+  if (
+    normalized.includes("invalid email") ||
+    normalized.includes("email address is invalid") ||
+    normalized.includes("unable to validate email")
+  ) {
+    return "Enter a valid email address.";
   }
 
   if (normalized.includes("invalid login credentials")) {
@@ -38,7 +55,9 @@ export function formatAuthError(error: unknown, fallback: string) {
     return "Phantom connected, but signing is not available yet. Unlock the wallet and try again.";
   }
 
-  return message || fallback;
+  return fallback && fallback !== message
+    ? fallback
+    : "Email access could not be completed right now. Try Phantom or try again shortly.";
 }
 
 function getAuthRedirectUrl() {

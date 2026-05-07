@@ -118,7 +118,7 @@ export function SolanaWalletStatusCard({ userId, role, displayName, className }:
         ) : (
           <>
             No live Solana wallet connected.
-            <div className="mt-2">TaskVerified expects Phantom on devnet for this demo payout flow.</div>
+            <div className="mt-2">TaskVerified expects Phantom on devnet for the current payout flow.</div>
           </>
         )}
         {hasLinkedWallet && !isCurrentWalletLinked ? (
