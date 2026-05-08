@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { seededPayouts, seededTasks } from "@/features/tasks/data/taskSeeds";
 import { formatCategoryLabel, formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
+import { formatClaimAvailability } from "@/features/tasks/lib/claimSlots";
 
 const publicTasks = getPublicTasks(seededTasks);
 const featuredTask = publicTasks[0];
@@ -119,7 +120,7 @@ export function HomePage() {
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Public task preview</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">The task is the contract.</h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              Public examples show the reward, claim capacity, category, deadline, proof bar, and current release model before a worker enters the claim flow.
+              Public examples show the reward, worker slots, category, deadline, proof bar, and current release model before a worker enters the claim flow.
             </p>
             <div className="mt-5">
               <Button asChild variant="outline" className="h-10 rounded-full border-slate-300 bg-white">
@@ -146,8 +147,8 @@ export function HomePage() {
               <p className="text-sm leading-6 text-slate-600">{featuredTask.description}</p>
               <div className="mt-4 grid gap-2 sm:grid-cols-3">
                 <div className="tv-ledger-row">
-                  <span>Claim state</span>
-                  <strong>{featuredTask.claimCount >= featuredTask.claimLimit ? "Filled" : "Open"}</strong>
+                  <span>Worker slots</span>
+                  <strong>{formatClaimAvailability(featuredTask)}</strong>
                 </div>
                 <div className="tv-ledger-row">
                   <span>Status</span>

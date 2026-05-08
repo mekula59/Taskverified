@@ -181,6 +181,7 @@ export async function createTaskMutation(input: TaskCreateInput, currentUser: { 
     p_description: input.description,
     p_category: input.category,
     p_proof_requirements: input.proofRequirements,
+    p_claim_limit: input.claimLimit,
     p_reward_amount: input.rewardAmount,
     p_reward_currency: input.rewardCurrency,
     p_deadline_at: input.deadlineAt,

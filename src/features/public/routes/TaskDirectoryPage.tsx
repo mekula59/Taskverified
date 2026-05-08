@@ -6,20 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { seededTasks } from "@/features/tasks/data/taskSeeds";
 import { formatCategoryLabel, formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
+import { formatClaimAvailability } from "@/features/tasks/lib/claimSlots";
 
 function formatDeadline(deadlineAt: string) {
   return new Intl.DateTimeFormat("en", {
     month: "short",
     day: "numeric",
   }).format(new Date(deadlineAt));
-}
-
-function getClaimState(task: { claimCount: number; claimLimit: number }) {
-  if (task.claimCount >= task.claimLimit) {
-    return "Filled";
-  }
-
-  return `${task.claimLimit - task.claimCount} slot open`;
 }
 
 export function TaskDirectoryPage() {
@@ -81,7 +74,7 @@ export function TaskDirectoryPage() {
                         Claim
                       </span>
                     ),
-                    value: getClaimState(task),
+                    value: formatClaimAvailability(task),
                   },
                   {
                     label: (

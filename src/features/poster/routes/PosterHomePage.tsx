@@ -9,6 +9,7 @@ import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalle
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { Button } from "@/components/ui/button";
 import { getPosterDashboardMetrics, getTasksForPoster, formatMoney } from "@/features/tasks/data/sampleData";
+import { formatClaimAvailability } from "@/features/tasks/lib/claimSlots";
 
 export function PosterHomePage() {
   const auth = useAuth();
@@ -40,7 +41,7 @@ export function PosterHomePage() {
           <LedgerHeader
             eyebrow={<StatusPill tone="info">Live tasks</StatusPill>}
             title="Posted work and claim state"
-            description="Tasks stay tied to reward, claim capacity, and the proof consequence workers accepted."
+            description="Tasks stay tied to reward, worker slots, and the proof consequence workers accepted."
           />
           <div className="space-y-3 p-5">
             {posterTasks.length > 0 ? (
@@ -51,7 +52,7 @@ export function PosterHomePage() {
                       <p className="font-semibold tracking-tight text-slate-950">{task.title}</p>
                       <p className="mt-1 text-sm text-slate-600">
                         <StatusPill tone={getStatusTone(task.status)} className="mr-2 capitalize">{task.status}</StatusPill>
-                        {task.claimCount >= task.claimLimit ? "claim slot filled" : "claim slot open"}
+                        {formatClaimAvailability(task)}
                       </p>
                     </div>
                     <StatusPill tone="dark">{formatMoney(task.rewardAmount, task.rewardCurrency)}</StatusPill>

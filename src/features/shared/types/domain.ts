@@ -211,6 +211,7 @@ export interface TaskCreateInput {
   description: string;
   category: TaskCategory;
   proofRequirements: string[];
+  claimLimit: number;
   rewardAmount: number;
   rewardCurrency: RewardCurrency;
   deadlineAt: string;
@@ -222,6 +223,7 @@ export interface TaskFormValues {
   description: string;
   category: TaskCategory | "";
   proofRequirementsText: string;
+  claimLimit: string;
   rewardAmount: string;
   rewardCurrency: RewardCurrency;
   deadlineAt: string;
@@ -233,6 +235,7 @@ export interface TaskValidationErrors {
   description?: string;
   category?: string;
   proofRequirementsText?: string;
+  claimLimit?: string;
   rewardAmount?: string;
   deadlineAt?: string;
   status?: string;

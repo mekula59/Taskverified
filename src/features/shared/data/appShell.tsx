@@ -10,7 +10,7 @@ export const lifecycleSteps = [
   },
   {
     title: "Claim task",
-    description: "Verified workers claim an available task with one clear active claim slot.",
+    description: "Verified workers claim available worker slots before a task fills.",
   },
   {
     title: "Submit proof",

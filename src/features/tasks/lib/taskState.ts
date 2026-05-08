@@ -19,7 +19,7 @@ export function createTaskRecord(current: TaskStoreSnapshot, input: TaskCreateIn
     rewardCurrency: input.rewardCurrency,
     deadlineAt: input.deadlineAt,
     status: input.status,
-    claimLimit: 1,
+    claimLimit: input.claimLimit,
     claimCount: 0,
     createdAt: new Date().toISOString(),
   };
@@ -38,11 +38,15 @@ export function claimTaskRecord(current: TaskStoreSnapshot, input: { taskId: str
 
   const nextTasks = current.tasks.map((task) =>
     task.id === input.taskId
-      ? {
-          ...task,
-          claimCount: task.claimCount + 1,
-          status: "claimed" as const,
-        }
+      ? (() => {
+          const nextClaimCount = task.claimCount + 1;
+
+          return {
+            ...task,
+            claimCount: nextClaimCount,
+            status: nextClaimCount >= task.claimLimit ? ("claimed" as const) : ("open" as const),
+          };
+        })()
       : task,
   );
 

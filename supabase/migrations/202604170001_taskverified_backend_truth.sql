@@ -717,7 +717,8 @@ create or replace function public.create_task(
   p_reward_amount integer,
   p_reward_currency text,
   p_deadline_at timestamptz,
-  p_status text
+  p_status text,
+  p_claim_limit integer default 1
 )
 returns uuid
 language plpgsql
@@ -750,6 +751,10 @@ begin
     raise exception 'Reward amount must be greater than zero.';
   end if;
 
+  if p_claim_limit is null or p_claim_limit < 1 or p_claim_limit > 50 then
+    raise exception 'Worker slots must be a whole number from 1 to 50.';
+  end if;
+
   if p_deadline_at <= timezone('utc', now()) then
     raise exception 'Deadline must be in the future.';
   end if;
@@ -780,7 +785,7 @@ begin
     p_reward_amount,
     p_reward_currency,
     coalesce(p_proof_requirements, '{}'),
-    1,
+    p_claim_limit,
     0,
     p_deadline_at,
     p_status,
@@ -827,16 +832,16 @@ begin
     raise exception 'Task not found.';
   end if;
 
-  if v_task.status <> 'open' then
-    raise exception 'Only open tasks can be claimed.';
+  if v_task.claim_count >= v_task.claim_limit then
+    raise exception 'This task has already reached its claim limit.';
+  end if;
+
+  if v_task.status not in ('open', 'claimed') then
+    raise exception 'This task no longer accepts new claims.';
   end if;
 
   if v_task.deadline_at <= timezone('utc', now()) then
     raise exception 'This task is past its deadline.';
-  end if;
-
-  if v_task.claim_count >= v_task.claim_limit then
-    raise exception 'This task has already reached its claim limit.';
   end if;
 
   if exists (
@@ -864,7 +869,10 @@ begin
 
   update public.tasks
   set claim_count = claim_count + 1,
-      status = 'claimed'
+      status = case
+        when claim_count + 1 >= claim_limit then 'claimed'
+        else 'open'
+      end
   where id = p_task_id;
 
   return v_claim_id;
@@ -1345,7 +1353,7 @@ begin
 end;
 $$;
 
-grant execute on function public.create_task(text, text, text, text[], integer, text, timestamptz, text) to authenticated;
+grant execute on function public.create_task(text, text, text, text[], integer, text, timestamptz, text, integer) to authenticated;
 grant execute on function public.claim_task(uuid) to authenticated;
 grant execute on function public.submit_proof(uuid, uuid, text, text, text, jsonb) to authenticated;
 grant execute on function public.review_submission(uuid, uuid, text, text) to authenticated;

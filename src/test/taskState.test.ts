@@ -4,7 +4,7 @@ import { seededClaims, seededPayouts, seededReputationEvents, seededReputationSu
 import { claimTaskRecord, reviewSubmissionRecord, submitProofRecord } from "@/features/tasks/lib/taskState";
 
 describe("task state transitions", () => {
-  it("claims an open task", () => {
+  it("claims an open task and keeps it open when worker slots remain", () => {
     const next = claimTaskRecord(
       {
         tasks: seededTasks,
@@ -24,6 +24,30 @@ describe("task state transitions", () => {
     );
 
     expect(next.claims[0]?.taskId).toBe("task-101");
+    expect(next.tasks.find((task) => task.id === "task-101")?.claimCount).toBe(1);
+    expect(next.tasks.find((task) => task.id === "task-101")?.status).toBe("open");
+  });
+
+  it("marks a task claimed when the final worker slot is taken", () => {
+    const next = claimTaskRecord(
+      {
+        tasks: seededTasks.map((task) => (task.id === "task-101" ? { ...task, claimLimit: 1 } : task)),
+        claims: seededClaims,
+        submissions: seededSubmissions,
+        workerProfiles: seededWorkerProfiles,
+        walletProfiles: seededWalletProfiles,
+        payouts: seededPayouts,
+        reputationEvents: seededReputationEvents,
+        reputationSummaries: seededReputationSummaries,
+      },
+      {
+        taskId: "task-101",
+        workerId: "worker-001",
+        workerName: "Nadia Cole",
+      },
+    );
+
+    expect(next.tasks.find((task) => task.id === "task-101")?.claimCount).toBe(1);
     expect(next.tasks.find((task) => task.id === "task-101")?.status).toBe("claimed");
   });
 
@@ -55,7 +79,7 @@ describe("task state transitions", () => {
       proofText: "Completed the onboarding flow and collected each screenshot.",
       proofLink: "https://example.com/task-101-proof",
       proofFileName: "task-101-evidence.zip",
-      checklistItems: [{ label: "5 screenshots", completed: true }],
+      checklistItems: [{ label: "Five screenshots showing each onboarding step", completed: true }],
     });
 
     expect(submitted.tasks.find((task) => task.id === "task-101")?.status).toBe("submitted");

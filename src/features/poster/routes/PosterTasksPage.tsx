@@ -4,6 +4,7 @@ import { getStatusTone } from "@/components/shell/workspaceStatus";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getPayoutsForPoster, getTasksForPoster } from "@/features/tasks/data/sampleData";
+import { formatClaimAvailability, formatClaimProgress } from "@/features/tasks/lib/claimSlots";
 
 export function PosterTasksPage() {
   const auth = useAuth();
@@ -33,7 +34,8 @@ export function PosterTasksPage() {
                 rows={[
                   { label: "Status", value: <span className="capitalize">{task.status}</span> },
                   { label: "Deadline", value: new Date(task.deadlineAt).toLocaleDateString() },
-                  { label: "Claim slot", value: task.claimCount >= task.claimLimit ? "Filled" : "Open" },
+                  { label: "Worker slots", value: formatClaimProgress(task) },
+                  { label: "Claim state", value: task.claimCount >= task.claimLimit ? "Claim slots filled" : formatClaimAvailability(task) },
                   {
                     label: "Payout",
                     value: (() => {

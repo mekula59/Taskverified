@@ -24,6 +24,7 @@ describe("task form helpers", () => {
       description: " Proof-based task ",
       category: "testing",
       proofRequirementsText: "Screenshot of completed account state\nSummary mapping evidence to each onboarding step",
+      claimLimit: "3",
       rewardAmount: "25",
       rewardCurrency: "USD",
       deadlineAt: "2026-04-20",
@@ -32,8 +33,41 @@ describe("task form helpers", () => {
 
     expect(input.title).toBe("Test task");
     expect(input.proofRequirements).toEqual(["Screenshot of completed account state", "Summary mapping evidence to each onboarding step"]);
+    expect(input.claimLimit).toBe(3);
     expect(input.rewardAmount).toBe(25);
     expect(input.deadlineAt).toContain("2026-04-20");
+  });
+
+  it("rejects invalid worker slot counts", () => {
+    ["", "0", "-1", "1.5", "abc", "51"].forEach((claimLimit) => {
+      const errors = validateTaskForm({
+        ...defaultTaskFormValues,
+        title: "Test onboarding flow",
+        description: "Complete onboarding and document each visible state.",
+        category: "testing",
+        proofRequirementsText: "Screenshot of completed account state\nDevice and browser details used during the test",
+        claimLimit,
+        rewardAmount: "25",
+        deadlineAt: "2026-04-20",
+      });
+
+      expect(errors.claimLimit).toBe("Worker slots must be a whole number from 1 to 50.");
+    });
+  });
+
+  it("accepts a valid worker slot count", () => {
+    const errors = validateTaskForm({
+      ...defaultTaskFormValues,
+      title: "Test onboarding flow",
+      description: "Complete onboarding and document each visible state.",
+      category: "testing",
+      proofRequirementsText: "Screenshot of completed account state\nDevice and browser details used during the test",
+      claimLimit: "50",
+      rewardAmount: "25",
+      deadlineAt: "2026-04-20",
+    });
+
+    expect(errors.claimLimit).toBeUndefined();
   });
 
   it("rejects vague standalone proof requirements", () => {

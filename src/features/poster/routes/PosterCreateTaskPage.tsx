@@ -63,6 +63,7 @@ export function PosterCreateTaskPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const previewProofRequirements = parseProofRequirements(values.proofRequirementsText);
+  const previewClaimLimit = Number.isInteger(Number(values.claimLimit)) && Number(values.claimLimit) > 0 ? Number(values.claimLimit) : 1;
 
   const applyTemplate = (template: (typeof taskTemplates)[number]) => {
     setValues((current) => ({
@@ -229,7 +230,22 @@ export function PosterCreateTaskPage() {
             {errors.proofRequirementsText ? <p className="text-sm text-destructive">{errors.proofRequirementsText}</p> : null}
           </div>
 
-          <div className="grid gap-5 md:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <div className="space-y-2">
+              <Label htmlFor="claimLimit">Worker slots</Label>
+              <p className="text-sm leading-6 text-slate-600">How many workers can claim this task before it closes?</p>
+              <Input
+                id="claimLimit"
+                type="number"
+                min="1"
+                max="50"
+                step="1"
+                value={values.claimLimit}
+                onChange={(event) => setValues((current) => ({ ...current, claimLimit: event.target.value }))}
+                placeholder="1"
+              />
+              {errors.claimLimit ? <p className="text-sm text-destructive">{errors.claimLimit}</p> : null}
+            </div>
             <div className="space-y-2">
               <Label htmlFor="rewardAmount">Reward amount</Label>
               <Input
@@ -283,7 +299,11 @@ export function PosterCreateTaskPage() {
             <p className="mt-3 text-sm leading-7 text-slate-600">
               {values.description.trim() || "Describe the work clearly enough for a worker to decide whether they can produce reviewable proof."}
             </p>
-            <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+            <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2 xl:grid-cols-4">
+              <div className="rounded-2xl bg-white px-4 py-3 ring-1 ring-slate-200">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Worker slots</p>
+                <p className="mt-2 font-semibold text-slate-950">0 of {previewClaimLimit} claimed</p>
+              </div>
               <div className="rounded-2xl bg-white px-4 py-3 ring-1 ring-slate-200">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Reward</p>
                 <p className="mt-2 font-semibold text-slate-950">{values.rewardAmount || "0"} {values.rewardCurrency}</p>

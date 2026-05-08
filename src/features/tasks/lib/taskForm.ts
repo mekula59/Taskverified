@@ -7,6 +7,7 @@ export const defaultTaskFormValues: TaskFormValues = {
   description: "",
   category: "",
   proofRequirementsText: "",
+  claimLimit: "1",
   rewardAmount: "",
   rewardCurrency: "USD",
   deadlineAt: "",
@@ -34,6 +35,11 @@ export function validateTaskForm(values: TaskFormValues): TaskValidationErrors {
   } else if (!hasReviewableProofRequirements(proofItems)) {
     errors.proofRequirementsText =
       "Add at least two specific proof requirements, or one structured requirement with enough detail to review. Avoid standalone items like proof, screenshot, done, submit proof, or send screenshot.";
+  }
+
+  const claimLimit = Number(values.claimLimit);
+  if (!values.claimLimit.trim() || !Number.isInteger(claimLimit) || claimLimit < 1 || claimLimit > 50) {
+    errors.claimLimit = "Worker slots must be a whole number from 1 to 50.";
   }
 
   const amount = Number(values.rewardAmount);
@@ -99,6 +105,7 @@ export function toTaskCreateInput(values: TaskFormValues): TaskCreateInput {
     description: values.description.trim(),
     category: values.category,
     proofRequirements: parseProofRequirements(values.proofRequirementsText),
+    claimLimit: Number(values.claimLimit),
     rewardAmount: Number(values.rewardAmount),
     rewardCurrency: values.rewardCurrency,
     deadlineAt: new Date(values.deadlineAt).toISOString(),

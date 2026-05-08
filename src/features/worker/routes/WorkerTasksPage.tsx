@@ -9,6 +9,7 @@ import { getStatusTone } from "@/components/shell/workspaceStatus";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getClaimForTask, getPayoutForSubmission, getPublicTasks, getSubmissionForClaim, getTrustScoreTone, getWorkerReputationSummary } from "@/features/tasks/data/sampleData";
+import { formatClaimAvailability } from "@/features/tasks/lib/claimSlots";
 import type { PayoutRecord, Task, TaskSubmission } from "@/features/shared/types/domain";
 
 function getDeadlineHasPassed(deadlineAt: string) {
@@ -111,12 +112,12 @@ export function WorkerTasksPage() {
       return "Claiming stays locked until your verification clears.";
     }
 
-    if (task.status !== "open") {
-      return `Task is ${task.status.replaceAll("_", " ")} and no longer accepts new claims.`;
+    if (task.claimCount >= task.claimLimit) {
+      return `${formatClaimAvailability(task)}.`;
     }
 
-    if (task.claimCount >= task.claimLimit) {
-      return "All claim slots are already filled.";
+    if (task.status !== "open" && task.status !== "claimed") {
+      return `Task is ${task.status.replaceAll("_", " ")} and no longer accepts new claims.`;
     }
 
     if (getDeadlineHasPassed(task.deadlineAt)) {
@@ -217,7 +218,7 @@ export function WorkerTasksPage() {
                 <div className="min-w-0 space-y-4">
                   <LedgerRows
                     rows={[
-                      { label: task.claimCount >= task.claimLimit ? "Availability" : "Availability", value: task.claimCount >= task.claimLimit ? "Filled" : "Open" },
+                      { label: "Worker slots", value: formatClaimAvailability(task) },
                       { label: "Status", value: <span className="capitalize">{task.status}</span> },
                       { label: "Deadline", value: new Date(task.deadlineAt).toLocaleDateString() },
                     ]}
@@ -277,7 +278,7 @@ export function WorkerTasksPage() {
                       <p className="mt-3 text-sm leading-6 text-white/68">{disabledReason}</p>
                     ) : (
                       <p className="mt-3 text-sm leading-6 text-white/68">
-                        {Math.max(task.claimLimit - task.claimCount, 0)} claim slot{task.claimLimit - task.claimCount === 1 ? "" : "s"} available before {new Date(task.deadlineAt).toLocaleDateString()}.
+                        {formatClaimAvailability(task)} before {new Date(task.deadlineAt).toLocaleDateString()}.
                       </p>
                     )}
                   </div>
