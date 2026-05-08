@@ -115,7 +115,7 @@ Supabase auth checklist:
 - Redirect URLs include:
   - `https://www.taskverified.xyz/auth/callback`
   - `https://taskverified.xyz/auth/callback`
-  - `https://trusty-tasks.vercel.app/auth/callback`
+  - `https://taskverified.vercel.app/auth/callback`
 - Site URL set to the production domain.
 - Production SMTP recommended before wider public use.
 - Magic links opened in the same browser and device where they were requested. If a reviewer opens the email on another device or browser, request a new link there.

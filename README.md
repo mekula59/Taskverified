@@ -116,7 +116,7 @@ Before a public or Frontier walkthrough, confirm these Supabase dashboard settin
 - Redirect URLs include:
   - `https://www.taskverified.xyz/auth/callback`
   - `https://taskverified.xyz/auth/callback`
-  - `https://trusty-tasks.vercel.app/auth/callback`
+  - `https://taskverified.vercel.app/auth/callback`
 - Site URL set to the production domain.
 - Production SMTP configured or scheduled before wider public use.
 - Magic links opened in the same browser and device where the request started. If a user opens the link somewhere else, request a new link from that browser.
