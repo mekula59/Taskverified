@@ -22,6 +22,19 @@ function isRateLimitMessage(message: string) {
   );
 }
 
+function isUnknownEmailError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  const normalized = message.toLowerCase();
+  return (
+    normalized.includes("user not found") ||
+    normalized.includes("no user") ||
+    normalized.includes("signups not allowed") ||
+    normalized.includes("signup disabled") ||
+    normalized.includes("signups are disabled") ||
+    (normalized.includes("signup") && normalized.includes("otp"))
+  );
+}
+
 export function SignInPage() {
   const auth = useAuth();
   const navigate = useNavigate();
@@ -86,7 +99,9 @@ export function SignInPage() {
       setEmailSent(email.trim().toLowerCase());
       setEmailCooldownRemaining(EMAIL_RESEND_COOLDOWN_SECONDS);
     } catch (error) {
-      const message = formatAuthError(error, "Unable to sign in right now.");
+      const message = isUnknownEmailError(error)
+        ? "No account found for this email yet. Create your TaskVerified account."
+        : formatAuthError(error, "Unable to sign in right now.");
       setSubmitError(message);
       if (isRateLimitMessage(message)) {
         setEmailCooldownRemaining(EMAIL_RESEND_COOLDOWN_SECONDS);
@@ -220,6 +235,15 @@ export function SignInPage() {
                   message={`A secure TaskVerified link was sent to ${emailSent}.`}
                   hint="Open the link in this same browser to finish signing in. If you opened it on another device or browser, request a new link there."
                 />
+              ) : null}
+              {submitError?.startsWith("No account found") ? (
+                <button
+                  type="button"
+                  onClick={() => navigate("/signup", { state: { email: email.trim().toLowerCase() } })}
+                  className="inline-flex min-h-10 w-full items-center justify-center rounded-xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-slate-800"
+                >
+                  Create TaskVerified account
+                </button>
               ) : null}
             </div>
           </form>

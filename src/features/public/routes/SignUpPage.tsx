@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { WalletReadyState } from "@solana/wallet-adapter-base";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Mail, ShieldCheck, Sparkles, Wallet } from "lucide-react";
@@ -25,7 +25,9 @@ function isRateLimitMessage(message: string) {
 export function SignUpPage() {
   const auth = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const location = useLocation();
+  const initialEmail = (location.state as { email?: string } | null)?.email ?? "";
+  const [email, setEmail] = useState(initialEmail);
   const [error, setError] = useState<string | null>(null);
   const [walletError, setWalletError] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState<string | null>(null);
@@ -82,7 +84,7 @@ export function SignUpPage() {
       setEmailSent(email.trim().toLowerCase());
       setEmailCooldownRemaining(EMAIL_RESEND_COOLDOWN_SECONDS);
     } catch (nextError) {
-      const message = formatAuthError(nextError, "Unable to create your account right now.");
+      const message = formatAuthError(nextError, "Email access is not available for this address yet. Use Phantom or try the email linked to your TaskVerified account.");
       setError(message);
       if (isRateLimitMessage(message)) {
         setEmailCooldownRemaining(EMAIL_RESEND_COOLDOWN_SECONDS);

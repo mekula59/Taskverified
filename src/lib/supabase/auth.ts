@@ -25,7 +25,7 @@ export function formatAuthError(error: unknown, fallback: string) {
     normalized.includes("signups are disabled") ||
     (normalized.includes("signup") && normalized.includes("otp"))
   ) {
-    return "Email access is not fully enabled for this project yet. Use Phantom or try the email linked to your TaskVerified account.";
+    return "Email access is not available for this address yet. Use Phantom or try the email linked to your TaskVerified account.";
   }
 
   if (

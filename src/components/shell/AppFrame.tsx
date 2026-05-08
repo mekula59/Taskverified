@@ -43,7 +43,9 @@ export function AppFrame({ area }: AppFrameProps) {
       ];
   const areaLabel =
     isPublicArea
-      ? "Public"
+      ? auth.isAuthenticated
+        ? auth.profile?.fullName ?? auth.user?.email ?? "Signed in"
+        : "Public"
       : auth.profile?.fullName ?? (roleArea ? `${roleArea} area` : "Shared");
   const shellClass = isPublicArea ? "tv-shell" : "tv-workspace-shell";
 
@@ -139,12 +141,10 @@ export function AppFrame({ area }: AppFrameProps) {
             ))}
           </nav>
           {auth.isAuthenticated ? (
-            <div className={cn("mt-3 grid gap-2", isPublicArea ? "grid-cols-1" : "grid-cols-[minmax(0,1fr)_auto]")}>
-              {!isPublicArea ? (
-                <Badge variant="secondary" className="min-w-0 justify-center rounded-full px-3 py-2 text-[11px] uppercase tracking-[0.14em]">
-                  <span className="truncate">{areaLabel}</span>
-                </Badge>
-              ) : null}
+            <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+              <Badge variant="secondary" className="min-w-0 justify-center rounded-full px-3 py-2 text-[11px] uppercase tracking-[0.14em]">
+                <span className="truncate">{areaLabel}</span>
+              </Badge>
               <Button size="sm" variant="ghost" className="h-10" onClick={auth.signOut}>
                 Sign out
               </Button>

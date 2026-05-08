@@ -46,6 +46,14 @@ export function deriveAuthFeedbackFromError(message: string, fallbackTitle: stri
     };
   }
 
+  if (normalized.includes("no account found") || normalized.includes("create your taskverified account")) {
+    return {
+      tone: "warning" as const,
+      title: "Create an account",
+      hint: "Switch to sign up to create the TaskVerified identity for this email.",
+    };
+  }
+
   if (normalized.includes("user not found") || normalized.includes("no taskverified account")) {
     return {
       tone: "warning" as const,
