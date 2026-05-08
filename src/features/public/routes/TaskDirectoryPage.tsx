@@ -54,7 +54,7 @@ export function TaskDirectoryPage() {
                     {task.status}
                   </Badge>
                 </div>
-                <h2 className="mt-3 text-xl font-semibold tracking-tight text-slate-950">{task.title}</h2>
+                <h2 className="mt-3 break-words text-xl font-semibold tracking-tight text-slate-950">{task.title}</h2>
               </div>
               <div className="rounded-2xl bg-slate-950 px-4 py-2 text-right text-white">
                 <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-400">Reward reference</p>
@@ -63,7 +63,7 @@ export function TaskDirectoryPage() {
             </div>
 
             <div className="px-5 py-4">
-              <p className="text-sm leading-6 text-slate-600">{task.description}</p>
+              <p className="break-words text-sm leading-6 text-slate-600">{task.description}</p>
 
               <LedgerRows
                 className="mt-4"

@@ -23,7 +23,7 @@ export const navigationByArea: Record<AppArea, NavigationItem[]> = {
   ],
   poster: [
     { label: "Overview", to: "/poster", end: true },
-    { label: "Tasks", to: "/poster/tasks" },
+    { label: "Tasks", to: "/poster/tasks", end: true },
     { label: "Create task", to: "/poster/tasks/new" },
     { label: "Reviews", to: "/poster/reviews" },
     { label: "Payouts", to: "/poster/payouts" },

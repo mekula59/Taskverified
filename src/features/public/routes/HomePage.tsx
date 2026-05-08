@@ -42,10 +42,10 @@ export function HomePage() {
         <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_390px]">
           <div className="px-5 py-7 sm:px-7 md:py-8 lg:px-8">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Human-verified micro-work</p>
-            <h1 className="mt-3 max-w-3xl text-[2.35rem] font-semibold leading-[0.98] tracking-tight text-slate-950 md:text-[3.35rem] lg:text-[3.6rem]">
+            <h1 className="mt-3 max-w-3xl break-words text-[2.35rem] font-semibold leading-[0.98] tracking-tight text-slate-950 md:text-[3.35rem] lg:text-[3.6rem]">
               Proof-first tasks with deliberate payout release.
             </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 md:text-lg">
+            <p className="mt-4 max-w-2xl break-words text-base leading-7 text-slate-600 md:text-lg">
               TaskVerified turns small work into reviewable packets: a clear proof bar, a submitted evidence record, and a poster-released SOL payout step on Solana devnet.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -63,9 +63,9 @@ export function HomePage() {
           <div className="border-t border-slate-200/80 bg-slate-50/80 p-4 sm:p-5 lg:border-l lg:border-t-0">
             <div className="rounded-2xl bg-slate-950 p-4 text-white shadow-ledger-sm">
               <div className="flex items-start justify-between gap-4">
-                <div>
+                <div className="min-w-0">
                   <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-emerald-200">Proof object</p>
-                  <h2 className="mt-2 text-lg font-semibold tracking-tight">{featuredTask?.title ?? "Task proof review"}</h2>
+                  <h2 className="mt-2 break-words text-lg font-semibold tracking-tight">{featuredTask?.title ?? "Task proof review"}</h2>
                 </div>
                 <span className="rounded-full bg-white px-3 py-1 text-sm font-semibold text-slate-950">
                   {featuredTask ? formatRewardReference(featuredTask.rewardAmount) : "$24 equivalent"}
@@ -119,8 +119,8 @@ export function HomePage() {
         <section className="grid gap-4 lg:grid-cols-[0.82fr_1.18fr] lg:items-stretch">
           <div className="tv-surface p-5 sm:p-6">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Public task preview</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">The task is the contract.</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+            <h2 className="mt-2 break-words text-2xl font-semibold tracking-tight text-slate-950">The task is the contract.</h2>
+            <p className="mt-2 break-words text-sm leading-6 text-slate-600">
               Public examples show the USD reward reference, worker slots, category, deadline, proof bar, and current release model before a worker enters the claim flow.
             </p>
             <div className="mt-5">
@@ -138,7 +138,7 @@ export function HomePage() {
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
                   {formatCategoryLabel(featuredTask.category)}
                 </p>
-                <h3 className="mt-1.5 text-xl font-semibold tracking-tight text-slate-950">{featuredTask.title}</h3>
+                <h3 className="mt-1.5 break-words text-xl font-semibold tracking-tight text-slate-950">{featuredTask.title}</h3>
               </div>
               <span className="rounded-full bg-white px-3 py-1 text-sm font-semibold text-slate-950 ring-1 ring-slate-200">
                 {formatRewardReference(featuredTask.rewardAmount)}
