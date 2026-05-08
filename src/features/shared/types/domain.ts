@@ -12,7 +12,7 @@ export type SubmissionStatus = "draft" | "submitted" | "approved" | "rejected";
 
 export type TaskCategory = "testing" | "research" | "community" | "content";
 
-export type RewardCurrency = "USD" | "NGN";
+export type RewardCurrency = "USD";
 export type WalletRole = "worker" | "poster";
 export type WalletConnectionStatus = "disconnected" | "connected";
 export type PayoutStatus = "pending" | "ready_to_release" | "released" | "failed";
@@ -177,7 +177,7 @@ export interface PayoutRecord {
   workerWalletAddress?: string;
   posterWalletAddress?: string;
   amount: number;
-  currencyToken: "USDC" | "SOL";
+  currencyToken: "SOL";
   transferAmountLamports?: number;
   status: PayoutStatus;
   txSignature?: string;

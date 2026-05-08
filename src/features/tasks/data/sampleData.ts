@@ -21,6 +21,10 @@ export function formatMoney(amount: number, currency: string) {
   }).format(amount);
 }
 
+export function formatRewardReference(amount: number) {
+  return `${formatMoney(amount, "USD")} equivalent`;
+}
+
 export function getPublicTasks(tasks: Task[]) {
   return tasks.filter((task) => task.status === "open" || task.status === "claimed" || task.status === "submitted");
 }
@@ -151,7 +155,7 @@ export function getWorkerDashboardMetrics(input: {
     },
     {
       label: "Solana payouts",
-      value: formatMoney(solanaAmount, "USD"),
+      value: formatRewardReference(solanaAmount),
       detail: `${approvedClaims} approved completions with ${workerPayouts.length} devnet SOL release records.`,
     },
   ];
@@ -181,7 +185,7 @@ export function getPosterDashboardMetrics(tasks: Task[], payouts: PayoutRecord[]
     },
     {
       label: "Solana release queue",
-      value: formatMoney(rewardReserved, "USD"),
+      value: formatRewardReference(rewardReserved),
       detail: `${readyToRelease} payouts ready for poster-released devnet SOL release.`,
     },
     {

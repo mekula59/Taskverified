@@ -1,12 +1,12 @@
 import { CheckCheck, Coins, Fingerprint, ShieldCheck, Star, Wallet } from "lucide-react";
 
 import { seededTasks } from "@/features/tasks/data/taskSeeds";
-import { formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
+import { formatRewardReference, getPublicTasks } from "@/features/tasks/data/sampleData";
 
 export const lifecycleSteps = [
   {
     title: "Create task",
-    description: "Poster defines the task, reward, proof requirements, and review deadline.",
+    description: "Poster defines the task, USD reference value, proof requirements, and review deadline.",
   },
   {
     title: "Claim task",
@@ -50,9 +50,9 @@ export const publicTrustSignals = [
     icon: <CheckCheck className="h-5 w-5" />,
   },
   {
-    label: "Reward pool",
-    value: formatMoney(getPublicTasks(seededTasks).reduce((sum, task) => sum + task.rewardAmount, 0), "USD"),
-    detail: "Sample rewards model payout visibility.",
+    label: "Reward references",
+    value: formatRewardReference(getPublicTasks(seededTasks).reduce((sum, task) => sum + task.rewardAmount, 0)),
+    detail: "Sample USD reference values; release uses devnet SOL.",
     icon: <Coins className="h-5 w-5" />,
   },
 ] as const;

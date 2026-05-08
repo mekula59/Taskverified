@@ -8,7 +8,7 @@ import { useAuth } from "@/features/auth/context/useAuth";
 import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { Button } from "@/components/ui/button";
-import { formatCategoryLabel, formatMoney, getClaimsForWorker, getWorkerDashboardMetrics, getWorkerReputationSummary, getTrustScoreTone } from "@/features/tasks/data/sampleData";
+import { formatCategoryLabel, formatRewardReference, getClaimsForWorker, getWorkerDashboardMetrics, getWorkerReputationSummary, getTrustScoreTone } from "@/features/tasks/data/sampleData";
 
 export function WorkerHomePage() {
   const auth = useAuth();
@@ -66,7 +66,7 @@ export function WorkerHomePage() {
                       <p className="font-semibold tracking-tight text-slate-950">{task.title}</p>
                       <p className="mt-1 text-sm leading-6 text-slate-600">{task.proofRequirements.join(" · ")}</p>
                     </div>
-                    <StatusPill tone="dark">{formatMoney(task.rewardAmount, task.rewardCurrency)}</StatusPill>
+                    <StatusPill tone="dark">{formatRewardReference(task.rewardAmount)}</StatusPill>
                   </div>
                 </div>
               ))

@@ -3,7 +3,7 @@ import { EmptyState, LedgerHeader, LedgerObject, LedgerRows, ProofList, StatusPi
 import { getStatusTone } from "@/components/shell/workspaceStatus";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
-import { formatMoney, getPayoutsForPoster, getTasksForPoster } from "@/features/tasks/data/sampleData";
+import { formatRewardReference, getPayoutsForPoster, getTasksForPoster } from "@/features/tasks/data/sampleData";
 import { formatClaimAvailability, formatClaimProgress } from "@/features/tasks/lib/claimSlots";
 import { getPayoutReleaseCopy, payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 
@@ -27,7 +27,7 @@ export function PosterTasksPage() {
               eyebrow={<StatusPill tone={getStatusTone(task.status)} className="capitalize">{task.status}</StatusPill>}
               title={task.title}
               description={task.description}
-              meta={<StatusPill tone="dark">{formatMoney(task.rewardAmount, task.rewardCurrency)}</StatusPill>}
+              meta={<StatusPill tone="dark">{formatRewardReference(task.rewardAmount)}</StatusPill>}
             />
             <div className="space-y-4 p-5">
               <ProofList items={task.proofRequirements} />
@@ -35,10 +35,10 @@ export function PosterTasksPage() {
                 rows={[
                   { label: "Status", value: <span className="capitalize">{task.status}</span> },
                   { label: "Deadline", value: new Date(task.deadlineAt).toLocaleDateString() },
+                  { label: "Reward", value: formatRewardReference(task.rewardAmount) },
                   { label: "Worker slots", value: formatClaimProgress(task) },
                   { label: "Claim state", value: task.claimCount >= task.claimLimit ? "Claim slots filled" : formatClaimAvailability(task) },
-                  { label: "Payout asset", value: "SOL" },
-                  { label: "Network", value: "Solana devnet" },
+                  { label: "Payout rail", value: "SOL on Solana devnet" },
                   { label: "Release model", value: "poster-released after approved proof" },
                   {
                     label: "Payout",

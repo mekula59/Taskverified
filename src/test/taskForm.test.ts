@@ -35,7 +35,24 @@ describe("task form helpers", () => {
     expect(input.proofRequirements).toEqual(["Screenshot of completed account state", "Summary mapping evidence to each onboarding step"]);
     expect(input.claimLimit).toBe(3);
     expect(input.rewardAmount).toBe(25);
+    expect(input.rewardCurrency).toBe("USD");
     expect(input.deadlineAt).toContain("2026-04-20");
+  });
+
+  it("keeps the reward reference currency locked to USD", () => {
+    const input = toTaskCreateInput({
+      title: "Reference value task",
+      description: "Proof-based task with a USD reference value.",
+      category: "testing",
+      proofRequirementsText: "Screenshot of completed account state\nDevice and browser details used during the test",
+      claimLimit: "1",
+      rewardAmount: "25",
+      rewardCurrency: "USD",
+      deadlineAt: "2026-04-20",
+      status: "open",
+    });
+
+    expect(input.rewardCurrency).toBe("USD");
   });
 
   it("rejects invalid worker slot counts", () => {

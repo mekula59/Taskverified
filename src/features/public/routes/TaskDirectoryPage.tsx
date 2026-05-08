@@ -5,7 +5,7 @@ import { LedgerRows } from "@/components/shell/WorkspacePrimitives";
 import { Badge } from "@/components/ui/badge";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { seededTasks } from "@/features/tasks/data/taskSeeds";
-import { formatCategoryLabel, formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
+import { formatCategoryLabel, formatRewardReference, getPublicTasks } from "@/features/tasks/data/sampleData";
 import { formatClaimAvailability } from "@/features/tasks/lib/claimSlots";
 import { payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 
@@ -29,8 +29,8 @@ export function TaskDirectoryPage() {
         title="Public tasks, shown as proof-first work objects."
         description={
           isShowingExamples
-            ? "These example tasks show how TaskVerified presents reward, claim state, deadline, and proof requirements before a worker commits."
-            : "Browse public tasks with visible rewards, claim state, deadline, and proof requirements before entering the worker flow."
+            ? "These example tasks show how TaskVerified presents USD reward reference, claim state, deadline, and proof requirements before a worker commits."
+            : "Browse public tasks with visible USD reward references, claim state, deadline, and proof requirements before entering the worker flow."
         }
       />
       {isShowingExamples ? (
@@ -57,8 +57,8 @@ export function TaskDirectoryPage() {
                 <h2 className="mt-3 text-xl font-semibold tracking-tight text-slate-950">{task.title}</h2>
               </div>
               <div className="rounded-2xl bg-slate-950 px-4 py-2 text-right text-white">
-                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-400">Reward</p>
-                <p className="text-lg font-semibold">{formatMoney(task.rewardAmount, task.rewardCurrency)}</p>
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-400">Reward reference</p>
+                <p className="text-lg font-semibold">{formatRewardReference(task.rewardAmount)}</p>
               </div>
             </div>
 
@@ -87,13 +87,17 @@ export function TaskDirectoryPage() {
                     value: formatDeadline(task.deadlineAt),
                   },
                   {
+                    label: "Reward",
+                    value: formatRewardReference(task.rewardAmount),
+                  },
+                  {
                     label: (
                       <span className="inline-flex items-center gap-1.5">
                         <WalletCards className="h-3.5 w-3.5" />
-                        Release model
+                        Payout rail
                       </span>
                     ),
-                    value: "poster-released SOL after approval",
+                    value: "SOL on Solana devnet",
                   },
                 ]}
               />

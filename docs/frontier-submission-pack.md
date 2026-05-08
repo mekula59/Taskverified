@@ -13,7 +13,7 @@ TaskVerified is a trust-first product for small work that still needs human judg
 1. Open the public homepage and state the thesis: TaskVerified is proof-first micro-work with review before payout release.
 2. Open `/tasks` and show that tasks are presented as work objects with reward, claim state, deadline, proof requirements, and release model.
 3. Sign in as the poster profile, TaskVerified Labs, using Phantom.
-4. Open `/poster/tasks/new` and create a small task with a reward, deadline, and concrete proof requirements.
+4. Open `/poster/tasks/new` and create a small task with a USD equivalent reward reference, deadline, and concrete proof requirements.
 5. Switch to the worker profile, Nadia Cole, using the linked worker Phantom wallet.
 6. Open `/worker/tasks`, refresh if needed, and show that the fresh open task is visible with proof requirements before claim.
 7. Claim the task and land in the proof submission flow.
@@ -37,6 +37,7 @@ TaskVerified uses Solana where the workflow needs an explicit release moment: wa
 ## Known Limitations
 
 - Escrow is planned for the next release model.
+- USD amounts are reference values only, not fiat payout support.
 - Active payout rail: SOL on Solana devnet.
 - Release model: poster-released after approved proof.
 - Proof history and payout records keep the review trail visible while dispute handling is being formalized.

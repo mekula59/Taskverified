@@ -107,7 +107,7 @@ export function toTaskCreateInput(values: TaskFormValues): TaskCreateInput {
     proofRequirements: parseProofRequirements(values.proofRequirementsText),
     claimLimit: Number(values.claimLimit),
     rewardAmount: Number(values.rewardAmount),
-    rewardCurrency: values.rewardCurrency,
+    rewardCurrency: "USD",
     deadlineAt: new Date(values.deadlineAt).toISOString(),
     status: values.status,
   };

@@ -40,7 +40,7 @@ type BackendTaskRow = {
   title: string;
   description: string;
   reward_amount: number;
-  reward_currency: "USD" | "NGN";
+  reward_currency: "USD";
   proof_requirements: string[];
   claim_limit: number;
   claim_count: number;
@@ -86,7 +86,7 @@ type BackendPayoutRow = {
   worker_wallet_address: string | null;
   poster_wallet_address: string | null;
   amount: number;
-  currency_token: "USDC" | "SOL";
+  currency_token: "SOL";
   transfer_amount_lamports: number | null;
   status: PayoutRecord["status"];
   tx_signature: string | null;

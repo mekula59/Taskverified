@@ -11,7 +11,7 @@ import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { defaultReviewFormValues, validateReviewForm } from "@/features/tasks/lib/reviewForm";
 import { getPayoutReleaseCopy, payoutRailCopy } from "@/features/tasks/lib/payoutRail";
-import { formatCategoryLabel, formatMoney, getPayoutForSubmission, getSubmittedSubmissionsForPoster, getWorkerProfile, getWorkerReputationSummary, getTrustScoreTone } from "@/features/tasks/data/sampleData";
+import { formatCategoryLabel, formatRewardReference, getPayoutForSubmission, getSubmittedSubmissionsForPoster, getWorkerProfile, getWorkerReputationSummary, getTrustScoreTone } from "@/features/tasks/data/sampleData";
 import { cn } from "@/lib/utils";
 
 function formatSubmissionStatus(status: string) {
@@ -239,8 +239,8 @@ export function PosterReviewsPage() {
                       </div>
                       <div className="grid gap-3 sm:grid-cols-2">
                         <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                          <p className="text-xs uppercase tracking-[0.16em] text-white/50">Reward value</p>
-                          <p className="mt-2 text-sm font-semibold text-white">{formatMoney(payout.amount, "USD")}</p>
+                          <p className="text-xs uppercase tracking-[0.16em] text-white/50">Reward reference</p>
+                          <p className="mt-2 text-sm font-semibold text-white">{formatRewardReference(payout.amount)}</p>
                         </div>
                         <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                           <p className="text-xs uppercase tracking-[0.16em] text-white/50">Payout asset</p>
@@ -251,7 +251,7 @@ export function PosterReviewsPage() {
                           <p className="mt-2 text-sm font-semibold text-white">Solana devnet</p>
                         </div>
                         <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                          <p className="text-xs uppercase tracking-[0.16em] text-white/50">Transfer target</p>
+                          <p className="text-xs uppercase tracking-[0.16em] text-white/50">Release transfer</p>
                           <p className="mt-2 text-sm font-semibold text-white">{formatLamportsAsSol(payout.transferAmountLamports)}</p>
                         </div>
                       </div>
@@ -373,8 +373,8 @@ export function PosterReviewsPage() {
                   </p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                  <p className="text-sm font-medium text-slate-500">Reward at stake</p>
-                  <p className="mt-2 text-sm font-semibold text-slate-950">{payout ? formatMoney(payout.amount, "USD") : formatMoney(selectedTask.rewardAmount, selectedTask.rewardCurrency)}</p>
+                  <p className="text-sm font-medium text-slate-500">Reward reference</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-950">{payout ? formatRewardReference(payout.amount) : formatRewardReference(selectedTask.rewardAmount)}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 bg-white p-4">
                   <p className="text-sm font-medium text-slate-500">Category</p>
@@ -461,7 +461,7 @@ export function PosterReviewsPage() {
                           isSelected ? "bg-emerald-400/15 text-emerald-100" : "bg-emerald-50 text-emerald-700",
                         )}
                       >
-                        {formatMoney(taskPayout.amount, "USD")} payout
+                        {formatRewardReference(taskPayout.amount)} reward reference
                       </div>
                     ) : null}
                   </div>

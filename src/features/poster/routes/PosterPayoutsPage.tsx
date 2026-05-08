@@ -8,7 +8,7 @@ import { useAuth } from "@/features/auth/context/useAuth";
 import { formatLamportsAsSol, executeDevnetPayoutTransfer } from "@/features/solana/lib/payoutExecution";
 import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
-import { formatMoney, getPayoutsForPoster, getWalletProfile } from "@/features/tasks/data/sampleData";
+import { formatRewardReference, getPayoutsForPoster, getWalletProfile } from "@/features/tasks/data/sampleData";
 import { getPosterReleaseRecord, payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { cn } from "@/lib/utils";
@@ -159,7 +159,7 @@ export function PosterPayoutsPage() {
         aside={
           <ActionPanel
             eyebrow="Release queue"
-            title={`${readyCount} ready · ${formatMoney(totalReadyUsd, "USD")}`}
+            title={`${readyCount} ready · ${formatRewardReference(totalReadyUsd)}`}
             description={`${releasedCount} payouts have already reached released state.`}
           />
         }
@@ -229,9 +229,9 @@ export function PosterPayoutsPage() {
                   <div className="space-y-4">
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                       <div className="space-y-1">
-                        <p className="text-sm font-semibold text-slate-950">{formatMoney(payout.amount, "USD")} reward value on the SOL payout rail</p>
+                        <p className="text-sm font-semibold text-slate-950">{formatRewardReference(payout.amount)} reward reference on the SOL payout rail</p>
                         <p className="text-sm leading-6 text-slate-600">
-                          Devnet transfer target {formatLamportsAsSol(payout.transferAmountLamports)}.
+                          Release transfer: devnet SOL target {formatLamportsAsSol(payout.transferAmountLamports)}.
                         </p>
                       </div>
                       <div className={cn("inline-flex items-center self-start rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]", getPayoutStatusClasses(payout.status))}>
@@ -326,13 +326,13 @@ export function PosterPayoutsPage() {
                   <div className="space-y-4">
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-                        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Reward value</p>
+                        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Reward reference</p>
                         <p className="mt-2 text-sm font-semibold text-slate-950">
-                          {formatMoney(payout.amount, "USD")}
+                          {formatRewardReference(payout.amount)}
                         </p>
                       </div>
                       <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-                        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Devnet SOL transfer</p>
+                        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Release transfer</p>
                         <p className="mt-2 text-sm font-semibold text-slate-950">{formatLamportsAsSol(payout.transferAmountLamports)}</p>
                       </div>
                     </div>
@@ -391,8 +391,8 @@ export function PosterPayoutsPage() {
               <p className="mt-2 text-4xl font-semibold">{readyCount}</p>
             </div>
             <div className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
-              <p className="text-sm text-white/55">Release value</p>
-              <p className="mt-2 text-4xl font-semibold">{formatMoney(totalReadyUsd, "USD")}</p>
+              <p className="text-sm text-white/55">Reward reference</p>
+              <p className="mt-2 text-4xl font-semibold">{formatRewardReference(totalReadyUsd)}</p>
             </div>
             <div className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
               <p className="text-sm text-white/55">Released</p>

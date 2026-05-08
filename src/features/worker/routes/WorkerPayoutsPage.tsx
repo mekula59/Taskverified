@@ -5,7 +5,7 @@ import { useAuth } from "@/features/auth/context/useAuth";
 import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
-import { formatMoney, getPayoutsForWorker, getWalletProfile } from "@/features/tasks/data/sampleData";
+import { formatRewardReference, getPayoutsForWorker, getWalletProfile } from "@/features/tasks/data/sampleData";
 import { payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 import type { PayoutRecord } from "@/features/shared/types/domain";
 
@@ -53,8 +53,8 @@ export function WorkerPayoutsPage() {
               <LedgerObject key={payout.id}>
                 <LedgerHeader
                   eyebrow={<StatusPill tone={getStatusTone(payout.status)}>{payout.status.replaceAll("_", " ")}</StatusPill>}
-                  title={`${formatMoney(payout.amount, "USD")} reward value`}
-                  description={`Poster-released devnet SOL transfer target ${formatLamportsAsSol(payout.transferAmountLamports)}.`}
+                  title={`${formatRewardReference(payout.amount)} reward reference`}
+                  description={`Release transfer: devnet SOL target ${formatLamportsAsSol(payout.transferAmountLamports)}.`}
                 />
                 <div className="min-w-0 space-y-4 p-5">
                   <div className="rounded-2xl border border-slate-200 bg-slate-50/85 px-4 py-3 text-sm leading-6 text-slate-600">
@@ -67,8 +67,9 @@ export function WorkerPayoutsPage() {
                   ) : null}
                   <LedgerRows
                     rows={[
-                      { label: "Payout asset", value: "SOL" },
-                      { label: "Network", value: "Solana devnet" },
+                      { label: "Reward", value: formatRewardReference(payout.amount) },
+                      { label: "Payout rail", value: "SOL on Solana devnet" },
+                      { label: "Release transfer", value: `devnet SOL target ${formatLamportsAsSol(payout.transferAmountLamports)}` },
                       { label: "Release model", value: "poster-released after approved proof" },
                       { label: "Status", value: <span className="capitalize">{payout.status.replaceAll("_", " ")}</span> },
                       { label: "Worker wallet", value: payout.workerWalletAddress ?? "Not connected", valueClassName: "tv-long-token font-mono text-xs leading-5" },

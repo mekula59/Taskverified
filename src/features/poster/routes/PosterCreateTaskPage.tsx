@@ -14,11 +14,11 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { posterTrustSignals } from "@/features/shared/data/appShell";
-import type { TaskCategory, RewardCurrency, TaskStatus } from "@/features/shared/types/domain";
+import type { TaskCategory, TaskStatus } from "@/features/shared/types/domain";
+import { formatRewardReference } from "@/features/tasks/data/sampleData";
 import { payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 
 const categoryOptions: TaskCategory[] = ["testing", "research", "community", "content"];
-const currencyOptions: RewardCurrency[] = ["USD", "NGN"];
 const statusOptions: TaskStatus[] = ["draft", "open"];
 const taskTemplates: Array<{
   label: string;
@@ -249,6 +249,7 @@ export function PosterCreateTaskPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="rewardAmount">Reward amount</Label>
+              <p className="text-sm leading-6 text-slate-600">Use this as a USD equivalent reference. The release transfer uses SOL on Solana devnet.</p>
               <Input
                 id="rewardAmount"
                 type="number"
@@ -261,20 +262,11 @@ export function PosterCreateTaskPage() {
               {errors.rewardAmount ? <p className="text-sm text-destructive">{errors.rewardAmount}</p> : null}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="rewardCurrency">Reward currency</Label>
-              <Select
-                id="rewardCurrency"
-                value={values.rewardCurrency}
-                onChange={(event) =>
-                  setValues((current) => ({ ...current, rewardCurrency: event.target.value as RewardCurrency }))
-                }
-              >
-                {currencyOptions.map((currency) => (
-                  <option key={currency} value={currency}>
-                    {currency}
-                  </option>
-                ))}
-              </Select>
+              <Label>Reward reference</Label>
+              <div className="rounded-xl border border-slate-200 bg-slate-50/85 px-3 py-2 text-sm font-semibold text-slate-950">
+                USD equivalent
+              </div>
+              <p className="text-sm leading-6 text-slate-600">Reference value only. TaskVerified does not release fiat or SPL tokens in this build.</p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="deadlineAt">Deadline</Label>
@@ -313,8 +305,8 @@ export function PosterCreateTaskPage() {
                 <p className="mt-2 font-semibold text-slate-950">0 of {previewClaimLimit} claimed</p>
               </div>
               <div className="rounded-2xl bg-white px-4 py-3 ring-1 ring-slate-200">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Reward</p>
-                <p className="mt-2 font-semibold text-slate-950">{values.rewardAmount || "0"} {values.rewardCurrency}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Reward reference</p>
+                <p className="mt-2 font-semibold text-slate-950">{formatRewardReference(Number(values.rewardAmount) || 0)}</p>
               </div>
               <div className="rounded-2xl bg-white px-4 py-3 ring-1 ring-slate-200">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Deadline</p>

@@ -8,7 +8,7 @@ import { useAuth } from "@/features/auth/context/useAuth";
 import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { Button } from "@/components/ui/button";
-import { getPosterDashboardMetrics, getTasksForPoster, formatMoney } from "@/features/tasks/data/sampleData";
+import { getPosterDashboardMetrics, getTasksForPoster, formatRewardReference } from "@/features/tasks/data/sampleData";
 import { formatClaimAvailability } from "@/features/tasks/lib/claimSlots";
 import { getPosterReleaseRecord, payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 
@@ -57,7 +57,7 @@ export function PosterHomePage() {
                         {formatClaimAvailability(task)}
                       </p>
                     </div>
-                    <StatusPill tone="dark">{formatMoney(task.rewardAmount, task.rewardCurrency)}</StatusPill>
+                    <StatusPill tone="dark">{formatRewardReference(task.rewardAmount)}</StatusPill>
                   </div>
                 </div>
               ))

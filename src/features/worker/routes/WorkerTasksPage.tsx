@@ -8,7 +8,7 @@ import { ActionPanel, EmptyState, LedgerHeader, LedgerObject, LedgerRows, ProofL
 import { getStatusTone } from "@/components/shell/workspaceStatus";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
-import { formatMoney, getClaimForTask, getPayoutForSubmission, getPublicTasks, getSubmissionForClaim, getTrustScoreTone, getWorkerReputationSummary } from "@/features/tasks/data/sampleData";
+import { formatRewardReference, getClaimForTask, getPayoutForSubmission, getPublicTasks, getSubmissionForClaim, getTrustScoreTone, getWorkerReputationSummary } from "@/features/tasks/data/sampleData";
 import { formatClaimAvailability } from "@/features/tasks/lib/claimSlots";
 import { formatPosterReleaseRecord, getPayoutReleaseCopy, getPosterReleaseRecord, payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 import type { PayoutRecord, Task, TaskSubmission } from "@/features/shared/types/domain";
@@ -182,7 +182,7 @@ export function WorkerTasksPage() {
               }
               title={task.title}
               description={task.description}
-              meta={<StatusPill tone="dark">{formatMoney(task.rewardAmount, task.rewardCurrency)}</StatusPill>}
+              meta={<StatusPill tone="dark">{formatRewardReference(task.rewardAmount)}</StatusPill>}
             />
 
             <div className="space-y-4 p-5">
@@ -193,7 +193,9 @@ export function WorkerTasksPage() {
                   <LedgerRows
                     rows={[
                       { label: "Worker slots", value: formatClaimAvailability(task) },
-                      { label: "Release", value: "poster-released SOL after approval" },
+                      { label: "Reward", value: formatRewardReference(task.rewardAmount) },
+                      { label: "Payout rail", value: "SOL on Solana devnet" },
+                      { label: "Release", value: "poster-released after approval" },
                       { label: "Status", value: <span className="capitalize">{task.status}</span> },
                       { label: "Deadline", value: new Date(task.deadlineAt).toLocaleDateString() },
                     ]}

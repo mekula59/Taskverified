@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { seededPayouts, seededTasks } from "@/features/tasks/data/taskSeeds";
-import { formatCategoryLabel, formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
+import { formatCategoryLabel, formatRewardReference, getPublicTasks } from "@/features/tasks/data/sampleData";
 import { formatClaimAvailability } from "@/features/tasks/lib/claimSlots";
 import { payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 
@@ -68,7 +68,7 @@ export function HomePage() {
                   <h2 className="mt-2 text-lg font-semibold tracking-tight">{featuredTask?.title ?? "Task proof review"}</h2>
                 </div>
                 <span className="rounded-full bg-white px-3 py-1 text-sm font-semibold text-slate-950">
-                  {featuredTask ? formatMoney(featuredTask.rewardAmount, featuredTask.rewardCurrency) : "$24"}
+                  {featuredTask ? formatRewardReference(featuredTask.rewardAmount) : "$24 equivalent"}
                 </span>
               </div>
               <div className="mt-4 space-y-2.5">
@@ -121,7 +121,7 @@ export function HomePage() {
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Public task preview</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">The task is the contract.</h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              Public examples show the reward, worker slots, category, deadline, proof bar, and current release model before a worker enters the claim flow.
+              Public examples show the USD reward reference, worker slots, category, deadline, proof bar, and current release model before a worker enters the claim flow.
             </p>
             <div className="mt-5">
               <Button asChild variant="outline" className="h-10 rounded-full border-slate-300 bg-white">
@@ -141,7 +141,7 @@ export function HomePage() {
                 <h3 className="mt-1.5 text-xl font-semibold tracking-tight text-slate-950">{featuredTask.title}</h3>
               </div>
               <span className="rounded-full bg-white px-3 py-1 text-sm font-semibold text-slate-950 ring-1 ring-slate-200">
-                {formatMoney(featuredTask.rewardAmount, featuredTask.rewardCurrency)}
+                {formatRewardReference(featuredTask.rewardAmount)}
               </span>
             </div>
             <div className="p-5">
@@ -187,7 +187,7 @@ export function HomePage() {
             <h2 className="text-xl font-semibold tracking-tight text-slate-950">Release is a decision, not a slogan.</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
               Approval prepares payout state; release remains poster-released and controlled by the poster in this build, with visible wallet context and transaction outcome. Escrow is planned for the next release model.
-              {releasedPayout ? ` Latest sample: ${formatMoney(releasedPayout.amount, "USD")} reward released through a devnet SOL transfer target of ${formatLamportsAsSol(releasedPayout.transferAmountLamports)}.` : ""}
+              {releasedPayout ? ` Latest sample: ${formatRewardReference(releasedPayout.amount)} reward reference released through a devnet SOL transfer target of ${formatLamportsAsSol(releasedPayout.transferAmountLamports)}.` : ""}
             </p>
           </div>
         </div>

@@ -18,7 +18,7 @@ TaskVerified is built to make that loop legible.
 
 ## Core Product Loop
 
-1. A poster creates a task with a reward, deadline, and proof requirements.
+1. A poster creates a task with a USD equivalent reward reference, deadline, and proof requirements.
 2. A verified worker claims the task.
 3. The worker submits a proof package: narrative, artifact link, file placeholder, and checklist coverage.
 4. The poster reviews the submission against the stated proof bar.
@@ -37,7 +37,7 @@ It matters here because the product is about small units of work, and small unit
 
 In TaskVerified, Solana shows up where it is actually useful: payout destination, poster release signature, native devnet SOL transfer, and visible completion state.
 
-The current release model is explicit: the active payout asset is SOL, the network is Solana devnet, and payout release is poster-released after approved proof, controlled by the poster. Escrow is planned for a later release model.
+The current release model is explicit: reward amounts are USD equivalent reference values, the active payout asset is SOL, the network is Solana devnet, and payout release is poster-released after approved proof, controlled by the poster. Escrow is planned for a later release model.
 
 ## What Is Real Today
 
@@ -63,6 +63,7 @@ The app is organized into four product areas:
 
 These are explicit limitations, not hidden production claims:
 - Escrow is planned for the next release model.
+- USD amounts are reference values only, not fiat payout support.
 - Active payout rail: SOL on Solana devnet.
 - Release model: poster-released after approved proof.
 - Proof history and payout records keep the review trail visible while dispute handling is being formalized.
