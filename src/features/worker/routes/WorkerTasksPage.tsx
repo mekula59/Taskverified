@@ -10,6 +10,7 @@ import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getClaimForTask, getPayoutForSubmission, getPublicTasks, getSubmissionForClaim, getTrustScoreTone, getWorkerReputationSummary } from "@/features/tasks/data/sampleData";
 import { formatClaimAvailability } from "@/features/tasks/lib/claimSlots";
+import { formatPosterReleaseRecord, getPayoutReleaseCopy, getPosterReleaseRecord, payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 import type { PayoutRecord, Task, TaskSubmission } from "@/features/shared/types/domain";
 
 function getDeadlineHasPassed(deadlineAt: string) {
@@ -51,37 +52,7 @@ function getWorkerPayoutState(submission?: TaskSubmission, payout?: PayoutRecord
     };
   }
 
-  if (payout.status === "ready_to_release") {
-    return {
-      label: "Approved, awaiting poster release",
-      detail: "Approved proof is waiting for poster release.",
-      needsDisputeNote: true,
-    };
-  }
-
-  if (payout.status === "released") {
-    return {
-      label: "Released",
-      detail: payout.txSignature ? "Released through the Solana-backed release flow with a recorded transaction signature." : "Released through the Solana-backed release flow.",
-      needsDisputeNote: false,
-    };
-  }
-
-  if (payout.status === "failed") {
-    return {
-      label: payout.txSignature ? "Failed, finalization recovery needed" : "Failed, recoverable",
-      detail: payout.txSignature
-        ? "A transaction signature exists, but TaskVerified still needs release finalization."
-        : "Release failed before a final transaction signature was recorded.",
-      needsDisputeNote: false,
-    };
-  }
-
-  return {
-    label: "Pending review",
-    detail: "Payout is not ready until proof clears review.",
-    needsDisputeNote: false,
-  };
+  return getPayoutReleaseCopy(payout);
 }
 
 export function WorkerTasksPage() {
@@ -197,7 +168,10 @@ export function WorkerTasksPage() {
         </div>
       ) : null}
       <div className="grid min-w-0 gap-4 xl:grid-cols-2">
-        {publicTasks.map((task) => (
+        {publicTasks.map((task) => {
+          const posterReleaseRecord = getPosterReleaseRecord(payouts, task.posterId);
+
+          return (
           <LedgerObject key={task.id}>
             <LedgerHeader
               eyebrow={
@@ -219,10 +193,16 @@ export function WorkerTasksPage() {
                   <LedgerRows
                     rows={[
                       { label: "Worker slots", value: formatClaimAvailability(task) },
+                      { label: "Release", value: "poster-released SOL after approval" },
                       { label: "Status", value: <span className="capitalize">{task.status}</span> },
                       { label: "Deadline", value: new Date(task.deadlineAt).toLocaleDateString() },
                     ]}
                   />
+                  <div className="rounded-2xl border border-cyan-200 bg-cyan-50/85 px-4 py-3 text-sm leading-6 text-cyan-950">
+                    <p className="font-semibold">{payoutRailCopy.workerClaimRelease}</p>
+                    <p>{payoutRailCopy.workerClaimRisk}</p>
+                    <p>{formatPosterReleaseRecord(posterReleaseRecord)}</p>
+                  </div>
                 </div>
               </div>
 
@@ -286,7 +266,8 @@ export function WorkerTasksPage() {
               })()}
             </div>
           </LedgerObject>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

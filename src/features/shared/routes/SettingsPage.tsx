@@ -9,6 +9,7 @@ import { useAuth } from "@/features/auth/context/useAuth";
 import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { getWalletProfile } from "@/features/tasks/data/sampleData";
+import { payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 
 export function SettingsPage() {
   const auth = useAuth();
@@ -79,9 +80,11 @@ export function SettingsPage() {
               value: linkedWalletAddress ?? "No linked wallet",
               valueClassName: linkedWalletAddress ? "font-mono text-xs leading-5 break-all" : undefined,
             },
-            { label: "Release model", value: "Poster-released payout after approved proof" },
-            { label: "Escrow status", value: "Planned for the next release model" },
-            { label: "Support/dispute status", value: "Review trail visible while dispute handling is formalized" },
+            { label: "Active payout rail", value: "SOL" },
+            { label: "Network", value: "Solana devnet" },
+            { label: "Release model", value: "poster-released after approved proof" },
+            { label: "Escrow", value: "planned for next release model" },
+            { label: "Worker protection today", value: payoutRailCopy.workerProtection },
           ]}
         />
       </SectionCard>

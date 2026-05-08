@@ -2,11 +2,11 @@
 
 ## One-Line Pitch
 
-TaskVerified turns micro-work into a proof, review, and poster-released payout loop backed by Solana.
+TaskVerified turns micro-work into a proof, review, and poster-released SOL payout loop backed by Solana devnet.
 
 ## 30-Second Pitch
 
-TaskVerified is a trust-first product for small work that still needs human judgment. A poster creates a task with explicit proof requirements, a verified worker claims it, submits evidence, and the poster reviews that proof against the original bar. When proof is approved, the payout enters a visible poster-controlled release flow backed by Solana, and the worker can see the released transaction and reputation impact. The goal is not to make another generic task board; it is to make proof, review, wallet identity, payout release, and trust state legible end to end.
+TaskVerified is a trust-first product for small work that still needs human judgment. A poster creates a task with explicit proof requirements, a verified worker claims it, submits evidence, and the poster reviews that proof against the original bar. When proof is approved, the payout enters a visible poster-released SOL flow backed by Solana devnet, and the worker can see the released transaction and reputation impact. The goal is not to make another generic task board; it is to make proof, review, wallet identity, payout release, and trust state legible end to end.
 
 ## Two-Minute Demo Script
 
@@ -21,12 +21,12 @@ TaskVerified is a trust-first product for small work that still needs human judg
 9. Switch back to the poster profile and open `/poster/reviews`.
 10. Show the submitted proof, the proof bar, and the copy that approving creates a release obligation.
 11. Approve the submission once.
-12. Open `/poster/payouts`, show that the payout is ready to release, and note that release is poster-controlled in this build, not escrow.
+12. Open `/poster/payouts`, show that the payout is ready to release, and note that this build uses poster-released SOL on Solana devnet, not escrow.
 13. Sign and release the payout with Phantom.
 14. Show the released state and transaction signature on the poster payout page.
 15. Switch back to the worker and open `/worker/payouts` to show the released payout and tx signature.
 16. Open `/worker/reputation` to show that trust state updates from reviewed proof and released payout outcomes.
-17. Open `/app/settings` to show identity, role, linked TaskVerified wallet, connected Phantom wallet, match state, release model, escrow status, and support/dispute status.
+17. Open `/app/settings` to show identity, role, linked TaskVerified wallet, active payout rail, network, release model, escrow status, and worker protection today.
 
 ## Why Solana
 
@@ -37,7 +37,8 @@ TaskVerified uses Solana where the workflow needs an explicit release moment: wa
 ## Known Limitations
 
 - Escrow is planned for the next release model.
-- Payout release is poster-controlled after proof approval in the current build.
+- Active payout rail: SOL on Solana devnet.
+- Release model: poster-released after approved proof.
 - Proof history and payout records keep the review trail visible while dispute handling is being formalized.
 - Submission artifacts are represented through proof narrative, evidence link, checklist coverage, and file placeholder rather than production-grade file custody.
 - Reputation is outcome-linked for the verified loop, but it is not a complete fraud model.
@@ -77,12 +78,12 @@ Recommended screenshots:
 - `/signup`: compact wallet-first onboarding.
 - `/poster/tasks/new`: task creation with proof requirements.
 - `/poster/reviews`: submitted proof and approval obligation language.
-- `/poster/payouts`: poster-controlled release state and released transaction.
+- `/poster/payouts`: poster-released SOL state, release obligation, release record, and released transaction.
 - `/worker/tasks`: worker claim surface with proof requirements before claim.
 - `/worker/submissions`: proof state, released/approved/submitted status, and transaction visibility where data exists.
 - `/worker/payouts`: released payout records with wallet and transaction signature.
 - `/worker/reputation`: outcome-linked trust/reputation update.
-- `/app/settings`: identity, role, linked wallet, connected wallet, match state, release model, escrow status, and support/dispute status.
+- `/app/settings`: identity, role, linked wallet, active payout rail, network, release model, escrow status, and worker protection today.
 
 Recommended video flow:
 
@@ -148,7 +149,7 @@ npm run preview
 Demo notes:
 
 - Use the prepared poster and worker identities for the live loop.
-- Keep the release model truthful: poster-released payout after approved proof.
+- Keep the release model truthful: poster-released SOL payout after approved proof on Solana devnet.
 - Do not describe the current build as escrow.
 - Do not present TaskVerified as a generic marketplace.
 - Keep the narrative focused on proof, review, release, wallet identity, and earned trust state.

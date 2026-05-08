@@ -9,6 +9,7 @@ import { formatLamportsAsSol, executeDevnetPayoutTransfer } from "@/features/sol
 import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getPayoutsForPoster, getWalletProfile } from "@/features/tasks/data/sampleData";
+import { getPosterReleaseRecord, payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { cn } from "@/lib/utils";
 import type { PayoutRecord } from "@/features/shared/types/domain";
@@ -78,6 +79,7 @@ export function PosterPayoutsPage() {
   const posterName = auth.profile?.fullName ?? "Poster";
   const wallet = getWalletProfile(walletProfiles, posterId);
   const posterPayouts = getPayoutsForPoster(payouts, posterId);
+  const releaseRecord = getPosterReleaseRecord(payouts, posterId);
   const activeReleasePayouts = posterPayouts.filter((payout) => payout.status === "ready_to_release" || isRecoverableFailedPayout(payout));
   const finalizationAttentionPayouts = posterPayouts.filter(isFinalizationAttentionPayout);
   const historyPayouts = posterPayouts.filter(isHistoryPayout);
@@ -153,7 +155,7 @@ export function PosterPayoutsPage() {
       <WorkspaceHero
         eyebrow="Poster payouts"
         title="Payout release is where approval becomes final."
-        description="Accepted work only becomes complete when you sign release with the right wallet and the transfer is recorded. Release is poster-controlled in this build; escrow is planned for the next release model."
+        description="Accepted work only becomes complete when you sign the poster-released SOL transfer with the right wallet and the devnet transaction is recorded. Escrow is planned for the next release model."
         aside={
           <ActionPanel
             eyebrow="Release queue"
@@ -165,7 +167,30 @@ export function PosterPayoutsPage() {
 
       <SectionCard title="Release queue" description="Each payout below is a custody event with visible wallet, transfer, and onchain state.">
         <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50/85 px-4 py-3 text-sm leading-6 text-slate-600">
-          <span className="font-medium text-slate-950">Release model:</span> Payouts are released by the poster after approved proof in this build. Escrow is planned for the next release model.
+          <span className="font-medium text-slate-950">{payoutRailCopy.payoutAsset}.</span> {payoutRailCopy.network}. {payoutRailCopy.releaseModel}. Escrow is planned for the next release model.
+        </div>
+        <div className="mb-4 grid gap-3 md:grid-cols-4">
+          <div className="rounded-2xl border border-cyan-200 bg-cyan-50/85 px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-700">Release obligation</p>
+            <p className="mt-2 text-sm font-semibold text-cyan-950">{payoutRailCopy.releaseObligation}</p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Approved payouts</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-950">{releaseRecord.approvedPayouts}</p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Released payouts</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-950">{releaseRecord.releasedPayouts}</p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Awaiting release</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-950">{releaseRecord.awaitingRelease}</p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 md:col-span-4">
+            <p className="text-sm leading-6 text-slate-600">
+              Failed/recoverable: <span className="font-semibold text-slate-950">{releaseRecord.failedRecoverable}</span>. Wallet-pending: <span className="font-semibold text-slate-950">{releaseRecord.pendingWalletSetup}</span>. Finalization attention: <span className="font-semibold text-slate-950">{releaseRecord.failedFinalization}</span>.
+            </p>
+          </div>
         </div>
         {releaseError ? <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-800">{releaseError}</div> : null}
         {!isLivePosterWalletConnected ? (
@@ -204,7 +229,7 @@ export function PosterPayoutsPage() {
                   <div className="space-y-4">
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                       <div className="space-y-1">
-                        <p className="text-sm font-semibold text-slate-950">{formatMoney(payout.amount, "USD")} reward ready for devnet SOL release</p>
+                        <p className="text-sm font-semibold text-slate-950">{formatMoney(payout.amount, "USD")} reward value on the SOL payout rail</p>
                         <p className="text-sm leading-6 text-slate-600">
                           Devnet transfer target {formatLamportsAsSol(payout.transferAmountLamports)}.
                         </p>
@@ -221,11 +246,11 @@ export function PosterPayoutsPage() {
                       </div>
                       <p className="mt-3 text-sm leading-7 text-white/72">
                         {payout.status === "ready_to_release"
-                          ? "Proof is approved, wallet custody is aligned, and this release is waiting on the final poster signature. Approval creates a release obligation."
+                          ? "Proof is approved, wallet custody is aligned, and this SOL release is waiting on the final poster signature. The poster is expected to release after approval."
                           : payout.status === "pending"
                             ? "The release path exists, but one or both payout wallets are still missing so the chain step cannot open."
                             : payout.status === "released"
-                              ? "This payout has already crossed the line: signed, transferred, and recorded back into TaskVerified."
+                              ? "This payout has already crossed the line: signed, transferred on Solana devnet, and recorded back into TaskVerified."
                               : getFailedPayoutMessage(payout)}
                       </p>
 
@@ -272,7 +297,7 @@ export function PosterPayoutsPage() {
 
                     {payout.status === "ready_to_release" ? (
                       <div className="rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm leading-6 text-cyan-900">
-                        Ready for signature. Approved proof is waiting for poster release; proof history and payout records keep the review trail visible while dispute handling is being formalized.
+                        Approved, awaiting SOL release. The poster is expected to release after approval; proof history and payout records keep the review trail visible while dispute handling is being formalized.
                       </div>
                     ) : null}
                     {payout.status === "pending" ? (
@@ -282,7 +307,7 @@ export function PosterPayoutsPage() {
                     ) : null}
                     {payout.status === "released" ? (
                       <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-6 text-emerald-900">
-                        Released on Solana and written back into TaskVerified.
+                        Released on Solana devnet and written back into TaskVerified.
                       </div>
                     ) : null}
                     {payout.status === "failed" ? (

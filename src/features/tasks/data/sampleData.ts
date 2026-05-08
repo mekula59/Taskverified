@@ -182,7 +182,7 @@ export function getPosterDashboardMetrics(tasks: Task[], payouts: PayoutRecord[]
     {
       label: "Solana release queue",
       value: formatMoney(rewardReserved, "USD"),
-      detail: `${readyToRelease} payouts ready for poster-controlled devnet SOL release.`,
+      detail: `${readyToRelease} payouts ready for poster-released devnet SOL release.`,
     },
     {
       label: "Draft and decisions",

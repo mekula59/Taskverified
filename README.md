@@ -4,7 +4,7 @@ TaskVerified is a proof-first micro-work product for small operational jobs that
 
 The core idea is simple: posters define tightly scoped work with explicit proof requirements, workers submit evidence instead of vague completion claims, posters review against that evidence, and approved work moves into a visible payout release flow on Solana.
 
-One-line pitch: TaskVerified turns micro-work into a proof, review, and poster-released payout loop backed by Solana.
+One-line pitch: TaskVerified turns micro-work into a proof, review, and poster-released SOL payout loop backed by Solana devnet.
 
 ## Why This Matters
 
@@ -22,7 +22,7 @@ TaskVerified is built to make that loop legible.
 2. A verified worker claims the task.
 3. The worker submits a proof package: narrative, artifact link, file placeholder, and checklist coverage.
 4. The poster reviews the submission against the stated proof bar.
-5. Approved work advances into payout state.
+5. Approved work advances into a poster-released payout state.
 6. The poster releases the payout with the correct wallet through a native Solana devnet SOL transfer.
 7. The product writes the result back into visible payout and trust state.
 
@@ -37,7 +37,7 @@ It matters here because the product is about small units of work, and small unit
 
 In TaskVerified, Solana shows up where it is actually useful: payout destination, poster release signature, native devnet SOL transfer, and visible completion state.
 
-The current release model is explicit: payout release is poster-controlled after approved proof, with escrow planned for a later release model.
+The current release model is explicit: the active payout asset is SOL, the network is Solana devnet, and payout release is poster-released after approved proof, controlled by the poster. Escrow is planned for a later release model.
 
 ## What Is Real Today
 
@@ -63,7 +63,8 @@ The app is organized into four product areas:
 
 These are explicit limitations, not hidden production claims:
 - Escrow is planned for the next release model.
-- Payout release is poster-controlled in the current build.
+- Active payout rail: SOL on Solana devnet.
+- Release model: poster-released after approved proof.
 - Proof history and payout records keep the review trail visible while dispute handling is being formalized.
 - Submission artifacts use proof narrative, links, checklist coverage, and file placeholders; durable file storage is not the main claim of this build.
 - Reputation is outcome-linked for the verified loop, but it is not a finished anti-fraud scoring system.

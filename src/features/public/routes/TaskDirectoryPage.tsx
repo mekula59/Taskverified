@@ -7,6 +7,7 @@ import { useTasks } from "@/features/tasks/context/useTasks";
 import { seededTasks } from "@/features/tasks/data/taskSeeds";
 import { formatCategoryLabel, formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
 import { formatClaimAvailability } from "@/features/tasks/lib/claimSlots";
+import { payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 
 function formatDeadline(deadlineAt: string) {
   return new Intl.DateTimeFormat("en", {
@@ -92,12 +93,12 @@ export function TaskDirectoryPage() {
                         Release model
                       </span>
                     ),
-                    value: "Poster-controlled after approval",
+                    value: "poster-released SOL after approval",
                   },
                 ]}
               />
               <p className="mt-3 rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm leading-6 text-slate-600">
-                Payouts are released by the poster after approved proof in this build. Escrow is planned for the next release model.
+                {payoutRailCopy.payoutAsset}. {payoutRailCopy.network}. {payoutRailCopy.releaseModel}. Escrow is planned for the next release model.
               </p>
             </div>
 

@@ -10,6 +10,7 @@ import { useAuth } from "@/features/auth/context/useAuth";
 import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { defaultReviewFormValues, validateReviewForm } from "@/features/tasks/lib/reviewForm";
+import { getPayoutReleaseCopy, payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 import { formatCategoryLabel, formatMoney, getPayoutForSubmission, getSubmittedSubmissionsForPoster, getWorkerProfile, getWorkerReputationSummary, getTrustScoreTone } from "@/features/tasks/data/sampleData";
 import { cn } from "@/lib/utils";
 
@@ -203,7 +204,7 @@ export function PosterReviewsPage() {
                         </div>
                         <h3 className="text-xl font-semibold tracking-tight">This review controls whether release can move forward.</h3>
                         <p className="text-sm leading-7 text-white/70">
-                          Approval unlocks the next payout state and creates a release obligation. Rejection stops the release path and records that this proof did not meet the standard.
+                          Approval unlocks a poster-released SOL payout state and creates a release obligation. Rejection stops the release path and records that this proof did not meet the standard.
                         </p>
                       </div>
                       <div className={cn("inline-flex items-center self-start rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]", getPayoutStatusClasses(payout.status))}>
@@ -222,6 +223,10 @@ export function PosterReviewsPage() {
                               <span className="font-semibold text-white">{checklistCompletedCount}/{checklistTotalCount || 0} marked complete</span>
                             </div>
                             <div className="flex items-start justify-between gap-4">
+                              <span className="text-white/70">Release model</span>
+                              <span className="font-semibold text-white">poster-released after approval</span>
+                            </div>
+                            <div className="flex items-start justify-between gap-4">
                               <span className="text-white/70">Worker payout destination</span>
                               <span className="font-semibold text-white">{payout.workerWalletAddress ? "Connected" : "Missing"}</span>
                             </div>
@@ -234,8 +239,16 @@ export function PosterReviewsPage() {
                       </div>
                       <div className="grid gap-3 sm:grid-cols-2">
                         <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                          <p className="text-xs uppercase tracking-[0.16em] text-white/50">Value</p>
-                          <p className="mt-2 text-sm font-semibold text-white">{formatMoney(payout.amount, "USD")} · {payout.currencyToken}</p>
+                          <p className="text-xs uppercase tracking-[0.16em] text-white/50">Reward value</p>
+                          <p className="mt-2 text-sm font-semibold text-white">{formatMoney(payout.amount, "USD")}</p>
+                        </div>
+                        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                          <p className="text-xs uppercase tracking-[0.16em] text-white/50">Payout asset</p>
+                          <p className="mt-2 text-sm font-semibold text-white">SOL</p>
+                        </div>
+                        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                          <p className="text-xs uppercase tracking-[0.16em] text-white/50">Network</p>
+                          <p className="mt-2 text-sm font-semibold text-white">Solana devnet</p>
                         </div>
                         <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                           <p className="text-xs uppercase tracking-[0.16em] text-white/50">Transfer target</p>
@@ -276,7 +289,7 @@ export function PosterReviewsPage() {
                 <div className="flex flex-col gap-3 rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
                   {payout ? (
                     <p className="text-sm leading-6 text-slate-600">
-                      <span className="font-medium text-slate-950">Approving this proof creates a release obligation.</span> It moves the payout toward <span className="font-medium text-slate-950">{payout.workerWalletAddress && payout.posterWalletAddress ? "ready to release" : "wallet-dependent hold"}</span>. Rejecting it preserves the evidence trail but blocks release.
+                      <span className="font-medium text-slate-950">{payoutRailCopy.releaseObligation}</span> It moves the payout toward <span className="font-medium text-slate-950">{payout.workerWalletAddress && payout.posterWalletAddress ? getPayoutReleaseCopy(payout).label : "wallet-dependent SOL hold"}</span>. Rejecting it preserves the evidence trail but blocks release.
                     </p>
                   ) : null}
                   {canReview ? (

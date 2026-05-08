@@ -6,24 +6,25 @@ import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { SolanaWalletStatusCard } from "@/features/solana/components/SolanaWalletStatusCard";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { formatMoney, getPayoutsForWorker, getWalletProfile } from "@/features/tasks/data/sampleData";
+import { payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 import type { PayoutRecord } from "@/features/shared/types/domain";
 
 function getWorkerPayoutMessage(payout: PayoutRecord) {
   if (payout.status === "ready_to_release") {
-    return "Approved proof is waiting for poster release.";
+    return "Approved, awaiting SOL release. The poster is expected to release after approval.";
   }
 
   if (payout.status === "released") {
-    return "Released through the Solana-backed release flow and recorded in TaskVerified.";
+    return "Released through the Solana-backed devnet SOL release flow and recorded in TaskVerified.";
   }
 
   if (payout.status === "failed") {
     return payout.txSignature
       ? "A transaction signature exists, but release finalization needs recovery."
-      : "Release failed before a final transaction signature was recorded.";
+      : "SOL release failed before a final transaction signature was recorded.";
   }
 
-  return "Payout is not ready until proof clears review and both wallet records are present.";
+  return "SOL release is not ready until proof clears review and both wallet records are present.";
 }
 
 export function WorkerPayoutsPage() {
@@ -39,7 +40,7 @@ export function WorkerPayoutsPage() {
       <WorkspaceHero
         eyebrow="Worker payouts"
         title="Payout visibility follows approved proof through Solana-ready release."
-        description="Workers can connect Phantom here and see whether approved proof is still waiting on poster-controlled release."
+        description="Workers can connect Phantom here and see whether approved proof is still waiting on poster-released SOL release."
       />
       <SectionCard title="Worker wallet" description="Phantom-first connection for the current payout flow.">
         <SolanaWalletStatusCard userId={workerId} role="worker" displayName={workerName} />
@@ -61,11 +62,14 @@ export function WorkerPayoutsPage() {
                   </div>
                   {payout.status === "ready_to_release" ? (
                     <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
-                      Proof history and payout records keep the review trail visible while dispute handling is being formalized.
+                      {payoutRailCopy.releaseObligation} Proof history and payout records keep the review trail visible while dispute handling is being formalized.
                     </div>
                   ) : null}
                   <LedgerRows
                     rows={[
+                      { label: "Payout asset", value: "SOL" },
+                      { label: "Network", value: "Solana devnet" },
+                      { label: "Release model", value: "poster-released after approved proof" },
                       { label: "Status", value: <span className="capitalize">{payout.status.replaceAll("_", " ")}</span> },
                       { label: "Worker wallet", value: payout.workerWalletAddress ?? "Not connected", valueClassName: "tv-long-token font-mono text-xs leading-5" },
                       { label: "Poster wallet", value: payout.posterWalletAddress ?? "Not connected", valueClassName: "tv-long-token font-mono text-xs leading-5" },

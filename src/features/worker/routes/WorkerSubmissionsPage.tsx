@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { useTasks } from "@/features/tasks/context/useTasks";
 import { createSubmissionFormValues, toSubmissionInput, validateSubmissionForm } from "@/features/tasks/lib/submissionForm";
+import { payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 import { getClaimsForWorker, getPayoutForSubmission, getSubmissionForClaim, getSubmissionTrustStatus, getWorkerReputationSummary } from "@/features/tasks/data/sampleData";
 import type { PayoutRecord, SubmissionFormValues, TaskSubmission } from "@/features/shared/types/domain";
 
@@ -48,8 +49,8 @@ function getSubmissionPayoutState(submission?: TaskSubmission, payout?: PayoutRe
   if (payout.status === "ready_to_release") {
     return {
       tone: "cyan",
-      label: "Approved, awaiting poster release",
-      detail: "Approved proof is waiting for poster release.",
+      label: payoutRailCopy.approvedAwaitingRelease,
+      detail: "The poster is expected to release after approval.",
       needsDisputeNote: true,
     };
   }
@@ -58,7 +59,9 @@ function getSubmissionPayoutState(submission?: TaskSubmission, payout?: PayoutRe
     return {
       tone: "emerald",
       label: "Released",
-      detail: payout.txSignature ? "Released through the Solana-backed release flow with a recorded transaction signature." : "Released through the Solana-backed release flow.",
+      detail: payout.txSignature
+        ? "Released through the Solana-backed devnet SOL release flow with a recorded transaction signature."
+        : "Released through the Solana-backed devnet SOL release flow.",
       needsDisputeNote: false,
     };
   }

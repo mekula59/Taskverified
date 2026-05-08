@@ -15,6 +15,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { posterTrustSignals } from "@/features/shared/data/appShell";
 import type { TaskCategory, RewardCurrency, TaskStatus } from "@/features/shared/types/domain";
+import { payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 
 const categoryOptions: TaskCategory[] = ["testing", "research", "community", "content"];
 const currencyOptions: RewardCurrency[] = ["USD", "NGN"];
@@ -287,6 +288,13 @@ export function PosterCreateTaskPage() {
             </div>
           </div>
 
+          <div className="rounded-2xl border border-cyan-200 bg-cyan-50/85 px-4 py-3 text-sm leading-6 text-cyan-950">
+            <p className="font-semibold text-cyan-950">{payoutRailCopy.createTaskRail}</p>
+            <p>
+              Approved work moves into a poster-released SOL payout state. Escrow is planned for the next release model.
+            </p>
+          </div>
+
           <Button type="submit">Create task</Button>
           {submitError ? <p className="text-sm text-destructive">{submitError}</p> : null}
         </form>
@@ -299,7 +307,7 @@ export function PosterCreateTaskPage() {
             <p className="mt-3 text-sm leading-7 text-slate-600">
               {values.description.trim() || "Describe the work clearly enough for a worker to decide whether they can produce reviewable proof."}
             </p>
-            <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2 xl:grid-cols-5">
               <div className="rounded-2xl bg-white px-4 py-3 ring-1 ring-slate-200">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Worker slots</p>
                 <p className="mt-2 font-semibold text-slate-950">0 of {previewClaimLimit} claimed</p>
@@ -315,6 +323,10 @@ export function PosterCreateTaskPage() {
               <div className="rounded-2xl bg-white px-4 py-3 ring-1 ring-slate-200">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Status</p>
                 <p className="mt-2 font-semibold capitalize text-slate-950">{values.status}</p>
+              </div>
+              <div className="rounded-2xl bg-white px-4 py-3 ring-1 ring-slate-200">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Payout rail</p>
+                <p className="mt-2 font-semibold text-slate-950">SOL on Solana devnet</p>
               </div>
             </div>
           </div>

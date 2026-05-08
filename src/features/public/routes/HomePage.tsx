@@ -6,6 +6,7 @@ import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { seededPayouts, seededTasks } from "@/features/tasks/data/taskSeeds";
 import { formatCategoryLabel, formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
 import { formatClaimAvailability } from "@/features/tasks/lib/claimSlots";
+import { payoutRailCopy } from "@/features/tasks/lib/payoutRail";
 
 const publicTasks = getPublicTasks(seededTasks);
 const featuredTask = publicTasks[0];
@@ -29,7 +30,7 @@ const operatingLoop = [
   },
   {
     title: "Release payout",
-    description: "Approved work enters a poster-released payout flow.",
+    description: "Approved work enters a poster-released SOL flow on Solana devnet.",
     icon: WalletCards,
   },
 ];
@@ -45,7 +46,7 @@ export function HomePage() {
               Proof-first tasks with deliberate payout release.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 md:text-lg">
-              TaskVerified turns small work into reviewable packets: a clear proof bar, a submitted evidence record, and a poster-released payout step.
+              TaskVerified turns small work into reviewable packets: a clear proof bar, a submitted evidence record, and a poster-released SOL payout step on Solana devnet.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Button asChild className="h-10 rounded-full px-5 font-semibold">
@@ -160,7 +161,7 @@ export function HomePage() {
                 </div>
               </div>
               <div className="mt-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-600">
-                <span className="font-medium text-slate-950">Release model:</span> Payouts are released by the poster after approved proof in this build.
+                <span className="font-medium text-slate-950">{payoutRailCopy.releaseModel}.</span> Payout asset: SOL. Network: Solana devnet.
               </div>
             </div>
             <div className="border-t border-slate-200/80 px-5 py-4">
@@ -185,7 +186,7 @@ export function HomePage() {
           <div>
             <h2 className="text-xl font-semibold tracking-tight text-slate-950">Release is a decision, not a slogan.</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-              Approval prepares payout state; release remains poster-controlled in this build and depends on visible wallet context and transaction outcome. Escrow is planned for the next release model.
+              Approval prepares payout state; release remains poster-released and controlled by the poster in this build, with visible wallet context and transaction outcome. Escrow is planned for the next release model.
               {releasedPayout ? ` Latest sample: ${formatMoney(releasedPayout.amount, "USD")} reward released through a devnet SOL transfer target of ${formatLamportsAsSol(releasedPayout.transferAmountLamports)}.` : ""}
             </p>
           </div>
