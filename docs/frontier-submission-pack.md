@@ -112,18 +112,15 @@ Supabase auth checklist:
 
 - Email provider enabled.
 - New user signups enabled if email signup is supported.
-- Redirect URLs include:
-  - `https://www.taskverified.xyz/auth/callback`
-  - `https://taskverified.xyz/auth/callback`
-  - `https://taskverified.vercel.app/auth/callback`
-- Site URL set to the production domain.
+- Site URL set to `https://taskverified.vercel.app`.
+- Redirect URL includes `https://taskverified.vercel.app/auth/callback`.
 - Production SMTP recommended before wider public use.
 - Magic links opened in the same browser and device where they were requested. If a reviewer opens the email on another device or browser, request a new link there.
 
 Deployment note:
 
 - `vercel.json` rewrites client-side routes to `/index.html` so direct URLs such as `/signup`, `/auth/callback`, `/worker`, and `/poster` load the React app.
-- Browser-initiated email links redirect back to the current app origin. Keep all live domains in the Supabase redirect allowlist, and use the custom domain as the primary domain once it is ready.
+- Browser-initiated email links redirect back to the current app origin. For Frontier submission, use the stable Vercel deployment as the public app URL.
 
 Local commands:
 
