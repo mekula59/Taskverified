@@ -1,4 +1,7 @@
+import { Link } from "react-router-dom";
+
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/context/useAuth";
 
 const statusCopy = {
@@ -22,6 +25,30 @@ const statusCopy = {
 
 export function VerificationPage() {
   const auth = useAuth();
+
+  if (!auth.isLoading && !auth.isAuthenticated) {
+    return (
+      <div className="space-y-8">
+        <section className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.92))] p-6 shadow-sm sm:p-8">
+          <div className="max-w-2xl space-y-5">
+            <Badge variant="secondary" className="rounded-full px-3 py-1">
+              Verification
+            </Badge>
+            <div className="space-y-3">
+              <h1 className="text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">Sign in to view your verification status.</h1>
+              <p className="text-base leading-7 text-slate-600">
+                Verification is tied to a TaskVerified identity. Sign in before checking worker access, review readiness, role, or account-level trust state.
+              </p>
+            </div>
+            <Button asChild className="h-11 rounded-xl px-5">
+              <Link to="/signin">Sign in to view verification</Link>
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   const currentStatus = auth.verification?.status ?? "unverified";
   const copy = statusCopy[currentStatus];
   const consequenceCopy = {

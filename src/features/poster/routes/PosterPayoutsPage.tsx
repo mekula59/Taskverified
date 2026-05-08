@@ -204,7 +204,7 @@ export function PosterPayoutsPage() {
                   <div className="space-y-4">
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                       <div className="space-y-1">
-                        <p className="text-sm font-semibold text-slate-950">{formatMoney(payout.amount, "USD")} ready for {payout.currencyToken} release</p>
+                        <p className="text-sm font-semibold text-slate-950">{formatMoney(payout.amount, "USD")} reward ready for devnet SOL release</p>
                         <p className="text-sm leading-6 text-slate-600">
                           Devnet transfer target {formatLamportsAsSol(payout.transferAmountLamports)}.
                         </p>
@@ -301,13 +301,13 @@ export function PosterPayoutsPage() {
                   <div className="space-y-4">
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-                        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Amount</p>
+                        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Reward value</p>
                         <p className="mt-2 text-sm font-semibold text-slate-950">
-                          {formatMoney(payout.amount, "USD")} / {payout.currencyToken}
+                          {formatMoney(payout.amount, "USD")}
                         </p>
                       </div>
                       <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-                        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Transfer</p>
+                        <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Devnet SOL transfer</p>
                         <p className="mt-2 text-sm font-semibold text-slate-950">{formatLamportsAsSol(payout.transferAmountLamports)}</p>
                       </div>
                     </div>

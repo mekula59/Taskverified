@@ -328,6 +328,7 @@ export function WorkerSubmissionsPage() {
                     />
                   </div>
                 </div>
+                {errors.proofArtifact ? <p className="mt-3 text-sm text-destructive">{errors.proofArtifact}</p> : null}
                 <div className="mt-5 space-y-2">
                   <Label>Checklist</Label>
                   <p className="text-sm leading-6 text-slate-600">Mark each requirement only when it is actually represented in the submission package.</p>
@@ -361,7 +362,7 @@ export function WorkerSubmissionsPage() {
                   <p className="mt-3 text-sm leading-6 text-white/72">
                     {isSubmissionReady
                       ? "This package reads as review-ready. Once submitted, the poster will judge exactly what is written here against the requirement list."
-                      : "Resolve the missing checks above before submitting. The form will block missing narrative or checklist coverage, and direct artifacts make the review defensible."}
+                      : "Resolve the missing checks above before submitting. The form will block missing narrative detail, missing artifacts, or checklist gaps."}
                   </p>
                   <Button className="mt-4 h-12 rounded-xl bg-white px-5 text-slate-950 hover:bg-slate-100" onClick={handleSubmit}>Submit for review</Button>
                 </div>

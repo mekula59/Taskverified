@@ -1,5 +1,7 @@
 import type { SubmissionFormValues, SubmissionInput, SubmissionValidationErrors, TaskSubmission } from "@/features/shared/types/domain";
 
+const minimumProofNarrativeLength = 20;
+
 export function createSubmissionFormValues(requirements: string[], existing?: TaskSubmission): SubmissionFormValues {
   if (existing) {
     return {
@@ -21,8 +23,12 @@ export function createSubmissionFormValues(requirements: string[], existing?: Ta
 export function validateSubmissionForm(values: SubmissionFormValues): SubmissionValidationErrors {
   const errors: SubmissionValidationErrors = {};
 
-  if (!values.proofText.trim()) {
-    errors.proofText = "Proof text is required.";
+  if (values.proofText.trim().length < minimumProofNarrativeLength) {
+    errors.proofText = "Add enough detail for the poster to review this against the proof requirements.";
+  }
+
+  if (!values.proofLink.trim() && !values.proofFileName.trim()) {
+    errors.proofArtifact = "Add a proof link or file placeholder so the poster has a direct artifact to review.";
   }
 
   if (values.checklistItems.some((item) => !item.completed)) {

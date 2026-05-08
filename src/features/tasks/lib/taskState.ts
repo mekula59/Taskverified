@@ -2,6 +2,10 @@ import { generateTxSignature } from "@/features/tasks/lib/wallet";
 import { withReputation } from "@/features/tasks/lib/reputation";
 import type { SubmissionInput, SubmissionReviewInput, Task, TaskClaim, TaskCreateInput, TaskStoreSnapshot, TaskSubmission, WalletConnectInput, WalletDisconnectInput, WalletProfile } from "@/features/shared/types/domain";
 
+function computeDemoTransferLamports(rewardAmount: number) {
+  return Math.min(Math.max(Math.round(rewardAmount * 500000), 500000), 20000000);
+}
+
 export function createTaskRecord(current: TaskStoreSnapshot, input: TaskCreateInput, currentUser: { id: string; name: string }): TaskStoreSnapshot {
   const task: Task = {
     id: `task-${Date.now()}`,
@@ -129,7 +133,8 @@ export function reviewSubmissionRecord(current: TaskStoreSnapshot, input: Submis
             workerWalletAddress: workerWallet?.walletAddress,
             posterWalletAddress: posterWallet?.walletAddress,
             amount: task.rewardAmount,
-            currencyToken: "USDC" as const,
+            currencyToken: "SOL" as const,
+            transferAmountLamports: existingPayout?.transferAmountLamports ?? computeDemoTransferLamports(task.rewardAmount),
             status: nextPayoutStatus,
             txSignature: existingPayout?.txSignature,
             createdAt: existingPayout?.createdAt ?? now,

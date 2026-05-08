@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2, ShieldAlert, ShieldCheck } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { completeEmailAuthCallback, formatAuthError } from "@/lib/supabase/auth";
 
@@ -66,7 +67,7 @@ export function AuthCallbackPage() {
         <div className="px-6 py-5">
           <p className="text-sm leading-6 text-slate-600">
             {error
-              ? "The email link could not complete a TaskVerified session in this browser."
+              ? "This sign-in link could not be completed. Request a new link or sign in with Phantom."
               : "We are verifying your email session and routing you into the right TaskVerified workspace."}
           </p>
           {!error ? (
@@ -75,9 +76,22 @@ export function AuthCallbackPage() {
               Checking session
             </div>
           ) : (
-            <div className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-950 ring-1 ring-rose-200">
-              {error}
-            </div>
+            <>
+              <div className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-950 ring-1 ring-rose-200">
+                {error}
+              </div>
+              <div className="mt-4 grid gap-2">
+                <Button asChild variant="outline" className="rounded-xl">
+                  <Link to="/signin">Return to sign in</Link>
+                </Button>
+                <Button asChild className="rounded-xl">
+                  <Link to="/signin#email">Request a new magic link</Link>
+                </Button>
+                <Button asChild variant="secondary" className="rounded-xl">
+                  <Link to="/signin">Use Phantom instead</Link>
+                </Button>
+              </div>
+            </>
           )}
         </div>
       </div>

@@ -23,7 +23,7 @@ TaskVerified is built to make that loop legible.
 3. The worker submits a proof package: narrative, artifact link, file placeholder, and checklist coverage.
 4. The poster reviews the submission against the stated proof bar.
 5. Approved work advances into payout state.
-6. The poster releases the payout with the correct wallet on Solana devnet.
+6. The poster releases the payout with the correct wallet through a native Solana devnet SOL transfer.
 7. The product writes the result back into visible payout and trust state.
 
 ## Why Solana
@@ -35,7 +35,7 @@ It matters here because the product is about small units of work, and small unit
 - explicit wallet custody
 - a visible release moment after review
 
-In TaskVerified, Solana shows up where it is actually useful: payout destination, poster release signature, and visible completion state.
+In TaskVerified, Solana shows up where it is actually useful: payout destination, poster release signature, native devnet SOL transfer, and visible completion state.
 
 The current release model is explicit: payout release is poster-controlled after approved proof, with escrow planned for a later release model.
 
@@ -67,7 +67,7 @@ These are explicit limitations, not hidden production claims:
 - Proof history and payout records keep the review trail visible while dispute handling is being formalized.
 - Submission artifacts use proof narrative, links, checklist coverage, and file placeholders; durable file storage is not the main claim of this build.
 - Reputation is outcome-linked for the verified loop, but it is not a finished anti-fraud scoring system.
-- Devnet payout records are used where technical transaction evidence matters.
+- Devnet SOL payout records are used where technical transaction evidence matters.
 
 ## Demo-Ready Surfaces
 

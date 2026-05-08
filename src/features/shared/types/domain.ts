@@ -247,6 +247,7 @@ export interface SubmissionFormValues {
 
 export interface SubmissionValidationErrors {
   proofText?: string;
+  proofArtifact?: string;
   checklistItems?: string;
 }
 

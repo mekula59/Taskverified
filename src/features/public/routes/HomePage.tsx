@@ -2,6 +2,7 @@ import { ArrowRight, CheckCircle2, ClipboardCheck, FileCheck2, ShieldCheck, Wall
 import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { seededPayouts, seededTasks } from "@/features/tasks/data/taskSeeds";
 import { formatCategoryLabel, formatMoney, getPublicTasks } from "@/features/tasks/data/sampleData";
 
@@ -184,7 +185,7 @@ export function HomePage() {
             <h2 className="text-xl font-semibold tracking-tight text-slate-950">Release is a decision, not a slogan.</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
               Approval prepares payout state; release remains poster-controlled in this build and depends on visible wallet context and transaction outcome. Escrow is planned for the next release model.
-              {releasedPayout ? ` Latest sample: ${formatMoney(releasedPayout.amount, "USD")} released via ${releasedPayout.currencyToken}.` : ""}
+              {releasedPayout ? ` Latest sample: ${formatMoney(releasedPayout.amount, "USD")} reward released through a devnet SOL transfer target of ${formatLamportsAsSol(releasedPayout.transferAmountLamports)}.` : ""}
             </p>
           </div>
         </div>

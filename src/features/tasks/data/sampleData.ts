@@ -151,8 +151,8 @@ export function getWorkerDashboardMetrics(input: {
     },
     {
       label: "Solana payouts",
-      value: `${solanaAmount} USDC`,
-      detail: `${approvedClaims} approved completions with ${workerPayouts.length} payout records.`,
+      value: formatMoney(solanaAmount, "USD"),
+      detail: `${approvedClaims} approved completions with ${workerPayouts.length} devnet SOL release records.`,
     },
   ];
 }
@@ -181,8 +181,8 @@ export function getPosterDashboardMetrics(tasks: Task[], payouts: PayoutRecord[]
     },
     {
       label: "Solana release queue",
-      value: `${rewardReserved} USDC`,
-      detail: `${readyToRelease} payouts ready to release.`,
+      value: formatMoney(rewardReserved, "USD"),
+      detail: `${readyToRelease} payouts ready for poster-controlled devnet SOL release.`,
     },
     {
       label: "Draft and decisions",

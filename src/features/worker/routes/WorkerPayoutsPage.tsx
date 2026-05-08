@@ -52,8 +52,8 @@ export function WorkerPayoutsPage() {
               <LedgerObject key={payout.id}>
                 <LedgerHeader
                   eyebrow={<StatusPill tone={getStatusTone(payout.status)}>{payout.status.replaceAll("_", " ")}</StatusPill>}
-                  title={`${formatMoney(payout.amount, "USD")} / ${payout.currencyToken}`}
-                  description={`Devnet transfer target ${formatLamportsAsSol(payout.transferAmountLamports)}.`}
+                  title={`${formatMoney(payout.amount, "USD")} reward value`}
+                  description={`Poster-released devnet SOL transfer target ${formatLamportsAsSol(payout.transferAmountLamports)}.`}
                 />
                 <div className="min-w-0 space-y-4 p-5">
                   <div className="rounded-2xl border border-slate-200 bg-slate-50/85 px-4 py-3 text-sm leading-6 text-slate-600">

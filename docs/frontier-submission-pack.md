@@ -32,7 +32,7 @@ TaskVerified is a trust-first product for small work that still needs human judg
 
 Solana is payout infrastructure for TaskVerified, not the product's marketing layer.
 
-TaskVerified uses Solana where the workflow needs an explicit release moment: wallet identity, destination visibility, poster signing, devnet transfer, transaction signature, and released payout state. Micro-work has small rewards and frequent settlement points, so low-friction transfer infrastructure matters. The product still keeps judgment off-chain: the task, proof, review, and trust consequences are product-level workflow decisions. Solana is used to make the payout release legible and verifiable after review.
+TaskVerified uses Solana where the workflow needs an explicit release moment: wallet identity, destination visibility, poster signing, native devnet SOL transfer, transaction signature, and released payout state. Micro-work has small rewards and frequent settlement points, so low-friction transfer infrastructure matters. The product still keeps judgment off-chain: the task, proof, review, and trust consequences are product-level workflow decisions. Solana is used to make the payout release legible and verifiable after review.
 
 ## Known Limitations
 
@@ -59,7 +59,7 @@ TaskVerified uses Solana where the workflow needs an explicit release moment: wa
 - Poster sees submitted proof in reviews.
 - Poster approves proof once.
 - Poster payout state becomes ready to release.
-- Poster signs and releases the payout through the Solana-backed release flow.
+- Poster signs and releases the payout through the Solana-backed devnet SOL release flow.
 - Payout becomes released and shows a transaction signature.
 - Worker sees released payout and transaction signature.
 - Worker reputation/trust state updates from the completed loop.
