@@ -61,6 +61,23 @@ export function HomePage() {
                 </Link>
               </Button>
             </div>
+
+            <div className="mt-6 border-t border-slate-200/80 pt-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Built with</p>
+              <p className="mt-1 max-w-xl text-sm leading-6 text-slate-600">
+                Infrastructure behind the proof, review, and SOL payout release loop.
+              </p>
+              <div className="mt-3 flex min-w-0 flex-wrap gap-2">
+                {infrastructureStack.map((item) => (
+                  <span
+                    key={item}
+                    className="inline-flex min-h-8 items-center rounded-full bg-slate-50 px-3 text-sm font-semibold tracking-tight text-slate-800 shadow-[0_10px_28px_-24px_rgba(15,23,42,0.8)] ring-1 ring-slate-200/85"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="min-w-0 border-t border-slate-200/80 bg-slate-50/80 p-4 sm:p-5 lg:border-l lg:border-t-0">
@@ -97,27 +114,6 @@ export function HomePage() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="tv-surface-muted px-4 py-4 sm:px-5">
-        <div className="grid gap-4 md:grid-cols-[minmax(0,0.42fr)_minmax(0,1fr)] md:items-center">
-          <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Built with</p>
-            <p className="mt-1 max-w-xl text-sm leading-6 text-slate-600">
-              Infrastructure behind the proof, review, and SOL payout release loop.
-            </p>
-          </div>
-          <div className="flex min-w-0 flex-wrap gap-2 md:justify-end">
-            {infrastructureStack.map((item) => (
-              <span
-                key={item}
-                className="inline-flex min-h-9 items-center rounded-full bg-white px-3.5 text-sm font-semibold tracking-tight text-slate-800 shadow-[0_10px_28px_-24px_rgba(15,23,42,0.8)] ring-1 ring-slate-200/85"
-              >
-                {item}
-              </span>
-            ))}
           </div>
         </div>
       </section>
