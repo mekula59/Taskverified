@@ -13,6 +13,8 @@ const publicTasks = getPublicTasks(seededTasks);
 const featuredTask = publicTasks[0];
 const releasedPayout = seededPayouts.find((payout) => payout.status === "released");
 
+const infrastructureStack = ["Solana", "Phantom", "Supabase", "Vercel", "React", "TypeScript"];
+
 const operatingLoop = [
   {
     title: "Define work",
@@ -95,6 +97,27 @@ export function HomePage() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="tv-surface-muted px-4 py-4 sm:px-5">
+        <div className="grid gap-4 md:grid-cols-[minmax(0,0.42fr)_minmax(0,1fr)] md:items-center">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Built with</p>
+            <p className="mt-1 max-w-xl text-sm leading-6 text-slate-600">
+              Infrastructure behind the proof, review, and SOL payout release loop.
+            </p>
+          </div>
+          <div className="flex min-w-0 flex-wrap gap-2 md:justify-end">
+            {infrastructureStack.map((item) => (
+              <span
+                key={item}
+                className="inline-flex min-h-9 items-center rounded-full bg-white px-3.5 text-sm font-semibold tracking-tight text-slate-800 shadow-[0_10px_28px_-24px_rgba(15,23,42,0.8)] ring-1 ring-slate-200/85"
+              >
+                {item}
+              </span>
+            ))}
           </div>
         </div>
       </section>
