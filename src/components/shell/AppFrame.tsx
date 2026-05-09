@@ -22,12 +22,13 @@ export function AppFrame({ area }: AppFrameProps) {
   const userRole = auth.user?.role;
   const roleArea = userRole === "poster" || userRole === "worker" ? userRole : null;
   const workspaceRoute = auth.routeForRole(userRole);
+  const signedInTasksRoute = roleArea ? `/${roleArea}/tasks` : "/tasks";
   const isWorkspaceArea = area === "poster" || area === "worker";
   const workspaceNavigation = isWorkspaceArea ? navigationByArea[area] : [];
   const globalNavigation = auth.isAuthenticated
     ? [
         { label: "Home", to: "/", end: true },
-        { label: "Tasks", to: "/tasks", end: true },
+        { label: "Tasks", to: signedInTasksRoute, end: true },
         { label: "Workspace", to: workspaceRoute },
         { label: "Settings", to: "/app/settings", end: true },
       ]
@@ -41,6 +42,10 @@ export function AppFrame({ area }: AppFrameProps) {
   const mainShellClass = isPublicArea ? "tv-shell" : "tv-workspace-shell";
 
   const isGlobalItemActive = (item: (typeof globalNavigation)[number]) => {
+    if (item.label === "Tasks" && auth.isAuthenticated && roleArea) {
+      return false;
+    }
+
     if (item.label === "Workspace") {
       return location.pathname.startsWith("/worker") || location.pathname.startsWith("/poster");
     }
