@@ -100,11 +100,11 @@
 
 @layer components {
   .tv-shell {
-    @apply mx-auto w-full max-w-shell min-w-0 max-w-full px-4 sm:px-5 lg:px-6;
+    @apply mx-auto box-border max-w-shell min-w-0 max-w-full px-4 sm:px-5 lg:px-6;
   }
 
   .tv-workspace-shell {
-    @apply mx-auto w-full max-w-workspace min-w-0 max-w-full px-4 sm:px-5 lg:px-6;
+    @apply mx-auto box-border max-w-workspace min-w-0 max-w-full px-4 sm:px-5 lg:px-6;
   }
 
   .tv-page-rhythm {

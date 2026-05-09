@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { ShieldCheck } from "lucide-react";
 
+import { TaskVerifiedMark } from "@/components/brand/TaskVerifiedMark";
 import { useAuth } from "@/features/auth/context/useAuth";
 import type { UserRole } from "@/features/shared/types/domain";
 
@@ -16,9 +16,7 @@ export function AuthGate({ role }: AuthGateProps) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-4 text-foreground">
         <div className="tv-surface flex max-w-sm flex-col items-center gap-4 px-6 py-7 text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-            <ShieldCheck className="h-6 w-6" />
-          </div>
+          <TaskVerifiedMark className="h-11 w-11" />
           <div className="space-y-1.5">
             <p className="text-base font-semibold tracking-tight">Opening TaskVerified</p>
             <p className="text-sm leading-6 text-muted-foreground">

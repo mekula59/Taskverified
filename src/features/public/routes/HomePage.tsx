@@ -1,6 +1,7 @@
 import { ArrowRight, CheckCircle2, ClipboardCheck, FileCheck2, ShieldCheck, WalletCards } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { TaskVerifiedMark } from "@/components/brand/TaskVerifiedMark";
 import { Button } from "@/components/ui/button";
 import { formatLamportsAsSol } from "@/features/solana/lib/payoutExecution";
 import { seededPayouts, seededTasks } from "@/features/tasks/data/taskSeeds";
@@ -40,7 +41,7 @@ export function HomePage() {
     <div className="space-y-5">
       <section className="tv-surface overflow-hidden">
         <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_390px]">
-          <div className="px-5 py-7 sm:px-7 md:py-8 lg:px-8">
+          <div className="min-w-0 px-5 py-7 sm:px-7 md:py-8 lg:px-8">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Human-verified micro-work</p>
             <h1 className="mt-3 max-w-3xl break-words text-[2.35rem] font-semibold leading-[0.98] tracking-tight text-slate-950 md:text-[3.35rem] lg:text-[3.6rem]">
               Proof-first tasks with deliberate payout release.
@@ -60,22 +61,22 @@ export function HomePage() {
             </div>
           </div>
 
-          <div className="border-t border-slate-200/80 bg-slate-50/80 p-4 sm:p-5 lg:border-l lg:border-t-0">
-            <div className="rounded-2xl bg-slate-950 p-4 text-white shadow-ledger-sm">
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
+          <div className="min-w-0 border-t border-slate-200/80 bg-slate-50/80 p-4 sm:p-5 lg:border-l lg:border-t-0">
+            <div className="min-w-0 rounded-2xl bg-slate-950 p-4 text-white shadow-ledger-sm">
+              <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
                   <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-emerald-200">Proof object</p>
                   <h2 className="mt-2 break-words text-lg font-semibold tracking-tight">{featuredTask?.title ?? "Task proof review"}</h2>
                 </div>
-                <span className="rounded-full bg-white px-3 py-1 text-sm font-semibold text-slate-950">
+                <span className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-semibold text-slate-950">
                   {featuredTask ? formatRewardReference(featuredTask.rewardAmount) : "$24 equivalent"}
                 </span>
               </div>
               <div className="mt-4 space-y-2.5">
                 {(featuredTask?.proofRequirements ?? ["Screenshots", "Structured notes", "Device details"]).slice(0, 3).map((item) => (
-                  <div key={item} className="flex items-start gap-3 rounded-xl bg-white/[0.07] px-3 py-2">
+                  <div key={item} className="flex min-w-0 items-start gap-3 rounded-xl bg-white/[0.07] px-3 py-2">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
-                    <span className="text-sm font-medium leading-5 text-slate-100">{item}</span>
+                    <span className="min-w-0 break-words text-sm font-medium leading-5 text-slate-100">{item}</span>
                   </div>
                 ))}
               </div>
@@ -180,9 +181,7 @@ export function HomePage() {
 
       <section className="tv-surface grid gap-4 p-5 md:grid-cols-[1fr_auto] md:items-center md:p-6">
         <div className="flex gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-            <ShieldCheck className="h-5 w-5" />
-          </div>
+          <TaskVerifiedMark alt="" className="h-10 w-10" />
           <div>
             <h2 className="text-xl font-semibold tracking-tight text-slate-950">Release is a decision, not a slogan.</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">

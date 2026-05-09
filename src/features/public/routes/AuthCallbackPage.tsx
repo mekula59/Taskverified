@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Loader2, ShieldAlert, ShieldCheck } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
+import { TaskVerifiedMark } from "@/components/brand/TaskVerifiedMark";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { completeEmailAuthCallback, formatAuthError } from "@/lib/supabase/auth";
@@ -55,9 +56,7 @@ export function AuthCallbackPage() {
     <div className="mx-auto flex min-h-[calc(100vh-8rem)] max-w-[620px] items-center justify-center px-4 py-10 text-center sm:px-6">
       <div className="tv-surface w-full overflow-hidden">
         <div className="border-b border-slate-200/80 bg-slate-50/80 px-5 py-4">
-          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-            {error ? <ShieldAlert className="h-5 w-5" /> : <ShieldCheck className="h-5 w-5" />}
-          </div>
+          <TaskVerifiedMark alt="" className="mx-auto h-11 w-11" />
           <p className="mt-3 text-xs font-semibold uppercase tracking-[0.22em] text-primary">TaskVerified auth</p>
           <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
             {error ? "Email sign-in needs attention" : "Finishing secure sign-in"}

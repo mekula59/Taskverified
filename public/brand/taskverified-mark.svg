@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">TaskVerified mark</title>
+  <desc id="desc">A midnight shield with a white T and green teal verification check.</desc>
+  <path fill="#0B1320" d="M88 56h336v220c0 92-68 164-168 204C156 440 88 368 88 276V56Z"/>
+  <path fill="#2B2F36" d="M124 100h264v171c0 68-49 122-132 159-83-37-132-91-132-159V100Z" opacity=".58"/>
+  <path fill="#F8FAFC" d="M144 126h224v52h-84v123h-56V178h-84v-52Z"/>
+  <path d="M150 248 226 324 370 180" fill="none" stroke="#F8FAFC" stroke-width="72" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M150 248 226 324 370 180" fill="none" stroke="#21C79A" stroke-width="44" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path fill="none" stroke="#F8FAFC" stroke-width="18" stroke-linecap="round" d="M148 334c25 42 62 72 108 92 46-20 83-50 108-92" opacity=".96"/>
+</svg>

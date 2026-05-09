@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import { ShieldCheck } from "lucide-react";
 
+import { TaskVerifiedMark } from "@/components/brand/TaskVerifiedMark";
 import { useAuth } from "@/features/auth/context/useAuth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -71,9 +71,7 @@ export function AppFrame({ area }: AppFrameProps) {
       <header className="sticky top-0 z-40 border-b border-slate-200/75 bg-white/86 backdrop-blur-xl">
         <div className={cn("tv-workspace-shell flex min-h-[3.8rem] min-w-0 items-center gap-3")}>
           <Link to="/" className="flex min-w-0 items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-emerald-100 shadow-[0_12px_30px_-22px_rgba(15,23,42,0.72)]">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
+            <TaskVerifiedMark alt="" className="h-10 w-10" />
             <div className="min-w-0">
               <div className="text-[0.95rem] font-semibold leading-5 tracking-tight">TaskVerified</div>
               <div className="text-xs leading-4 text-muted-foreground">Hire real people. Review proof. Pay on Solana.</div>
