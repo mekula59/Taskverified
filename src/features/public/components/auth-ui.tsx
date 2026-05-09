@@ -271,7 +271,7 @@ export function AuthShell({
   brandEyebrow,
 }: AuthShellProps) {
   const renderForm = () => (
-    <div className="mx-auto w-full max-w-[22.5rem] min-w-0 space-y-2.5 text-left">
+    <div className="mx-auto w-full max-w-[22.5rem] min-w-0 space-y-2.5 text-left [@media(max-height:700px)]:space-y-2">
       <div className="space-y-1.5 text-center">
         <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">{modeEyebrow}</div>
         <h1
@@ -281,7 +281,7 @@ export function AuthShell({
           {modeTitle}
         </h1>
         <p
-          className="mx-auto max-w-[18rem] text-[13px] leading-5 text-slate-600"
+          className="mx-auto max-w-[18rem] text-[13px] leading-5 text-slate-600 [@media(max-height:640px)]:hidden"
           style={{ viewTransitionName: "taskverified-auth-description" }}
         >
           {modeDescription}
@@ -336,7 +336,7 @@ export function AuthShell({
       className={cn(
         "flex flex-col text-center",
         variant === "desktop"
-          ? "h-full items-center justify-center bg-primary px-10 py-12 text-white"
+          ? "h-full items-center justify-center bg-primary px-10 py-12 text-white [@media(max-height:700px)]:py-8"
           : "mt-4 items-center rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200",
       )}
     >
@@ -384,7 +384,7 @@ export function AuthShell({
 
   return (
     <div className="relative isolate">
-      <div className="mx-auto flex min-h-[calc(100vh-7.25rem)] w-full items-center px-3 py-3 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-[calc(100vh-7.25rem)] w-full items-start px-3 py-3 sm:px-6 lg:px-8 [@media(max-height:700px)]:py-1">
         <div
           className="mx-auto w-full max-w-[calc(100vw-2rem)] overflow-hidden rounded-[1.25rem] bg-white p-5 shadow-ledger ring-1 ring-slate-200 lg:hidden"
           style={{ viewTransitionName: "taskverified-auth-card" }}
@@ -394,24 +394,24 @@ export function AuthShell({
         </div>
 
         <div
-          className="relative mx-auto hidden h-[545px] w-full max-w-[920px] overflow-hidden rounded-[1.35rem] bg-white shadow-ledger ring-1 ring-slate-200 lg:block"
+          className="mx-auto hidden w-full max-w-[920px] overflow-hidden rounded-[1.35rem] bg-white shadow-ledger ring-1 ring-slate-200 lg:grid lg:grid-cols-2"
           style={{ viewTransitionName: "taskverified-auth-card" }}
         >
           <div
             className={cn(
-              "absolute top-0 h-full w-1/2 px-9 py-6 transition-all duration-500 ease-in-out",
-              mode === "signin" ? "left-0" : "left-1/2",
+              "min-w-0 px-9 py-6 [@media(max-height:700px)]:py-2",
+              mode === "signin" ? "order-1" : "order-2",
             )}
           >
-            <div className="flex h-full items-center justify-center">
+            <div className="flex min-h-[493px] items-center justify-center [@media(max-height:700px)]:min-h-0">
               <div className="w-full">{renderForm()}</div>
             </div>
           </div>
 
           <div
             className={cn(
-              "absolute left-0 top-0 z-10 h-full w-1/2 overflow-hidden transition-transform duration-500 ease-in-out",
-              mode === "signin" ? "translate-x-full" : "translate-x-0",
+              "min-w-0 overflow-hidden",
+              mode === "signin" ? "order-2" : "order-1",
             )}
           >
             {renderSwitchPrompt("desktop")}
