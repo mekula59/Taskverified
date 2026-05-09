@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/brand/taskverified-logo.svg" alt="TaskVerified" width="420" />
+</p>
+
 # TaskVerified
 
 TaskVerified is a proof-first micro-work product for small operational jobs that still need a real human in the loop.
@@ -38,6 +42,14 @@ It matters here because the product is about small units of work, and small unit
 In TaskVerified, Solana shows up where it is actually useful: payout destination, poster release signature, native devnet SOL transfer, and visible completion state.
 
 The current release model is explicit: reward amounts are USD equivalent reference values, the active payout asset is SOL, the network is Solana devnet, and payout release is poster-released after approved proof, controlled by the poster. Escrow is planned for a later release model.
+
+## Ika-Ready Payout Roadmap
+
+Ika is a future side-track for TaskVerified, not an active integration in this build.
+
+The current active payout rail remains SOL on Solana devnet. A later Ika-enabled release model could let posters fund work from native assets on other chains while Solana enforces the TaskVerified proof, review, and release policy through programmable, policy-bound dWallet signing. That would fit the product's trust model because payout release should remain tied to approved proof, reviewer accountability, wallet identity, and an auditable release trail.
+
+This repo does not claim bridgeless payouts, Ika settlement, cross-chain payout execution, escrow, or 2PC-MPC signing are live today.
 
 ## What Is Real Today
 

@@ -88,6 +88,19 @@ export function SettingsPage() {
           ]}
         />
       </SectionCard>
+
+      <SectionCard title="Ika-ready payout roadmap" description="A future payout rail direction, not an active integration in this build.">
+        <LedgerRows
+          rows={[
+            { label: "Future rail", value: "Ika dWallet settlement" },
+            {
+              label: "Use case",
+              value: "posters fund from native assets on other chains while Solana enforces proof/review/release policy",
+            },
+            { label: "Status", value: "planned, not active in this build" },
+          ]}
+        />
+      </SectionCard>
     </div>
   );
 }

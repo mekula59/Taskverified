@@ -34,6 +34,14 @@ Solana is payout infrastructure for TaskVerified, not the product's marketing la
 
 TaskVerified uses Solana where the workflow needs an explicit release moment: wallet identity, destination visibility, poster signing, native devnet SOL transfer, transaction signature, and released payout state. Micro-work has small rewards and frequent settlement points, so low-friction transfer infrastructure matters. The product still keeps judgment off-chain: the task, proof, review, and trust consequences are product-level workflow decisions. Solana is used to make the payout release legible and verifiable after review.
 
+## Ika-Ready Payout Roadmap
+
+Ika is a planned payout-roadmap direction, not an active TaskVerified integration in this build.
+
+Current active rail: SOL on Solana devnet. Future rail: Ika dWallet settlement. The intended use case is bridgeless poster funding, where posters could fund from native assets on other chains while Solana enforces TaskVerified's proof, review, and release policy through programmable, policy-bound signing. This would extend the current release trail without changing the core product rule: approved proof creates a poster release obligation, and payment should be accountable to the review record.
+
+For judging and demo purposes, do not describe TaskVerified as using Ika today. The current build does not implement Ika, 2PC-MPC signing, cross-chain payout execution, escrow, or guaranteed settlement.
+
 ## Known Limitations
 
 - Escrow is planned for the next release model.
