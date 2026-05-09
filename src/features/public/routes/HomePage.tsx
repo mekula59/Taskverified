@@ -13,8 +13,6 @@ const publicTasks = getPublicTasks(seededTasks);
 const featuredTask = publicTasks[0];
 const releasedPayout = seededPayouts.find((payout) => payout.status === "released");
 
-const infrastructureStack = ["Solana", "Phantom", "Supabase", "Vercel", "React", "TypeScript"];
-
 const operatingLoop = [
   {
     title: "Define work",
@@ -60,23 +58,6 @@ export function HomePage() {
                   Browse examples <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-            </div>
-
-            <div className="mt-6 border-t border-slate-200/80 pt-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Built with</p>
-              <p className="mt-1 max-w-xl text-sm leading-6 text-slate-600">
-                Infrastructure behind the proof, review, and SOL payout release loop.
-              </p>
-              <div className="mt-3 flex min-w-0 flex-wrap gap-2">
-                {infrastructureStack.map((item) => (
-                  <span
-                    key={item}
-                    className="inline-flex min-h-8 items-center rounded-full bg-slate-50 px-3 text-sm font-semibold tracking-tight text-slate-800 shadow-[0_10px_28px_-24px_rgba(15,23,42,0.8)] ring-1 ring-slate-200/85"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
             </div>
           </div>
 
